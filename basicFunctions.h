@@ -1,0 +1,4 @@
+#ifndef BASICFUNCTIONS_H
+#define BASICFUNCTIONS_H
+
+#endif
