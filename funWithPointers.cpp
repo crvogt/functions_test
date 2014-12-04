@@ -1,6 +1,7 @@
 #include <cstdio>
 #include "basicFunctions.h"
 
+/*
 void multiplyByTwo(double *passedVal){
 	*passedVal*=2;
 }
@@ -8,8 +9,9 @@ void multiplyByTwo(double *passedVal){
 void divideByTwo(double *passedVal){
 	*passedVal/=2;
 }
-
+*/
 int main(int argc, char **argv){
+
 
 	double *aPointer;
 	double myValue, myModifiedValue;
