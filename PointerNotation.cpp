@@ -17,6 +17,7 @@ int main(){
 	cout << "Here are the values in the coins array:\n";
 	for(count=0; count<NUM_COINS; count++)
 		cout << doublePtr[count] << " ";
+	cout << endl;
 
 	//Display the contents of the array again, but 
 	//this time use pointer notation with the array name
