@@ -1,5 +1,5 @@
 //Pointers to const and arrays and
-//addresses and such
+//addresses and such.
 
 #include <iostream>
 #include <iomanip>
