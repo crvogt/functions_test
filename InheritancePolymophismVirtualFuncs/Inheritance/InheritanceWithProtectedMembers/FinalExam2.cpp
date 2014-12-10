@@ -1,11 +1,11 @@
-#include "FinalExam.h"
+#include "FinalExam2.h"
 /*
 set function
 The parameters are the number of questions and
 the number of questions missed
 */
 
-void FinalExam::set(int questions, int missed){
+void FinalExam2::set(int questions, int missed){
 	//To hold the numeric score
 	double numericScore;
 
@@ -23,3 +23,23 @@ void FinalExam::set(int questions, int missed){
 	//The numeric score
 	setScore(numericScore);
 }
+
+/*
+Definition of adjustScore.  If score is within
+0.5 points of the next whole point, it rounds
+the score up and recalculates the letter grade
+*/
+
+void FinalExam2::adjustScore(){
+	double fraction = score - static_cast<int>(score);
+
+	if(fraction > 0.5){
+		//Adjust the score var in the GradedActivity
+		//class
+		score += (1.0 - fraction);
+	}
+}
+
+
+
+

@@ -5,7 +5,7 @@ ie, inheritance
 */
 #include <iostream>
 #include <iomanip>
-#include "FinalExam.h"
+#include "FinalExam2.h"
 using namespace std;
 
 int main(int argc, char *argv[]){
@@ -25,10 +25,10 @@ int main(int argc, char *argv[]){
 
 	//Define a FinalExam object and initialize
 	//it with the values entered
-	FinalExam test(questions, missed);
+	FinalExam2 test(questions, missed);
 
 	//Display the test results
-	//cout << setprecision(2);
+	cout << setprecision(2);
 	cout << "\nEach questions counts "
 		 << test.getPointsEach()
 		 << " points.\n";

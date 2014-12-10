@@ -7,22 +7,22 @@ on or derived from the base class
 Can think of the base class as the parent
 and the derived class as the child.
 */
-#ifndef GRADEDACTIVITY1_H
-#define GRADEDACTIVITY1_H
+#ifndef GRADEDACTIVITY2_H
+#define GRADEDACTIVITY2_H
 
 //Graded activity class declaration
 
-class GradedActivity1{
-private:
+class GradedActivity2{
+protected:
 	double score;	//to hold numeric score
 public:
 	//Default Constructor
-	GradedActivity1(){
+	GradedActivity2(){
 		score = 0;
 	}
 
 	//Constructor
-	GradedActivity1(double s){
+	GradedActivity2(double s){
 		score = s;
 	}
 
