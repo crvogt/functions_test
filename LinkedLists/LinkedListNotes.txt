@@ -1,0 +1,37 @@
+********************************************************************
+A few interesting notes from chapter 17 of intro to oop in c++
+*******************************************************************
+
+On Speed
+
+Linked lists have advantages over vectors, primarily it is the speed at
+which a node may be inserted into or deleted from the list. To insert a 
+value into a vector, specifically the middle, requires all the elements
+below the insertion point to be moved one position toward the vector's end, 
+thus making room for the new value.  Likewise, removing a value from a vector
+requires all the elements below the removal point to be moved one position
+toward the vector's beginning.  When a node is inserted into or deleted from 
+a linked list, none of the other nodes have to be moved.
+
+********************************************************************
+
+On self-referential data structures
+
+struct ListNode{
+	double value;
+	ListNode *next;
+};
+
+ListNode structure contains a pointer to an object of the same type as that
+being declared, it is known as a self-referential data structure. This 
+structure makes it possibel to create nodes that point to other nodes of 
+the same type.
+
+...Methinks more investigation is needed...
+
+*********************************************************************
+
+Linked List Operations
+
+The basic linked list operations are appending a node, traversing the 
+list, inserting a node, deleting a node, and destroying the list.
