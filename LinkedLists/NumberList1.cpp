@@ -46,11 +46,44 @@ End if
 	}
 }
 
-/*
-void NumberList1::deleteNode(double){
 
+void NumberList1::deleteNode(double num){
+	//To traverse the list
+	ListNode *nodePtr;
+	//To point to the previous node
+	ListNode *previousNode;
+
+	//If the list is empty do nothing
+	if(!head)
+		return;
+
+	//Determine if the first node is the one
+	if(head->value == num){
+		nodePtr = head->next;
+		delete head;
+		head = nodePtr;
+	}
+	else{
+		//Initialize nodePtr to head of list
+		nodePtr = head;
+
+		//Skip all nodes whose value member is 
+		//not equal to num
+		while(nodePtr != NULL && nodePtr->value != num){
+			previousNode = nodePtr;
+			nodePtr = nodePtr->next;
+		}
+
+		//If nodePtr is not at the end of the lsit
+		//link the previous node to the node after
+		//nodePtr, then delete nodePtr
+		if(nodePtr){
+			previousNode->next = nodePtr->next;
+			delete nodePtr;
+		}
+	}
 }
-*/
+
 void NumberList1::insertNode(double num){
 	/*
 	Create a new node

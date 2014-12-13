@@ -3,7 +3,7 @@
 using namespace std;
 
 /*
-This program demonstrates a simple append
+This program demonstrates the delete node
 operation on a linked list
 */
 
@@ -17,10 +17,27 @@ int main(int argc, char **argv){
 	list.appendNode(7.9);
 	list.appendNode(12.6);
 
-	//Insert a node in the middle of the list
-	list.insertNode(10.5);
+	//Display the list
+	cout << "Here are the initial values:\n";
+	list.displayList();
+	cout << endl;
 
-	//Display the values in this list
+	//Delete the middle node
+	cout << "Now deleting the node in the middle:\n";
+	list.deleteNode(7.9);
+
+	//Display the list
+	cout << "Here are the remaining values:\n";
+	list.displayList();
+	cout << endl;
+
+	//Deleting the rest of the nodes
+	cout << "Deleting the rest of the nodes:\n";
+	list.deleteNode(2.5);
+	list.deleteNode(12.6);
+
+	//Display whatever remains
+	cout << "The remains:\n";
 	list.displayList();
 
 	return 0;

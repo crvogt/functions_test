@@ -25,7 +25,7 @@ public:
 	//Linked list operations
 	void appendNode(double);
 	void insertNode(double);
-	//void deleteNode(double);
+	void deleteNode(double);
 	void displayList() const;
 };
 
