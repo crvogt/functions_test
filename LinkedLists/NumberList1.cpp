@@ -74,7 +74,7 @@ void NumberList1::deleteNode(double num){
 			nodePtr = nodePtr->next;
 		}
 
-		//If nodePtr is not at the end of the lsit
+		//If nodePtr is not at the end of the list
 		//link the previous node to the node after
 		//nodePtr, then delete nodePtr
 		if(nodePtr){
