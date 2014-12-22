@@ -1,0 +1,8 @@
+Learning a bit more about recursion
+
+It should be noted for future geek references:
+"The system stores temporary data on a stack each time  afunction is called. 
+Eventually these recursive function calls will use up all available stack
+memory and cause it to overflow"
+
+hint hint, stack overflow
