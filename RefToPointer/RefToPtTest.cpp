@@ -15,6 +15,7 @@ int main(){
 
 	cout << "\nAnd the address exiting: "
 		 << pvar << endl;
+	int val;
 	
 	cout << endl;
 	cout << *pvar << endl << endl;
