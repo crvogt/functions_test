@@ -5,6 +5,8 @@ void functionWithPointer(int *, int **);
 
 void PtrToPtr(int **);
 
+void RefToPtr(int *&);
+
 int main(int argc, char **argv){
 	/*
 	I want to pass a pointer 
@@ -58,6 +60,12 @@ int main(int argc, char **argv){
 	cout << "\nThe value of the original ptr "
 		 << "is now: " << *var1ptr << endl;
 
+	RefToPtr(var1ptr);
+
+	cout << "\nThe value of the orig ptr "
+		 << "after ref to ptr: " << *var1ptr
+		 << "\n\n";
+
 	return 0;
 }
 
@@ -73,7 +81,11 @@ void functionWithPointer(int *passedPtrToVal, int **passedPtrToPtr){
 
 void PtrToPtr(int **pointerToPtr){
 	cout << "\n\n\nNow Passing pointer to pointer"
-		 << " only" << endl;
+		 << " only\n\n";
 
 	**pointerToPtr *= 50;
+}
+
+void RefToPtr(int *&referredPtr){
+	*referredPtr *= 2;
 }

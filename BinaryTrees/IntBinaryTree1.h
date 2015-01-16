@@ -1,6 +1,7 @@
 #ifndef INTBINARYTREE1_H
 #define INTBINARYTREE1_H
 #include <cstddef>
+//cstddef is required for NULL
 
 class IntBinaryTree{
 private:
@@ -16,12 +17,12 @@ private:
 
 	//Private member functions
 	void insert(TreeNode *&, TreeNode *&);
-	//void destroySubTree(TreeNode *);
-	//void deleteNode(int, TreeNode *&);
-	//void makeDeletion(TreeNode *&);
-	//void displayInOrder(TreeNode *) const;
-	//void displayPreOrder(TreeNode *) const;
-	//void displayPostOrder(TreeNode *) const;
+	void destroySubTree(TreeNode *);
+	void deleteNode(int, TreeNode *&);
+	void makeDeletion(TreeNode *&);
+	void displayInOrder(TreeNode *) const;
+	void displayPreOrder(TreeNode *) const;
+	void displayPostOrder(TreeNode *) const;
 
 public:
 	//constructor
@@ -30,15 +31,15 @@ public:
 	}
 
 	//Destructor
-	//~IntBinaryTree(){
-	//	destroySubTree(root);
-	//}
+	~IntBinaryTree(){
+		destroySubTree(root);
+	}
 
 	//Binary tree operations
 	void insertNode(int);
-	//bool searchNode(int);
-	//void remove(int);
-	/*
+	bool searchNode(int);
+	void remove(int);
+	
 	void displayInOrder() const{
 		displayInOrder(root);
 	}
@@ -50,7 +51,7 @@ public:
 	void displayPostOrder() const{
 		displayPostOrder(root);
 	}
-	*/
+	
 };
 
 #endif
