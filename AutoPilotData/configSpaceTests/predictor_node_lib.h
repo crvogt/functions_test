@@ -4,17 +4,33 @@
 
 class ValueBlock{
 private:
+	//Actaul dimensions of boxes, values assigned in constructor
+	float latDim, longDim, altDim;
 	//These values will define the values around the boxes
 	//Within the configuration space
-	//Latitude value
-	double length;
-	//Longitude value
-	double width;
-	//Altitude value
-	double depth;
+	//Latitude values
+	double latitudeS, latitudeF;
+	//Longitude values
+	double longitudeS, longitudeF;
+	//Altitude values
+	double altitudeS, altitudeF;
 	//Need a way to aggregate all of the measurements taken within a block
-	//ie, store values in a vector
+	//ie, store values in a vector (a struct?)
+	struct windComponents{
+		float x;
+		float y;
+		float z;
+		float magnitude;
+	}windVector;
 	std::vector<float> windVectorAgg; 
+
+	//Want to automatically create the cube
+	void setLength(double);
+	void setWidth(double);
+	void setDepth(double);
+
+	//Check ASTE 280 MATLAB code
+	double degreesToMeters(double, double); 
 
 public:
 	//Constructor
@@ -30,16 +46,25 @@ public:
 	double getLength(void) const;
 	double getWidth(void) const;
 	double getDepth(void) const;
-
-	void setLength(double);
-	void setWidth(double);
-	void setDepth(double);
-
 };
 
 //Need a function to check the contents of each class (does a measurement
 //fall within a specific cube or does a new one need to be created)
 //But, each object will be stored in an instance of a vector
 
-bool isCorrectCube(std::vector<ValueBlock>);
+bool checkCube(std::vector<ValueBlock>);
+
+void writeCubesToFile(std::vector<ValueBlock>);
+
+/*************
+class GPOverConfig{
+private:
+public:
+};
+
+class currentClassifier{
+private:
+public:
+};
+
 #endif
