@@ -21,8 +21,9 @@ private:
 		float y;
 		float z;
 		float magnitude;
-	}windVector;
-	std::vector<float> windVectorAgg; 
+	};
+	
+	std::vector<windComponents> windVectorAgg; 
 
 	//Want to automatically create the cube
 	void setLength(double);

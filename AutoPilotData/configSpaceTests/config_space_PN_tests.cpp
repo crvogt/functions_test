@@ -23,6 +23,9 @@ int main(int argc, char **argv){
 	}
 
 	cout << endl;
+
+
+	
 	/*
 	Get GPS values,
 	if vector = 0 elements
