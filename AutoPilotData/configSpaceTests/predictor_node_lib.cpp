@@ -47,6 +47,12 @@ ValueBlock::ValueBlock(){
 	altDim = 3;
 }
 
+double ValueBlock::setValues(double lat, double lon, double alt){
+	setLength(lat);
+	setWidth(lon);
+	setDepth(alt);
+}
+
 double ValueBlock::getLength(void) const{
 	return latDim;
 }
@@ -59,6 +65,8 @@ double ValueBlock::getDepth(void) const{
 	//This should suffice (in meters)
 	return altDim;
 }
+
+
 
 /***********Outside of class*************/
 bool checkCube(std::vector<ValueBlock> stdBlock){
