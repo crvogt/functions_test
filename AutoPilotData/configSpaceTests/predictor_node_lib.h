@@ -2,10 +2,13 @@
 #define __PREDICTOR_NODE_LIB_H
 #include <vector>
 
+//This class defines one cube
 class ValueBlock{
 private:
 	//Actaul dimensions of boxes, values assigned in constructor
 	float latDim, longDim, altDim;
+	//Keep track of number of measurements in block
+	float measurementNumber;
 	//These values will define the values around the boxes
 	//Within the configuration space
 	//Latitude values
@@ -30,9 +33,6 @@ private:
 	void setWidth(double);
 	void setDepth(double);
 
-	//Check ASTE 280 MATLAB code
-	double degreesToMeters(double, double); 
-
 public:
 	//Constructor
 	ValueBlock();
@@ -47,15 +47,25 @@ public:
 	double getLength(void) const;
 	double getWidth(void) const;
 	double getDepth(void) const;
+
+	double setValues(struct GPSVals);
+};
+
+//GPS struct
+struct GPSVals{
+	double latitudeInd;
+	double longitudeInd;
+	double altitudeInd;
 };
 
 //Need a function to check the contents of each class (does a measurement
 //fall within a specific cube or does a new one need to be created)
 //But, each object will be stored in an instance of a vector
 
-bool checkCube(std::vector<ValueBlock>);
+//Check values against cubes.
+void checkCube(std::vector<ValueBlock>, GPSVals);
 
-void writeCubesToFile(std::vector<ValueBlock>);
+//void writeCubesToFile(std::vector<ValueBlock>);
 
 /*************
 class GPOverConfig{
@@ -67,5 +77,5 @@ class currentClassifier{
 private:
 public:
 };
-
+*********/
 #endif

@@ -1,9 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <cstdio>
-//#include "predictor_node_lib.h"
+#include "predictor_node_lib.h"
 using namespace std;
 //For use with testing class
+/*
 class ValueBlock{
 private:
 	double m;
@@ -15,6 +16,7 @@ public:
 		m = val;
 	}
 };
+*/
 
 
 int main(int argc, char **argv){
@@ -36,20 +38,27 @@ int main(int argc, char **argv){
 	//Don't necessarily need to specify number of elements if initializing
 	double initAlt[] = {154.77, 154.36, 179.98, 223.97, 140.54};
 
+	//Send GPS values through. Check if they match any blocks. If not, create a new block
+	
+
+	/*
 	while(i < arrayVal){
 		//if(cubeVector.size() == 0){//vector size is zero, create a new object
 		//}
-		cubePointer = new ValueBlock;
-		cubePointer->setM(initAlt[i]);
-		cubeVector.push_back(cubePointer);
+		//cubePointer = new ValueBlock;
+		//cubePointer->setM(initAlt[i]);
+		//cubeVector.push_back(cubePointer);
 
 		i++;
 	}
-	
+	*/
+	/*
 	for(int j = 0; j < 5; j++){
 		cout << "\n\n" << cubeVector[j]->returnM() << endl;
 	}
-	
+	*/
+
+	/*
 	int l = 0, m = 0, k = 0;
 	cout << "\n\nWould you like to add another value?: ";
 	cin >> question;
@@ -77,7 +86,7 @@ int main(int argc, char **argv){
 	}
 	*/
 
-	cout << endl;
+	//cout << endl;
 
 	//Cube vector
 
