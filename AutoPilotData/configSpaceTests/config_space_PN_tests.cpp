@@ -1,9 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <cstdio>
-#include "predictor_node_lib.h"
+//#include "predictor_node_lib.h"
 using namespace std;
 //For use with testing class
+
 /*
 class ValueBlock{
 private:
@@ -18,18 +19,18 @@ public:
 };
 */
 
+//Function to receive vector and display contents
+//void showVector(vector<ValueBlock *>);
+
+//void showBlock(ValueBlock *);
 
 int main(int argc, char **argv){
+	GPSVals GPSStruct;
+
+	//cubeStart();
 	const int arrayVal = 5;
 	int i = 0;
-	char question = 'y';
-
-	//Cube pointer
-	ValueBlock *cubePointer;
-
-	//Create a vector of cube objects
-	vector<ValueBlock *> cubeVector;
-
+	//char question = 'y';
 
 
 	//Preparing data to pass to vectors
@@ -40,18 +41,40 @@ int main(int argc, char **argv){
 
 	//Send GPS values through. Check if they match any blocks. If not, create a new block
 	
+	while(i < arrayVal){//GPS values are coming through remaing true
+		GPSStruct.latitudeInd = initLat[i];
+		GPSStruct.longitudeInd = initLon[i];
+		GPSStruct.altitudeInd = initAlt[i];
+		checkCube(GPSStruct);	
+	}
 
 	/*
 	while(i < arrayVal){
-		//if(cubeVector.size() == 0){//vector size is zero, create a new object
+		//if(cubeVector.size() == 0){ //vector size is zero, create a new object
+		cubePointer = new ValueBlock;
+		cubePointer->setM(initAlt[i]);
+		cubeVector.push_back(cubePointer);
 		//}
-		//cubePointer = new ValueBlock;
-		//cubePointer->setM(initAlt[i]);
-		//cubeVector.push_back(cubePointer);
-
 		i++;
 	}
-	*/
+	
+	//now send values to function
+	//Send Valueblock vector
+	showVector(cubeVector);
+
+	cout << endl << "now showing cubePointer... hopefully" << endl;
+
+	//Send Valueblock
+	showBlock(cubePointer);
+
+	cout << endl << endl << endl;
+
+	cout << cubeVector[0]->returnM() << " " << cubeVector[1]->returnM() << endl;
+
+	if(cubeVector[0]->returnM() > cubeVector[1]->returnM()){
+		cout << endl << "This method seems to work" << endl;
+	}
+
 	/*
 	for(int j = 0; j < 5; j++){
 		cout << "\n\n" << cubeVector[j]->returnM() << endl;
@@ -109,6 +132,19 @@ int main(int argc, char **argv){
 	//As the plane flies, build the configuration space
 
 	//Send measurements to appropriate config cube.
-
+	
 	return 0;
 }
+
+/*
+void showVector(vector<ValueBlock *> cubeVectorPtr){
+	cout << endl << "This is the showVector function" << endl;
+	for(int i = 0; i < cubeVectorPtr.size(); i++)
+		cout << cubeVectorPtr[i]->returnM() << endl;
+}
+
+void showBlock(ValueBlock *blockValPtr){
+	cout << "This is the showBlock function";
+	cout << endl << blockValPtr->returnM() << endl;
+}
+*/

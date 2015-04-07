@@ -7,8 +7,10 @@ class ValueBlock{
 private:
 	//Actaul dimensions of boxes, values assigned in constructor
 	float latDim, longDim, altDim;
+	
 	//Keep track of number of measurements in block
-	float measurementNumber;
+	float numberOfMeasurements;
+	
 	//These values will define the values around the boxes
 	//Within the configuration space
 	//Latitude values
@@ -17,38 +19,44 @@ private:
 	double longitudeS, longitudeF;
 	//Altitude values
 	double altitudeS, altitudeF;
+	
 	//Need a way to aggregate all of the measurements taken within a block
-	//ie, store values in a vector (a struct?)
 	struct windComponents{
 		float x;
 		float y;
 		float z;
 		float magnitude;
-	};
+	}windStructComponents;
 	
-	std::vector<windComponents> windVectorAgg; 
+	//std::vector<windComponents> windVectorAgg; 
 
 	//Want to automatically create the cube
 	void setLength(double);
 	void setWidth(double);
 	void setDepth(double);
 
+	//Add wind values
+	//void setWindValues(struct windStruct *);
+
 public:
 	//Constructor
 	ValueBlock();
 	//Destructor
 	~ValueBlock();
-	//This is where a vector with all the values would
-	//be helpful, that is, wind speed vectors per cube
-	//Here being as part of this class
-	//Or do you want each class to be an instance within
-	//the vector?
+	
 	//Return the values
-	double getLength(void) const;
-	double getWidth(void) const;
-	double getDepth(void) const;
+	double returnStartLength(void) const;
+	double returnEndLength(void) const;
+	double returnStartWidth(void) const;
+	double returnEndWidth(void) const;
+	double returnStartDepth(void) const;
+	double returnEndDepth(void) const;
+	double returnLatDim(void) const;
+	double returnLongDim(void) const;
+	double returnAltDim(void) const;
 
-	double setValues(struct GPSVals);
+	double setGPSValues(struct GPSVals *);
+	//double sendWindValues(struct windStruct *);
 };
 
 //GPS struct
@@ -58,12 +66,16 @@ struct GPSVals{
 	double altitudeInd;
 };
 
-//Need a function to check the contents of each class (does a measurement
-//fall within a specific cube or does a new one need to be created)
-//But, each object will be stored in an instance of a vector
+//Wind values
+struct windVals{
+	float x;
+	float y;
+	float z;
+	float magnitude;
+};
 
 //Check values against cubes.
-void checkCube(std::vector<ValueBlock>, GPSVals);
+void checkCube(struct GPSVals *);
 
 //void writeCubesToFile(std::vector<ValueBlock>);
 

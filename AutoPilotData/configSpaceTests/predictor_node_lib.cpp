@@ -30,6 +30,15 @@ void ValueBlock::setDepth(double altS){
 	altitudeF = altS + altDim;
 }
 
+/*
+void ValueBlock::setWindValues(windStruct *windVals){
+	windStructComponents.x = windVals->x;
+	windStructComponents.y = windVals->y;
+	windStructComponents.z = windVals->z;
+	windStructComponents.magnitude = windVals->magnitude;
+}
+*/
+
 //Destructor
 ValueBlock::~ValueBlock(){
 
@@ -41,74 +50,108 @@ ValueBlock::~ValueBlock(){
 ValueBlock::ValueBlock(){
 	//Want to set cube dimensions here
 	//values in decimals of lat and long
-	//Fairly subjective at the moment
 	latDim = 0.00003;
 	longDim = 0.00003;
 	//altitude dimension in meters
 	altDim = 3;
 }
 
-double ValueBlock::setValues(GPSVals gpsStruct){
-	setLength(gpsStruct.latitudeInd);
-	setWidth(gpsStruct.longitudeInd);
-	setDepth(gpsStruct.altitudeInd);
+double ValueBlock::setGPSValues(GPSVals *gpsStruct){
+	//Send GPS values to private member that will adjust sizes
+	setLength(gpsStruct->latitudeInd);
+	setWidth(gpsStruct->longitudeInd);
+	setDepth(gpsStruct->altitudeInd);
 }
 
-double ValueBlock::getLength(void) const{
+double ValueBlock::returnStartLength(void) const{
+	return latitudeS;
+}
+
+double ValueBlock::returnEndLength(void) const{
+	return latitudeF;
+}
+
+double ValueBlock::returnStartWidth(void) const{
+	return longitudeS;
+}
+
+double ValueBlock::returnEndWidth(void) const{
+	return longitudeF;
+}
+
+double ValueBlock::returnStartDepth(void) const{
+	//This should suffice (in meters)
+	return altitudeS;
+}
+
+double ValueBlock::returnEndDepth(void) const{
+	return altitudeF;
+}
+
+double ValueBlock::returnLatDim(void) const{
 	return latDim;
 }
 
-double ValueBlock::getWidth(void) const{
+double ValueBlock::returnLongDim(void) const{
 	return longDim;
 }
 
-double ValueBlock::getDepth(void) const{
-	//This should suffice (in meters)
+double ValueBlock::returnAltDim(void) const{
 	return altDim;
 }
 
 
 
+
 /***********Outside of class*************/
+void checkCube(GPSVals *GPSValStruct, windVals *windValStruct)){
+	GPSVals startValsStruct;
 
-void checkCube(GPSVals valStruct){
 	//For dimensions
-	float latDimension, longDimension, altDimension;
-
-	//Vector iterator
-	vector<float>::iterator it;
-
-	//Bringing in a block (or location) and checking it against other blocks...
+	//float latDimension, longDimension, altDimension;
+	//latDimension = cubePointer->getLength();
+	//longDimension = cubePointer->getWidth();
+	//altDimension = cubePointer->getDepth();
+	
+	//cube pointer
 	ValueBlock *cubePointer;
 
-	//create vector
+	//cube vector
 	vector <ValueBlock *> cubeVector;
 
+	//Vector iterator
+	vector<ValueBlock *>::iterator it;
 	if(cubeVector.empty()){
-		//create new block
 		cubePointer = new ValueBlock;
-		cubePointer->setValues(valStruct);
-		cubeVector.push_back(cubePointer);
-		//Get the dimensions we'll need from the class
-		latDimension = cubePointer->getLength();
-		longDimension = cubePointer->getWidth();
-		altDimension = cubePointer->getDepth();
+		cubePointer->setGPSValues(GPSValStruct);
 	}
 	else{
 		//check values of existing cubes
-		for(it = cubeVector.begin)
-			if(valStruct.latitudeInd >= valublockLatStart && valStruct.latitudeInd <= valublockLatEnd){
-				//add wind values to this block and increase measurement number
+		for(it = cubeVector.begin()){
+			if(abs(GPSValStruct->latitudeInd) >= abs(cubeVector[it]->returnStartLength()) && 
+				abs(GPSValStruct->latitudeInd) <= abs(cubeVector[it]->returnEndLength())){
+				if(abs(GPSValStruct->longitudeInd) >= abs(cubeVector[it]->returnStartWidth()) && 
+					abs(GPSValStruct->longitudeInd) <= abs(cubeVector[it].returnEndWidth())){
+					if(abs(GPSValStruct->altitudeInd) >= abs(cubeVector[it].returnStartDepth()) && 
+						abs(GPSValStruct->altitudeInd) >= abs(cubeVector[it].returnEndDepth())){
+						//add wind values to this block and increase measurement number
+						//cubeVector[it]->sendWindValues(windValStruct);
+					}
+				}
 			}
 			else{
-				//construct new block (or series of blocks depending on how far away we are)
-				//Dimensions were pulled from the class earlier
-				if()
-					//make sure altitudes are constant, block wise
-					//Just make sure they all line up
-			}
+				//Create new block
+				cubePointer = new ValueBlock;
+				//setGPSValues requires a struct of the start locations
+
+			}					
+		}
 	}
+
+//End of block	
 }
+
+
 /*
 void writeCubesToFile(std::vector<ValueBlock> blockOut){
 	//Want this file to write each block to an output file with all of its data
