@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "predictor_node_lib.h"
+#include <math.h>
 using namespace std;
 
 /******************private*****************/
@@ -100,21 +101,34 @@ double ValueBlock::returnAltDim(void) const{
 	return altDim;
 }
 
+double returnSumOfDistances(void) const{
+	double sum;
+
+	sum = latitudeS + latitudeF + longitudeS + longitudeF + altitudeS + altitudeF;
+
+	return sum;
+}
+
 
 
 
 /***********Outside of class*************/
 void checkCube(GPSVals *GPSValStruct, windVals *windValStruct)){
-	GPSVals startValsStruct;
-
-	//For dimensions
-	//float latDimension, longDimension, altDimension;
-	//latDimension = cubePointer->getLength();
-	//longDimension = cubePointer->getWidth();
-	//altDimension = cubePointer->getDepth();
-	
+	//startValsStruct holds the values to be passed to create the new block
+	//GPSValStruct is simply incoming GPS values.
+	GPSVals *startValsStruct;
+	//To hold sum of values from incoming struct
+	double GPSValSum;
+	//holds difference between closest block and current GPS values.
+	double difference;
+	int roundingInt;
+	//Unclear why you're here
+	//float firstAltitudeValue;
+		
 	//cube pointer
 	ValueBlock *cubePointer;
+
+	GPSValSum = GPSValStruct->latitudeInd + GPSValStruct->longitudeInd + GPSValStruct->altitudeInd;
 
 	//cube vector
 	vector <ValueBlock *> cubeVector;
@@ -128,25 +142,26 @@ void checkCube(GPSVals *GPSValStruct, windVals *windValStruct)){
 	else{
 		//check values of existing cubes
 		for(it = cubeVector.begin()){
-			if(abs(GPSValStruct->latitudeInd) >= abs(cubeVector[it]->returnStartLength()) && 
-				abs(GPSValStruct->latitudeInd) <= abs(cubeVector[it]->returnEndLength())){
-				if(abs(GPSValStruct->longitudeInd) >= abs(cubeVector[it]->returnStartWidth()) && 
-					abs(GPSValStruct->longitudeInd) <= abs(cubeVector[it].returnEndWidth())){
-					if(abs(GPSValStruct->altitudeInd) >= abs(cubeVector[it].returnStartDepth()) && 
-						abs(GPSValStruct->altitudeInd) >= abs(cubeVector[it].returnEndDepth())){
+			//Check values to see if struct lies in existing block	
+			if(GPSValStruct->latitudeInd >= cubeVector[it]->returnStartLength() && 
+				GPSValStruct->latitudeInd <= cubeVector[it]->returnEndLength()){
+				if(GPSValStruct->longitudeInd >= cubeVector[it]->returnStartWidth() && 
+					GPSValStruct->longitudeInd <= cubeVector[it].returnEndWidth()){
+					if(GPSValStruct->altitudeInd >= cubeVector[it].returnStartDepth() && 
+						GPSValStruct->altitudeInd >= cubeVector[it].returnEndDepth()){
 						//add wind values to this block and increase measurement number
 						//cubeVector[it]->sendWindValues(windValStruct);
+						//now return to make sure loop doesn't continue
+						return;
 					}
 				}
 			}
-			else{
-				//Create new block
-				cubePointer = new ValueBlock;
-				//setGPSValues requires a struct of the start locations
-
-			}					
-		}
+			//Also check for closest block to values while we're in this loop
+			
+			
+		}					
 	}
+	
 
 //End of block	
 }

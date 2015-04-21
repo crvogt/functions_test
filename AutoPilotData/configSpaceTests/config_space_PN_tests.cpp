@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cstdio>
+#include <math.h>
 //#include "predictor_node_lib.h"
 using namespace std;
 //For use with testing class
@@ -25,7 +26,16 @@ public:
 //void showBlock(ValueBlock *);
 
 int main(int argc, char **argv){
-	GPSVals GPSStruct;
+	float myRemainder;
+
+	float initLat = 55.862282;
+	float primLat = 55.862278;
+
+	myRemainder = fmod(initLat, primLat);
+
+	cout << "\nThe remainder is: " << myRemainder << endl;
+
+	/*GPSVals GPSStruct;
 
 	//cubeStart();
 	const int arrayVal = 5;
@@ -47,7 +57,7 @@ int main(int argc, char **argv){
 		GPSStruct.altitudeInd = initAlt[i];
 		checkCube(GPSStruct);	
 	}
-
+*/
 	/*
 	while(i < arrayVal){
 		//if(cubeVector.size() == 0){ //vector size is zero, create a new object

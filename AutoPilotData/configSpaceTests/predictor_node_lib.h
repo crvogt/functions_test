@@ -54,6 +54,7 @@ public:
 	double returnLatDim(void) const;
 	double returnLongDim(void) const;
 	double returnAltDim(void) const;
+	double returnSumOfDistances(void) const;
 
 	double setGPSValues(struct GPSVals *);
 	//double sendWindValues(struct windStruct *);
