@@ -34,6 +34,7 @@ private:
 	void setLength(double);
 	void setWidth(double);
 	void setDepth(double);
+	void setAltDim(double);
 
 	//Add wind values
 	//void setWindValues(struct windStruct *);
@@ -54,6 +55,7 @@ public:
 	double returnLatDim(void) const;
 	double returnLongDim(void) const;
 	double returnAltDim(void) const;
+	void adjustAltDim(double);
 	double returnSumOfDistances(void) const;
 
 	double setGPSValues(struct GPSVals *);

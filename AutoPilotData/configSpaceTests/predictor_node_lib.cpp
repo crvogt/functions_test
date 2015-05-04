@@ -16,6 +16,10 @@ double ValueBlock::metersToDegrees(double dimension, double startDeg){
 	return finishDeg;
 }
 */
+void ValueBlock::setAltDim(double altitude){
+	altDim = altitude;
+}
+
 void ValueBlock::setLength(double latS){
 	latitudeS = latS;
 	latitudeF = latitudeS + latDim;
@@ -101,6 +105,10 @@ double ValueBlock::returnAltDim(void) const{
 	return altDim;
 }
 
+void ValueBlock::adjustAltDim(double altitude){
+	setAltDim(altitude);
+}
+/*
 double returnSumOfDistances(void) const{
 	double sum;
 
@@ -108,6 +116,8 @@ double returnSumOfDistances(void) const{
 
 	return sum;
 }
+*/
+ 
 
 
 
@@ -116,25 +126,68 @@ double returnSumOfDistances(void) const{
 void checkCube(GPSVals *GPSValStruct, windVals *windValStruct)){
 	//startValsStruct holds the values to be passed to create the new block
 	//GPSValStruct is simply incoming GPS values.
-	GPSVals *startValsStruct;
+	GPSVals startValsStruct;
+	
 	//To hold sum of values from incoming struct
 	double GPSValSum;
+	
 	//holds difference between closest block and current GPS values.
 	double difference;
+	double preDifference;
+	
+	//extremes
+	double smallLat;
+	double largeLat;
+	double smallLong
+	double largeLong;
+	double smallAlt;
+	double largeAlt;
+	double tempHoldLong;
+	double tempHoldLat;
+	double tempHoldAlt;
+
+	//Holds the it value for the closest value
+	int countHigh;
 	int roundingInt;
-	//Unclear why you're here
-	//float firstAltitudeValue;
-		
+	
+	//Hold difference between locations
+	double locDifference;
+
 	//cube pointer
 	ValueBlock *cubePointer;
 
-	GPSValSum = GPSValStruct->latitudeInd + GPSValStruct->longitudeInd + GPSValStruct->altitudeInd;
+	//GPSValSum = GPSValStruct->latitudeInd + GPSValStruct->longitudeInd + GPSValStruct->altitudeInd;
 
 	//cube vector
 	vector <ValueBlock *> cubeVector;
 
 	//Vector iterator
 	vector<ValueBlock *>::iterator it;
+	
+	//add first GPS values
+
+
+	//look through GPS values, get extremes, create box (2d, one layer)
+	//while values less than greater value,
+	tempHoldLong = smallLong;
+	tempHoldLat = smallLat;
+	tempHoldAlt = largeAlt - smallAlt;
+	startValsStruct.latitudeInd = smallLat;
+	startValsStruct.longitudeInd = smallLong;
+	startValsStruct.altitudeInd = smallAlt + (largeAlt - smallAlt) / 2;
+
+	while(tempHoldLong <= largeLong){
+		while(tempHoldLat <= largeLat){
+			cubePointer = new ValueBlock;
+			cubePointer->adjustAltDim(tempHoldAlt);
+			cubePointer->setGPSValues(startValStruct);
+			cubeVector.pushback(cubePointer);
+			tempHoldLat += cubePointer->returnLatDim();
+		}
+		tempHoldLong += cubePointer->returnLongDim();
+	}
+	/*
+	//Control structure
 	if(cubeVector.empty()){
 		cubePointer = new ValueBlock;
 		cubePointer->setGPSValues(GPSValStruct);
@@ -152,15 +205,29 @@ void checkCube(GPSVals *GPSValStruct, windVals *windValStruct)){
 						//add wind values to this block and increase measurement number
 						//cubeVector[it]->sendWindValues(windValStruct);
 						//now return to make sure loop doesn't continue
-						return;
+						return; //hopefully doesn't exit ros
 					}
 				}
 			}
 			//Also check for closest block to values while we're in this loop
-			
-			
-		}					
+			difference = cubeVector[it]->returnSumOfDistances - GPSValSum;
+			if(difference < preDifference){
+				countHigh = it;
+				preDifference = difference;
+			}		
+		}
+		//Now we have the value of the closest block in countHigh
+		locDifference = GPSValStruct->altitudeInd - cubeVector[countHigh]->returnStartDepth;
+		//startValsStruct->altitudeInd = ;
+		locDifference = GPSValStruct->longitudeInd - cubeVector[countHigh]->returnStartWidth;
+		//startValsStruct->longitudeInd = ;
+		locDifference = GPSValStruct->latitudeInd - cubeVector[countHigh]->returnStartLength;
+
+		//Fill in blocks?					
 	}
+
+*/
+
 	
 
 //End of block	
@@ -172,3 +239,93 @@ void writeCubesToFile(std::vector<ValueBlock> blockOut){
 	//Want this file to write each block to an output file with all of its data
 }
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class test{
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
