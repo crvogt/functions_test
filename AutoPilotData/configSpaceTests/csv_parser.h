@@ -20,7 +20,20 @@ struct autopilotData{
 	double currentTime; 
 };
 
+struct extremes{
+	double smallLat;
+	double largeLat;
+	double smallLong;
+	double largeLong;
+	double smallAlt;
+	double largeAlt;
+};
+
 void printResults(std::vector<autopilotData> &);
+
+//An int value to declare which extreme we're looking for
+//ie, large/small long, large/small lat, large/small alt
+double returnExtremes(std::vector<autopilotData> &, int);
 
 void parseFile(void);
 

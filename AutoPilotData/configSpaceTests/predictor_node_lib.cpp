@@ -1,21 +1,12 @@
 #include <iostream>
 #include <vector>
-#include "predictor_node_lib.h"
 #include <math.h>
+
+#include "predictor_node_lib.h"
+#include "csv_parser.h"
 using namespace std;
 
 /******************private*****************/
-//We'd put functions here that might act within other functions (or methods)
-/*double ValueBlock::degreesToMeters(double deg1, double deg2){
-
-	return distanceInMeters;
-}
-
-double ValueBlock::metersToDegrees(double dimension, double startDeg){
-
-	return finishDeg;
-}
-*/
 void ValueBlock::setAltDim(double altitude){
 	altDim = altitude;
 }
@@ -35,14 +26,6 @@ void ValueBlock::setDepth(double altS){
 	altitudeF = altS + altDim;
 }
 
-/*
-void ValueBlock::setWindValues(windStruct *windVals){
-	windStructComponents.x = windVals->x;
-	windStructComponents.y = windVals->y;
-	windStructComponents.z = windVals->z;
-	windStructComponents.magnitude = windVals->magnitude;
-}
-*/
 
 //Destructor
 ValueBlock::~ValueBlock(){
@@ -118,12 +101,8 @@ double returnSumOfDistances(void) const{
 }
 */
  
-
-
-
-
 /***********Outside of class*************/
-void checkCube(GPSVals *GPSValStruct, windVals *windValStruct)){
+void checkCube(std::vector<autopilotData> &flightVector)){
 	//startValsStruct holds the values to be passed to create the new block
 	//GPSValStruct is simply incoming GPS values.
 	GPSVals startValsStruct;
@@ -136,12 +115,15 @@ void checkCube(GPSVals *GPSValStruct, windVals *windValStruct)){
 	double preDifference;
 	
 	//extremes
-	double smallLat;
-	double largeLat;
-	double smallLong
-	double largeLong;
-	double smallAlt;
-	double largeAlt;
+	extremes *coordinates;
+	/*
+	double smallLat = returnExtremes(flightVector, 1);
+	double largeLat = returnExtremes(flightVector, 2);
+	double smallLong = returnExtremes(flightVector, 3);
+	double largeLong = returnExtremes(flightVector, 4);
+	double smallAlt = returnExtremes(flightVector, 5);
+	double largeAlt = returnExtremes(flightVector, 6);
+	*/
 	double tempHoldLong;
 	double tempHoldLat;
 	double tempHoldAlt;
