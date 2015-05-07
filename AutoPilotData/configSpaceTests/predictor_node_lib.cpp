@@ -183,10 +183,34 @@ void checkCube(GPSVals *GPSValStruct, windVals *windValStruct)){
 			cubePointer->setGPSValues(startValStruct);
 			cubeVector.pushback(cubePointer);
 			tempHoldLat += cubePointer->returnLatDim();
+			startValStruct.latitudeInd = tempHoldLat;
 		}
+		//This should start the previous while loop up again
+		tempHoldLat = smallLat;
+
+		//Continuing first while loop and updating startValStruct
 		tempHoldLong += cubePointer->returnLongDim();
+		startValStruct.longitudeInd = tempHoldLong;
 	}
+
+	//Now go through each of the values in the file and assign
+	//it a cube
 	/*
+	while(not end of file){
+		get GPS values
+		get wind values
+		
+		search cubes and match GPS values
+			put value in correct cube
+
+		continue
+	}
+	*/
+}
+
+
+
+/*
 	//Control structure
 	if(cubeVector.empty()){
 		cubePointer = new ValueBlock;
@@ -231,101 +255,3 @@ void checkCube(GPSVals *GPSValStruct, windVals *windValStruct)){
 	
 
 //End of block	
-}
-
-
-/*
-void writeCubesToFile(std::vector<ValueBlock> blockOut){
-	//Want this file to write each block to an output file with all of its data
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class test{
-
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
