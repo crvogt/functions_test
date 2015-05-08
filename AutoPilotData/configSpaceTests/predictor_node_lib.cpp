@@ -115,7 +115,9 @@ void checkCube(std::vector<autopilotData> &flightVector)){
 	double preDifference;
 	
 	//extremes
-	extremes *coordinates;
+	extremes coordinates;
+	returnExtremes(flightVector, &coordinates);
+	
 	/*
 	double smallLat = returnExtremes(flightVector, 1);
 	double largeLat = returnExtremes(flightVector, 2);
