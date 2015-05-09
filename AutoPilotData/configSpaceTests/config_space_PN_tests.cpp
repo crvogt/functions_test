@@ -18,6 +18,7 @@ int main(int argc, char **argv){
 
 	//extremes test
 	extremes values;
+	/*
 	returnExtremes(flightVec, &values);
 	cout << "\nThis is the output from the extremes parsing:\n";
 		cout << "smallLat " << values.smallLat << endl
@@ -26,7 +27,7 @@ int main(int argc, char **argv){
 			 << "largeLong " << values.largeLong << endl
 			 << "smallAlt " << values.smallAlt << endl
 			 << "largeAlt " << values.largeAlt << endl;
-
+	*/
 	return 0;
 }
 

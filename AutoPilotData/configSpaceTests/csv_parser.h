@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 
-#define COLUMNS 21
+#define COLUMNS 16//22//not 21 columns? possible miscount
 
 struct autopilotData{
 	float compass; 			//column 1/0
