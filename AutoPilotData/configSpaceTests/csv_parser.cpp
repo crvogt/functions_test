@@ -20,6 +20,11 @@ void parseFile(vector<autopilotData> &flightVec){
 	//Count number of rows we've gone through
 	int rows = 0;
 
+	/*
+	...Should turn this into a function... will do later, but at
+	least we know it works! :D
+	*/
+
 	filename = "compass17_3.csv";
 	fstream dataFileCompass(filename.c_str(), ios::in);
 		while(dataFileCompass){
