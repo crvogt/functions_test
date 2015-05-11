@@ -26,6 +26,35 @@ void ValueBlock::setDepth(double altS){
 	altitudeF = altS + altDim;
 }
 
+void ValueBlock::addToWindVec(windCompGlobal componentsStruct){
+	windVectorAgg.push_back(componentsStruct);	
+}
+
+int ValueBlock::dataManip(void){
+	int size = windVectorAgg.size();
+	float compassSum = 0, magnitudeSum = 0;
+	for(int i = 0; i < size; i++){
+		compassSum += windVectorAgg[i].compass;	
+		//cout << "\nwind vector agg value " << i << " compass " << windVectorAgg[i].compass;
+		magnitudeSum += windVectorAgg[i].magnitude;
+		//cout << "\nwind vector agg value " << i << " magnitude " << windVectorAgg[i].magnitude;
+	}
+	if(size){
+		cout << "\nwindVectorAgg size " << size;
+		averageWCS.compass = compassSum / size;
+		cout << "\ncompassSum " << compassSum; 
+		averageWCS.magnitude = magnitudeSum / size;
+		cout << "\nmagnitudeSum " << magnitudeSum
+			 << endl;
+	}
+	isEmpty = 1;
+}
+
+void ValueBlock::displayBlockVals(void){
+	cout << "\nAverage compass heading: " << averageWCS.compass;
+	cout << "\nAverage magnitude: " << averageWCS.magnitude;
+	cout << endl;
+}
 
 //Destructor
 ValueBlock::~ValueBlock(){
@@ -40,8 +69,8 @@ ValueBlock::ValueBlock(){
 	//values in decimals of lat and long
 	latDim = 0.00003;
 	longDim = 0.00003;
-	//altitude dimension in meters
 	altDim = 3;
+	isEmpty = 1;//equal to 1 for true
 }
 
 double ValueBlock::setGPSValues(GPSVals *gpsStruct){
@@ -68,7 +97,6 @@ double ValueBlock::returnEndWidth(void) const{
 }
 
 double ValueBlock::returnStartDepth(void) const{
-	//This should suffice (in meters)
 	return altitudeS;
 }
 
@@ -91,19 +119,58 @@ double ValueBlock::returnAltDim(void) const{
 void ValueBlock::adjustAltDim(double altitude){
 	setAltDim(altitude);
 }
-/*
-double returnSumOfDistances(void) const{
-	double sum;
 
-	sum = latitudeS + latitudeF + longitudeS + longitudeF + altitudeS + altitudeF;
-
-	return sum;
+void ValueBlock::addToWindDat(windCompGlobal componentCarry){
+	addToWindVec(componentCarry);
 }
-*/
  
+int ValueBlock::dataManipulation(void){
+	dataManip();	
+}
+
+void ValueBlock::displayBlockValues(void){
+	displayBlockVals();
+}
 /***********Outside of class*************/
-void checkCube(vector<autopilotData> &flightVector, extremes *values,
-			   vector<ValueBlock *> &cubeVector){
+
+void sortValues(vector<autopilotData> &flightVec, vector<ValueBlock *> &cubeVector){
+	//will call addToWindDat
+	int sizeFV = flightVec.size();
+	int sizeCV = cubeVector.size();
+	windCompGlobal componentCarry; 
+	int i = 0, j = 0;
+
+	for(i = 0; i < sizeFV; i++){
+		for(j = 0; j < sizeCV; j++){
+			if(flightVec[i].latitude >= cubeVector[j]->returnStartLength()
+				&& flightVec[i].latitude <= cubeVector[j]->returnEndLength()
+				&& flightVec[i].longitude >= cubeVector[j]->returnStartWidth()
+				&& flightVec[i].longitude <= cubeVector[j]->returnEndWidth()){
+				//addToWindDat(componentCarry)
+				//Figure out wind components
+				componentCarry.compass = flightVec[i].compass;
+				//going basic for the moment
+				componentCarry.magnitude = flightVec[i].airspeed - flightVec[i].groundspeed;
+				
+				if(componentCarry.magnitude < 0){
+					componentCarry.compass -= 180; //to get correct direction
+				}
+				
+				componentCarry.windLatitude = flightVec[i].latitude;
+				componentCarry.windLongitude = flightVec[i].longitude;
+				componentCarry.windAltitude = flightVec[i].altitude;
+				
+				cubeVector[j]->addToWindDat(componentCarry);
+			}
+		}
+	}
+	for(i = 0; i < sizeCV; i++){
+		cubeVector[i]->dataManipulation();
+	}	
+}
+
+/****************************************/
+void checkCube(extremes *values, vector<ValueBlock *> &cubeVector){
 	
 	/*
 	Current issue, make sure to check back about negative values
@@ -130,13 +197,6 @@ void checkCube(vector<autopilotData> &flightVector, extremes *values,
 
 	//cube pointer
 	ValueBlock *cubePointer;
-
-	//Define in main?
-	//cube vector
-	//vector<ValueBlock *> cubeVector;
-
-	//Vector iterator
-	//vector<ValueBlock *>::iterator it;
 	
 	//look through GPS values, get extremes, create box (2d, one layer)
 	//while values less than greater value,
@@ -177,4 +237,13 @@ void checkCube(vector<autopilotData> &flightVector, extremes *values,
 	}
 
 	cout << endl;
+}
+
+void cubeVectorPrint(vector<ValueBlock *> &cubeVector){
+	cout << "\n\n\nPrinting values for cubeVector..." << endl;
+	int size = cubeVector.size();
+
+	for(int i = 0; i < size; i++){
+		cubeVector[i]->displayBlockValues();
+	}
 }

@@ -29,9 +29,13 @@ int main(int argc, char **argv){
 	returnExtremes(flightVec, &values);
 	
 	//Function to create grid
-	checkCube(flightVec, &values, cubeVector);	
+	checkCube(&values, cubeVector);	
 
 	//Can now work with cubeVector as it's being returned
+	sortValues(flightVec, cubeVector);
+
+	//Test to print compass and mag
+	//cubeVectorPrint(cubeVector);
 
 	return 0;
 }

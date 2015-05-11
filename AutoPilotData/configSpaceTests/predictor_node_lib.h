@@ -15,31 +15,36 @@ private:
 	
 	//These values will define the values around the boxes
 	//Within the configuration space
-	//Latitude values
+	//Latitude values aka length
 	double latitudeS, latitudeF;
-	//Longitude values
+	//Longitude values aka width
 	double longitudeS, longitudeF;
 	//Altitude values
 	double altitudeS, altitudeF;
+	//Let us know if windVectorAgg is empty
+	int isEmpty;
 	
 	//Need a way to aggregate all of the measurements taken within a block
 	struct windComponents{
-		float x;
-		float y;
-		float z;
+		float compass;
 		float magnitude;
-	}windStructComponents;
+		double windLatitude;
+		double windLongitude;
+		double windAltitude;
+	};
 	
-	//std::vector<windComponents> windVectorAgg; 
+	windComponents averageWCS;
+	
+	std::vector<windCompGlobal> windVectorAgg; 
 
 	//Want to automatically create the cube
 	void setLength(double);
 	void setWidth(double);
 	void setDepth(double);
 	void setAltDim(double);
-
-	//Add wind values
-	//void setWindValues(struct windStruct *);
+	void addToWindVec(windCompGlobal);
+	void dataManip(void);
+	void displayBlockVals(void);
 
 public:
 	//Constructor
@@ -58,11 +63,23 @@ public:
 	double returnLongDim(void) const;
 	double returnAltDim(void) const;
 	void adjustAltDim(double);
-	double returnSumOfDistances(void) const;
-
+	
+	void addToWindDat(windCompGlobal);
 	double setGPSValues(struct GPSVals *);
-	//double sendWindValues(struct windStruct *);
+	void dataManipulation(void);
+	void displayBlockValues(void);
 };
+
+//
+/*
+struct windCompGlobal{
+		float compass;
+		float magnitude;
+		double windLatitude;
+		double windLongitude;
+		double windAltitude;
+};
+*/
 
 //GPS struct
 struct GPSVals{
@@ -71,28 +88,11 @@ struct GPSVals{
 	double altitudeInd;
 };
 
-//Wind values
-struct windVals{
-	float x;
-	float y;
-	float z;
-	float magnitude;
-};
-
 //Check values against cubes.
-void checkCube(std::vector<autopilotData> &, extremes *, std::vector<ValueBlock *> &);
+void checkCube(extremes *, std::vector<ValueBlock *> &);
 
-//void writeCubesToFile(std::vector<ValueBlock>);
+void sortValues(std::vector<autopilotData> &, std::vector<ValueBlock *> &);
 
-/*************
-class GPOverConfig{
-private:
-public:
-};
+void cubeVectorPrint(std::vector<ValueBlock *> &);
 
-class currentClassifier{
-private:
-public:
-};
-*********/
 #endif

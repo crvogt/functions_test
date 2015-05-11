@@ -30,6 +30,14 @@ struct extremes{
 	double largeAlt;
 };
 
+struct windCompGlobal{
+		float compass;
+		float magnitude;
+		double windLatitude;
+		double windLongitude;
+		double windAltitude;
+};
+
 void printResults(std::vector<autopilotData> &);
 
 //An int value to declare which extreme we're looking for
