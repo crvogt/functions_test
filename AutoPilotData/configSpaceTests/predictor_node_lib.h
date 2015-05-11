@@ -1,6 +1,8 @@
 #ifndef __PREDICTOR_NODE_LIB_H
 #define __PREDICTOR_NODE_LIB_H
+
 #include <vector>
+#include "csv_parser.h"
 
 //This class defines one cube
 class ValueBlock{
@@ -78,7 +80,7 @@ struct windVals{
 };
 
 //Check values against cubes.
-void checkCube(struct GPSVals *);
+void checkCube(std::vector<autopilotData> &, extremes *, std::vector<ValueBlock *> &);
 
 //void writeCubesToFile(std::vector<ValueBlock>);
 

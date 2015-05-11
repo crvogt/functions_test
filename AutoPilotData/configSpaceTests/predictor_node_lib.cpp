@@ -102,30 +102,21 @@ double returnSumOfDistances(void) const{
 */
  
 /***********Outside of class*************/
-void checkCube(std::vector<autopilotData> &flightVector)){
+void checkCube(vector<autopilotData> &flightVector, extremes *values,
+			   vector<ValueBlock *> &cubeVector){
+	
+	/*
+	Current issue, make sure to check back about negative values
+	*/
+
+	//Debug counters
+	int counterLat = 0, counterLon = 0;	
+
 	//startValsStruct holds the values to be passed to create the new block
 	//GPSValStruct is simply incoming GPS values.
 	GPSVals startValsStruct;
-	
-	//To hold sum of values from incoming struct
-	double GPSValSum;
-	
-	//holds difference between closest block and current GPS values.
-	double difference;
-	double preDifference;
-	
-	//extremes
-	extremes coordinates;
-	returnExtremes(flightVector, &coordinates);
-	
-	/*
-	double smallLat = returnExtremes(flightVector, 1);
-	double largeLat = returnExtremes(flightVector, 2);
-	double smallLong = returnExtremes(flightVector, 3);
-	double largeLong = returnExtremes(flightVector, 4);
-	double smallAlt = returnExtremes(flightVector, 5);
-	double largeAlt = returnExtremes(flightVector, 6);
-	*/
+		
+	//Simple holders	
 	double tempHoldLong;
 	double tempHoldLat;
 	double tempHoldAlt;
@@ -140,102 +131,50 @@ void checkCube(std::vector<autopilotData> &flightVector)){
 	//cube pointer
 	ValueBlock *cubePointer;
 
-	//GPSValSum = GPSValStruct->latitudeInd + GPSValStruct->longitudeInd + GPSValStruct->altitudeInd;
-
+	//Define in main?
 	//cube vector
-	vector <ValueBlock *> cubeVector;
+	//vector<ValueBlock *> cubeVector;
 
 	//Vector iterator
-	vector<ValueBlock *>::iterator it;
+	//vector<ValueBlock *>::iterator it;
 	
-	//add first GPS values
-
-
 	//look through GPS values, get extremes, create box (2d, one layer)
 	//while values less than greater value,
-	tempHoldLong = smallLong;
-	tempHoldLat = smallLat;
-	tempHoldAlt = largeAlt - smallAlt;
-	startValsStruct.latitudeInd = smallLat;
-	startValsStruct.longitudeInd = smallLong;
-	startValsStruct.altitudeInd = smallAlt + (largeAlt - smallAlt) / 2;
+	tempHoldLong = values->smallLong;
+	tempHoldLat = values->smallLat;
+	tempHoldAlt = values->smallAlt;
+	startValsStruct.latitudeInd = values->smallLat;
+	startValsStruct.longitudeInd = values->smallLong;
+	startValsStruct.altitudeInd = (values->largeAlt / 2);
 
-	while(tempHoldLong <= largeLong){
-		while(tempHoldLat <= largeLat){
+	/*
+	This while loop simply takes the "extremes values"
+	and creates a grid. Once this is done, the values are siphoned
+	into their respective grid location
+	*/
+	while(tempHoldLong <= values->largeLong){
+		while(tempHoldLat <= values->largeLat){
 			cubePointer = new ValueBlock;
-			cubePointer->adjustAltDim(tempHoldAlt);
-			cubePointer->setGPSValues(startValStruct);
-			cubeVector.pushback(cubePointer);
+			cubePointer->adjustAltDim(values->largeAlt - values->smallAlt);
+			cubePointer->setGPSValues(&startValsStruct);
+			cubeVector.push_back(cubePointer);
 			tempHoldLat += cubePointer->returnLatDim();
-			startValStruct.latitudeInd = tempHoldLat;
+			startValsStruct.latitudeInd = tempHoldLat;
+			//Debug check
+			cout << "\nNumber of iterations (counterLat): " << (counterLat + 1);
+			counterLat++;			
 		}
 		//This should start the previous while loop up again
-		tempHoldLat = smallLat;
+		tempHoldLat = values->smallLat;
+		counterLat = 0;
 
 		//Continuing first while loop and updating startValStruct
 		tempHoldLong += cubePointer->returnLongDim();
-		startValStruct.longitudeInd = tempHoldLong;
+		startValsStruct.longitudeInd = tempHoldLong;
+		cout << "\n\nNumber of iterations (counterLon): " << (counterLon + 1)
+			 << endl;
+		counterLon++;
 	}
 
-	//Now go through each of the values in the file and assign
-	//it a cube
-	/*
-	while(not end of file){
-		get GPS values
-		get wind values
-		
-		search cubes and match GPS values
-			put value in correct cube
-
-		continue
-	}
-	*/
+	cout << endl;
 }
-
-
-
-/*
-	//Control structure
-	if(cubeVector.empty()){
-		cubePointer = new ValueBlock;
-		cubePointer->setGPSValues(GPSValStruct);
-	}
-	else{
-		//check values of existing cubes
-		for(it = cubeVector.begin()){
-			//Check values to see if struct lies in existing block	
-			if(GPSValStruct->latitudeInd >= cubeVector[it]->returnStartLength() && 
-				GPSValStruct->latitudeInd <= cubeVector[it]->returnEndLength()){
-				if(GPSValStruct->longitudeInd >= cubeVector[it]->returnStartWidth() && 
-					GPSValStruct->longitudeInd <= cubeVector[it].returnEndWidth()){
-					if(GPSValStruct->altitudeInd >= cubeVector[it].returnStartDepth() && 
-						GPSValStruct->altitudeInd >= cubeVector[it].returnEndDepth()){
-						//add wind values to this block and increase measurement number
-						//cubeVector[it]->sendWindValues(windValStruct);
-						//now return to make sure loop doesn't continue
-						return; //hopefully doesn't exit ros
-					}
-				}
-			}
-			//Also check for closest block to values while we're in this loop
-			difference = cubeVector[it]->returnSumOfDistances - GPSValSum;
-			if(difference < preDifference){
-				countHigh = it;
-				preDifference = difference;
-			}		
-		}
-		//Now we have the value of the closest block in countHigh
-		locDifference = GPSValStruct->altitudeInd - cubeVector[countHigh]->returnStartDepth;
-		//startValsStruct->altitudeInd = ;
-		locDifference = GPSValStruct->longitudeInd - cubeVector[countHigh]->returnStartWidth;
-		//startValsStruct->longitudeInd = ;
-		locDifference = GPSValStruct->latitudeInd - cubeVector[countHigh]->returnStartLength;
-
-		//Fill in blocks?					
-	}
-
-*/
-
-	
-
-//End of block	

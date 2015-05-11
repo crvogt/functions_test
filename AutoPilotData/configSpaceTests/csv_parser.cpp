@@ -10,8 +10,16 @@ using namespace std;
 
 void parseFile(vector<autopilotData> &flightVec){
 
+	/*
+	Function parses several different files as at the moment
+	I have data stored on a per-type basis (ie, compass is
+	in a file of its own, as is airspeed, groundspeed, etc)
+	*/
+
 	//Define the filename string
 	string filename;
+	//Values to hold the string brought in
+	
 	string scompass, sgroundspeed, sairspeed, sgpsX, sgpsY, sgpsZ;
 	string spressureInATM, slatitude, slongitude, saltitude, scurrentTime, sjunkString;
 	autopilotData flightData;
@@ -52,7 +60,7 @@ void parseFile(vector<autopilotData> &flightVec){
 	
 	
 	filename = "altitude17_3.csv";
-	fstream dataFileAltitude; //(filename.c_str()), ios::in);
+	fstream dataFileAltitude;
 	dataFileAltitude.open(filename.c_str());
 	while(rows < vectorSize){
 		getline(dataFileAltitude, saltitude);
@@ -66,7 +74,7 @@ void parseFile(vector<autopilotData> &flightVec){
 	rows = 0;
 
 	filename = "latitude17_3.csv";
-	fstream dataFileLatitude;//(filename.c_str()), ios::in);
+	fstream dataFileLatitude;
 	dataFileLatitude.open(filename.c_str());
 	while(rows < vectorSize){
 		getline(dataFileLatitude, slatitude);
@@ -80,7 +88,7 @@ void parseFile(vector<autopilotData> &flightVec){
 	rows = 0;
 
 	filename = "longitude17_3.csv";
-	fstream dataFileLongitude;//(filename.c_str()), ios::in);
+	fstream dataFileLongitude;
 	dataFileLongitude.open(filename.c_str());
 	while(rows < vectorSize){
 		getline(dataFileLongitude, slongitude);
@@ -108,7 +116,7 @@ void parseFile(vector<autopilotData> &flightVec){
 	rows = 0;
 
 	filename = "Y17_3.csv";
-	fstream dataFileY;//(filename.c_str()), ios::in);
+	fstream dataFileY;
 	dataFileY.open(filename.c_str());
 	while(rows < vectorSize){
 		getline(dataFileY, sgpsY);
@@ -122,7 +130,7 @@ void parseFile(vector<autopilotData> &flightVec){
 	rows = 0;
 
 	filename = "Z17_3.csv";
-	fstream dataFileZ;//(filename.c_str()), ios::in);
+	fstream dataFileZ;
 	dataFileZ.open(filename.c_str());
 	while(rows < vectorSize){
 		getline(dataFileZ, sgpsZ);
@@ -196,6 +204,30 @@ void parseFile(vector<autopilotData> &flightVec){
 }
 
 /**********************************************************************/
+/*
+void accessFiles(std::vector<autopilotData> &flightVec, std::vector<string> &filenames){
+	string sholder;
+	if(flightVec.empty(filenames[0].c_str())){
+		fstream dataFile.open();
+		while
+	}
+	fstream dataFile;
+	dataFileAltitude.open(filename.c_str());
+	while(rows < vectorSize){
+		getline(dataFileAltitude, saltitude);
+		//flightData.airspeed = stof(sairspeed);
+		//cout << "\nAirspeed value " << flightData.airspeed << endl;
+		flightVec[rows].altitude = stof(saltitude);
+		rows++;
+	}
+	dataFileAltitude.close();
+	dataFileAltitude.clear();
+	rows = 0;
+}
+*/
+/**********************************************************************/
+
+/**********************************************************************/
 
 void printResults(vector<autopilotData> &flightVec){
 	cout << "\nFirst value: " <<flightVec[0].compass << endl;
@@ -232,25 +264,28 @@ void returnExtremes(vector<autopilotData> &flightVec, extremes *values){
 		else if(flightVec[i].altitude >= values->largeAlt)
 			values->largeAlt = flightVec[i].altitude;
 	}
+
+	if(values->smallAlt > 0){
+		for(int i = 0; i < size; i++){
+			flightVec[i].altitude = flightVec[i].altitude - values->smallAlt;
+		}
+
+		//Normalize the altitude values
+		values->largeAlt -= values->smallAlt;
+		values->smallAlt = 0;
+	}
+
+	//print results
+	cout << "\nThis is the output from the extremes parsing:\n";
+	cout << "smallLat " << values->smallLat << endl
+		 << "largeLat " << values->largeLat << endl
+		 << "smallLong " << values->smallLong << endl
+		 << "largeLong " << values->largeLong << endl
+		 << "smallAlt " << values->smallAlt << endl
+		 << "largeAlt " << values->largeAlt << endl;
+
+	return;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
