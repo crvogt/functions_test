@@ -33,6 +33,7 @@ struct extremes{
 struct windCompGlobal{
 		float compass;
 		float magnitude;
+		float pressure;
 		double windLatitude;
 		double windLongitude;
 		double windAltitude;

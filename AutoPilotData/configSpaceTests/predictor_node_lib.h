@@ -12,6 +12,9 @@ private:
 	
 	//Keep track of number of measurements in block
 	float numberOfMeasurements;
+
+	 //Matrix dimensions (typical 0 is starting index value)
+	int matX, matY, matZ;
 	
 	//These values will define the values around the boxes
 	//Within the configuration space
@@ -28,6 +31,7 @@ private:
 	struct windComponents{
 		float compass;
 		float magnitude;
+		float pressure;
 		double windLatitude;
 		double windLongitude;
 		double windAltitude;
@@ -45,6 +49,7 @@ private:
 	void addToWindVec(windCompGlobal);
 	void dataManip(void);
 	void displayBlockVals(void);
+	void setMatrixDims(int, int, int);
 
 public:
 	//Constructor
@@ -62,24 +67,18 @@ public:
 	double returnLatDim(void) const;
 	double returnLongDim(void) const;
 	double returnAltDim(void) const;
+	int returnXDimension(void) const;
+	int returnYDimension(void) const;
+	int returnZDimension(void) const;
+	float returnNumOfMeasure(void) const;
 	void adjustAltDim(double);
 	
 	void addToWindDat(windCompGlobal);
 	double setGPSValues(struct GPSVals *);
 	void dataManipulation(void);
 	void displayBlockValues(void);
+	void setMatrixDimensions(int, int, int);
 };
-
-//
-/*
-struct windCompGlobal{
-		float compass;
-		float magnitude;
-		double windLatitude;
-		double windLongitude;
-		double windAltitude;
-};
-*/
 
 //GPS struct
 struct GPSVals{

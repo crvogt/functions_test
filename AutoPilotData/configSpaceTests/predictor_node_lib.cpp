@@ -30,21 +30,24 @@ void ValueBlock::addToWindVec(windCompGlobal componentsStruct){
 	windVectorAgg.push_back(componentsStruct);	
 }
 
-int ValueBlock::dataManip(void){
+void ValueBlock::dataManip(void){
 	int size = windVectorAgg.size();
-	float compassSum = 0, magnitudeSum = 0;
+	float compassSum = 0, magnitudeSum = 0, pressureSum = 0;
 	for(int i = 0; i < size; i++){
 		compassSum += windVectorAgg[i].compass;	
 		//cout << "\nwind vector agg value " << i << " compass " << windVectorAgg[i].compass;
 		magnitudeSum += windVectorAgg[i].magnitude;
 		//cout << "\nwind vector agg value " << i << " magnitude " << windVectorAgg[i].magnitude;
+		pressureSum += windVectorAgg[i].pressure;
 	}
 	if(size){
 		cout << "\nwindVectorAgg size " << size;
 		averageWCS.compass = compassSum / size;
 		cout << "\ncompassSum " << compassSum; 
 		averageWCS.magnitude = magnitudeSum / size;
-		cout << "\nmagnitudeSum " << magnitudeSum
+		cout << "\nmagnitudeSum " << magnitudeSum;
+		averageWCS.pressure = pressureSum / size;
+		cout << "\npressureSum " << pressureSum
 			 << endl;
 	}
 	isEmpty = 1;
@@ -54,6 +57,12 @@ void ValueBlock::displayBlockVals(void){
 	cout << "\nAverage compass heading: " << averageWCS.compass;
 	cout << "\nAverage magnitude: " << averageWCS.magnitude;
 	cout << endl;
+}
+
+void ValueBlock::setMatrixDims(int x, int y, int z){
+	matX = x;
+	matY = y;
+	matZ = z;
 }
 
 //Destructor
@@ -116,6 +125,22 @@ double ValueBlock::returnAltDim(void) const{
 	return altDim;
 }
 
+int ValueBlock::returnXDimension(void) const{
+	return matX;
+}
+
+int ValueBlock::returnYDimension(void) const{
+	return matY;
+}
+
+int ValueBlock::returnZDimension(void) const{
+	return matZ;
+}
+
+float ValueBlock::returnNumOfMeasure(void) const{
+	return numberOfMeasurements;
+}
+
 void ValueBlock::adjustAltDim(double altitude){
 	setAltDim(altitude);
 }
@@ -124,12 +149,16 @@ void ValueBlock::addToWindDat(windCompGlobal componentCarry){
 	addToWindVec(componentCarry);
 }
  
-int ValueBlock::dataManipulation(void){
+void ValueBlock::dataManipulation(void){
 	dataManip();	
 }
 
 void ValueBlock::displayBlockValues(void){
 	displayBlockVals();
+}
+
+void ValueBlock::setMatrixDimensions(int x, int y, int z){
+	setMatrixDims(x, y, z);
 }
 /***********Outside of class*************/
 
@@ -145,7 +174,9 @@ void sortValues(vector<autopilotData> &flightVec, vector<ValueBlock *> &cubeVect
 			if(flightVec[i].latitude >= cubeVector[j]->returnStartLength()
 				&& flightVec[i].latitude <= cubeVector[j]->returnEndLength()
 				&& flightVec[i].longitude >= cubeVector[j]->returnStartWidth()
-				&& flightVec[i].longitude <= cubeVector[j]->returnEndWidth()){
+				&& flightVec[i].longitude <= cubeVector[j]->returnEndWidth()
+				&& flightVec[i].altitude >= cubeVector[j]->returnStartDepth()
+				&& flightVec[i].altitude <= cubeVector[j]->returnEndDepth()){
 				//addToWindDat(componentCarry)
 				//Figure out wind components
 				componentCarry.compass = flightVec[i].compass;
@@ -159,7 +190,8 @@ void sortValues(vector<autopilotData> &flightVec, vector<ValueBlock *> &cubeVect
 				componentCarry.windLatitude = flightVec[i].latitude;
 				componentCarry.windLongitude = flightVec[i].longitude;
 				componentCarry.windAltitude = flightVec[i].altitude;
-				
+				componentCarry.pressure = flightVec[i].pressureInATM;
+
 				cubeVector[j]->addToWindDat(componentCarry);
 			}
 		}
@@ -177,7 +209,7 @@ void checkCube(extremes *values, vector<ValueBlock *> &cubeVector){
 	*/
 
 	//Debug counters
-	int counterLat = 0, counterLon = 0;	
+	int counterLat = 0, counterLon = 0, counterAlt = 0;	
 
 	//startValsStruct holds the values to be passed to create the new block
 	//GPSValStruct is simply incoming GPS values.
@@ -205,7 +237,7 @@ void checkCube(extremes *values, vector<ValueBlock *> &cubeVector){
 	tempHoldAlt = values->smallAlt;
 	startValsStruct.latitudeInd = values->smallLat;
 	startValsStruct.longitudeInd = values->smallLong;
-	startValsStruct.altitudeInd = (values->largeAlt / 2);
+	startValsStruct.altitudeInd = values->smallAlt;
 
 	/*
 	This while loop simply takes the "extremes values"
@@ -213,15 +245,20 @@ void checkCube(extremes *values, vector<ValueBlock *> &cubeVector){
 	into their respective grid location
 	*/
 	while(tempHoldLong <= values->largeLong){
-		while(tempHoldLat <= values->largeLat){
-			cubePointer = new ValueBlock;
-			cubePointer->adjustAltDim(values->largeAlt - values->smallAlt);
-			cubePointer->setGPSValues(&startValsStruct);
-			cubeVector.push_back(cubePointer);
+		while(tempHoldLat <= values->largeLat){	
+			while(tempHoldAlt <= values->largeAlt){
+				cubePointer = new ValueBlock;
+				//cubePointer->adjustAltDim(values->largeAlt - values->smallAlt);
+				cubePointer->setGPSValues(&startValsStruct);
+				cubeVector.push_back(cubePointer);
+				cubePointer->setMatrixDimensions(counterLon, counterLat, counterAlt);
+				tempHoldAlt += cubePointer->returnAltDim();
+				startValsStruct.altitudeInd = tempHoldAlt;
+				counterAlt++;
+			}
+			counterAlt = 0;
 			tempHoldLat += cubePointer->returnLatDim();
 			startValsStruct.latitudeInd = tempHoldLat;
-			//Debug check
-			cout << "\nNumber of iterations (counterLat): " << (counterLat + 1);
 			counterLat++;			
 		}
 		//This should start the previous while loop up again
