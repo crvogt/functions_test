@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <iomanip>
 
 #include "predictor_node_lib.h"
 #include "csv_parser.h"
@@ -284,3 +285,56 @@ void cubeVectorPrint(vector<ValueBlock *> &cubeVector){
 		cubeVector[i]->displayBlockValues();
 	}
 }
+
+/*
+void prettyPrint(vector<ValueBlock *> &cubeVector){
+	bool notFound = false;
+	int x = 0, y = 0, z = 0;
+
+	cout << "\n\nPrinting a pretty table of all the data, by slice" << endl
+		 << endl;
+
+	//Find 0 0 0 value, and so on.
+	while(notfound){
+		x = cubeVector[i].returnXDimension();
+		y = cubeVector[i].returnYDimension();
+		z = cubeVector[i].returnZDimension();
+		if(x == xCount && y == yCount && z == zCount){
+
+		}
+	}
+
+
+
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

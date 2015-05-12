@@ -35,8 +35,30 @@ int main(int argc, char **argv){
 	sortValues(flightVec, cubeVector);
 
 	//Test to print compass and mag
-	//cubeVectorPrint(cubeVector);
+	cubeVectorPrint(cubeVector);
 
-	return 0;
+	//Pretty print of 3D matrix
+	//prettyPrint(cubeVector);
+
+	//create own series of matrices
+	//myMatrix(int, int, int, cubeVector);
+
+	/*
+	A couple of notes on how to approach the gaussian - 
+	First interpolate: Empty cells need to be interpolated based on the 
+	cells with surrounding data.
+	Regression: Once the interpolation has finished, we can, on a cell by
+	cell basis, start to predict based off the measurements within that 
+	cell. Though, it will be good to look at other methods.. Is there a 
+	way by which I can ALSO include data from surrounding cells when getting
+	the predicted values, or will it be better not to?
+	If we go by individual cells, I think that this will be a better method
+	if we're to look at then doing feature detection.
+	Pattern Recognition for types of weather: I think a Gaussian mixture
+	model will not be a bad way to approach this type of thing (see mathematical
+	monk number 16)
+	*/
+
+	return 0;`
 }
 

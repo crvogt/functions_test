@@ -94,4 +94,6 @@ void sortValues(std::vector<autopilotData> &, std::vector<ValueBlock *> &);
 
 void cubeVectorPrint(std::vector<ValueBlock *> &);
 
+void prettyPrint(std::vector<ValueBlock *> &);
+
 #endif
