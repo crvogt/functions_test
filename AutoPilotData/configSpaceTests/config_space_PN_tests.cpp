@@ -2,159 +2,63 @@
 #include <vector>
 #include <cstdio>
 #include <math.h>
-//#include "predictor_node_lib.h"
+
+#include "csv_parser.h"
+#include "predictor_node_lib.h"
+
 using namespace std;
-//For use with testing class
-
-/*
-class ValueBlock{
-private:
-	double m;
-public:
-	double returnM(void) const{
-		return m;
-	}
-	void setM(double val){
-		m = val;
-	}
-};
-*/
-
-//Function to receive vector and display contents
-//void showVector(vector<ValueBlock *>);
-
-//void showBlock(ValueBlock *);
 
 int main(int argc, char **argv){
-	float myRemainder;
 
-	float initLat = 55.862282;
-	float primLat = 55.862278;
+	//Call a struct that holds the data of interest
+	//Defined in csv_parser.h
+	extremes values;
 
-	myRemainder = fmod(initLat, primLat);
+	//Define the vector
+	//Autopilot data is a struct defined in csv_parser
+	vector<autopilotData> flightVec;
 
-	cout << "\nThe remainder is: " << myRemainder << endl;
-
-	/*GPSVals GPSStruct;
-
-	//cubeStart();
-	const int arrayVal = 5;
-	int i = 0;
-	//char question = 'y';
-
-
-	//Preparing data to pass to vectors
-	double initLat[arrayVal] = {55.862282, 55.862278, 55.862278, 55.866093, 55.86235};
-	double initLon[arrayVal] = {-3.1532116, -3.1532202, -3.1530969, -3.1532218, -3.153194};
-	//Don't necessarily need to specify number of elements if initializing
-	double initAlt[] = {154.77, 154.36, 179.98, 223.97, 140.54};
-
-	//Send GPS values through. Check if they match any blocks. If not, create a new block
+	//Valueblock vector object
+	vector<ValueBlock *> cubeVector;
 	
-	while(i < arrayVal){//GPS values are coming through remaing true
-		GPSStruct.latitudeInd = initLat[i];
-		GPSStruct.longitudeInd = initLon[i];
-		GPSStruct.altitudeInd = initAlt[i];
-		checkCube(GPSStruct);	
-	}
-*/
-	/*
-	while(i < arrayVal){
-		//if(cubeVector.size() == 0){ //vector size is zero, create a new object
-		cubePointer = new ValueBlock;
-		cubePointer->setM(initAlt[i]);
-		cubeVector.push_back(cubePointer);
-		//}
-		i++;
-	}
+	//Parses files of interest, data goes into a vector
+	parseFile(flightVec);
 	
-	//now send values to function
-	//Send Valueblock vector
-	showVector(cubeVector);
+	//Returns the highest and lowest values to create
+	//cube grid
+	returnExtremes(flightVec, &values);
+	
+	//Function to create grid
+	checkCube(&values, cubeVector);	
 
-	cout << endl << "now showing cubePointer... hopefully" << endl;
+	//Can now work with cubeVector as it's being returned
+	sortValues(flightVec, cubeVector);
 
-	//Send Valueblock
-	showBlock(cubePointer);
+	//Test to print compass and mag
+	cubeVectorPrint(cubeVector);
 
-	cout << endl << endl << endl;
+	//Pretty print of 3D matrix
+	//prettyPrint(cubeVector);
 
-	cout << cubeVector[0]->returnM() << " " << cubeVector[1]->returnM() << endl;
-
-	if(cubeVector[0]->returnM() > cubeVector[1]->returnM()){
-		cout << endl << "This method seems to work" << endl;
-	}
+	//create own series of matrices
+	//myMatrix(int, int, int, cubeVector);
 
 	/*
-	for(int j = 0; j < 5; j++){
-		cout << "\n\n" << cubeVector[j]->returnM() << endl;
-	}
+	A couple of notes on how to approach the gaussian - 
+	First interpolate: Empty cells need to be interpolated based on the 
+	cells with surrounding data.
+	Regression: Once the interpolation has finished, we can, on a cell by
+	cell basis, start to predict based off the measurements within that 
+	cell. Though, it will be good to look at other methods.. Is there a 
+	way by which I can ALSO include data from surrounding cells when getting
+	the predicted values, or will it be better not to?
+	If we go by individual cells, I think that this will be a better method
+	if we're to look at then doing feature detection.
+	Pattern Recognition for types of weather: I think a Gaussian mixture
+	model will not be a bad way to approach this type of thing (see mathematical
+	monk number 16)
 	*/
 
-	/*
-	int l = 0, m = 0, k = 0;
-	cout << "\n\nWould you like to add another value?: ";
-	cin >> question;
-	while(question == 'y'){
-		cubePointer = new ValueBlock;
-		cubePointer->setM(initLat[m]);
-		cubeVector.push_back(cubePointer);
-		l = i + m;
-		cout << "m = " << m << "and i = " << l << endl;
-		cout << "\nanother?: ";
-		cin >> question;
-		m++;
-	}
-
-	cout << "\nThanks for playing!" <<  endl;
-	cout << "\n\nDisplaying the list:\n";
-	for(k = 0; k < l; k++){
-		cout << cubeVector[k]->returnM() << endl;
-	}
-	/*Vector Test*/
-	/*
-	for(int i = 0; i < 5; i++){
-		gpsLatValsVec.push_back(initLat[i]);
-		printf("\n GPS Lat vector val %d is %lf", i, gpsLatValsVec[i]);
-	}
-	*/
-
-	//cout << endl;
-
-	//Cube vector
-
-	
-	/*
-	Get GPS values,
-	if vector = 0 elements
-	create a new instance of the class
-	*/
-	
-	/*
-	Get GPS values
-	if vector ~= 0
-	Check GPS values vs current vals
-	if no similar GPS vals
-	create new instance of class and store in vector
-	*/
-	//Store its address in a vector
-
-	//As the plane flies, build the configuration space
-
-	//Send measurements to appropriate config cube.
-	
-	return 0;
+	return 0;`
 }
 
-/*
-void showVector(vector<ValueBlock *> cubeVectorPtr){
-	cout << endl << "This is the showVector function" << endl;
-	for(int i = 0; i < cubeVectorPtr.size(); i++)
-		cout << cubeVectorPtr[i]->returnM() << endl;
-}
-
-void showBlock(ValueBlock *blockValPtr){
-	cout << "This is the showBlock function";
-	cout << endl << blockValPtr->returnM() << endl;
-}
-*/

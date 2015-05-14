@@ -1,6 +1,43 @@
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
+struct extremes{
+	double latitude = 0;
+	double longitude = 0;
+	double altitude = 0;
+};
+
+void fillStruct(extremes *);
+
+void printStructContents(extremes *);
+
+/********************************************/
+
+int main(int argc, char **argv){
+	
+	extremes extremesPtr;
+	fillStruct(&extremesPtr);
+	printStructContents(&extremesPtr);
+
+	return 0;
+}
+
+/*********************************************/
+
+void fillStruct(extremes *extremesPtrPassed){
+	extremesPtrPassed->latitude = 12345;
+	extremesPtrPassed->longitude = 23456;
+	extremesPtrPassed->altitude = 257;
+}
+
+void printStructContents(extremes *extremesPtrPassed){
+	cout << "\n\nStruct values:\nlatitude - " << extremesPtrPassed->latitude
+		 << "\nlongitude - " << extremesPtrPassed->longitude
+		 << "\naltitude - " << extremesPtrPassed->altitude << endl;
+}
+
+/*
 void functionWithPointer(int *, int **);
 
 void PtrToPtr(int **);
@@ -13,7 +50,7 @@ int main(int argc, char **argv){
 	and see what happens with it.
 	Why do I need a reference to a 
 	pointer? Or a ref to ptr?
-	*/
+	
 
 	int *var1ptr, **var2ptr;
 	int nVal = 5;
@@ -42,7 +79,7 @@ int main(int argc, char **argv){
 	pointer is changed in a function
 	if that is possible. Binary tree education
 	suggests otherwise, at least sort of
-	*/
+	
 	
 	functionWithPointer(var1ptr, var2ptr);
 
@@ -53,7 +90,7 @@ int main(int argc, char **argv){
 	Now modifying the pointer to a pointer
 	in the function, thereby modifying the
 	original pointer...
-	*/
+	
 
 	PtrToPtr(var2ptr);
 
@@ -70,8 +107,7 @@ int main(int argc, char **argv){
 }
 
 void functionWithPointer(int *passedPtrToVal, int **passedPtrToPtr){
-	/*
-	*/
+		
 	cout << "\n\nthe passedPtrToVal is: "
 		 << *passedPtrToVal << endl;
 	*passedPtrToVal *= 4;
@@ -89,3 +125,4 @@ void PtrToPtr(int **pointerToPtr){
 void RefToPtr(int *&referredPtr){
 	*referredPtr *= 2;
 }
+*/
