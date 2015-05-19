@@ -184,7 +184,7 @@ void parseFile(vector<autopilotData> &flightVec){
 	dataFileTime.close();
 	dataFileTime.clear();
 	rows = 0;
-
+/*
 	for(rows = 0; rows < vectorSize; rows++){
 		cout << "ROW " << (rows+1) << endl
 			 << "compass " << flightVec[rows].compass
@@ -199,8 +199,8 @@ void parseFile(vector<autopilotData> &flightVec){
 			 << "altitude " << flightVec[rows].altitude
 			 << " currentTime " << flightVec[rows].currentTime << endl << endl;
 	}
-
-	return;
+*/
+	//return;
 }
 
 /**********************************************************************/
@@ -276,6 +276,7 @@ void returnExtremes(vector<autopilotData> &flightVec, extremes *values){
 	}
 
 	//print results
+	
 	cout << "\nThis is the output from the extremes parsing:\n";
 	cout << "smallLat " << values->smallLat << endl
 		 << "largeLat " << values->largeLat << endl
@@ -283,7 +284,7 @@ void returnExtremes(vector<autopilotData> &flightVec, extremes *values){
 		 << "largeLong " << values->largeLong << endl
 		 << "smallAlt " << values->smallAlt << endl
 		 << "largeAlt " << values->largeAlt << endl;
-
+	
 	return;
 }
 

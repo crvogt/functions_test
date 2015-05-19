@@ -36,9 +36,9 @@ void ValueBlock::dataManip(void){
 	float compassSum = 0, magnitudeSum = 0, pressureSum = 0;
 	for(int i = 0; i < size; i++){
 		compassSum += windVectorAgg[i].compass;	
-		//cout << "\nwind vector agg value " << i << " compass " << windVectorAgg[i].compass;
+		cout << "\nwind vector agg value " << i << " compass " << windVectorAgg[i].compass;
 		magnitudeSum += windVectorAgg[i].magnitude;
-		//cout << "\nwind vector agg value " << i << " magnitude " << windVectorAgg[i].magnitude;
+		cout << "\nwind vector agg value " << i << " magnitude " << windVectorAgg[i].magnitude;
 		pressureSum += windVectorAgg[i].pressure;
 	}
 	if(size){
@@ -208,7 +208,7 @@ void checkCube(extremes *values, vector<ValueBlock *> &cubeVector){
 	/*
 	Current issue, make sure to check back about negative values
 	*/
-
+	cout << "\n\nIn cube vector\n\n";
 	//Debug counters
 	int counterLat = 0, counterLon = 0, counterAlt = 0;	
 
@@ -265,6 +265,7 @@ void checkCube(extremes *values, vector<ValueBlock *> &cubeVector){
 		//This should start the previous while loop up again
 		tempHoldLat = values->smallLat;
 		counterLat = 0;
+		cout << "\ncounterLat: " << counterLat;
 
 		//Continuing first while loop and updating startValStruct
 		tempHoldLong += cubePointer->returnLongDim();
