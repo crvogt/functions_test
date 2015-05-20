@@ -11,7 +11,7 @@ private:
 	float latDim, longDim, altDim;
 	
 	//Keep track of number of measurements in block
-	float numberOfMeasurements;
+	int numberOfMeasurements;
 
 	 //Matrix dimensions (typical 0 is starting index value)
 	int matX, matY, matZ;
@@ -48,7 +48,7 @@ private:
 	void setAltDim(double);
 	void addToWindVec(windCompGlobal);
 	void dataManip(void);
-	void displayBlockVals(void);
+	int displayBlockVals(void);
 	void setMatrixDims(int, int, int);
 
 public:
@@ -70,13 +70,14 @@ public:
 	int returnXDimension(void) const;
 	int returnYDimension(void) const;
 	int returnZDimension(void) const;
-	float returnNumOfMeasure(void) const;
+	int returnNumOfMeasure(void) const;
+	int returnIsEmpty(void) const;
 	void adjustAltDim(double);
 	
 	void addToWindDat(windCompGlobal);
 	double setGPSValues(struct GPSVals *);
 	void dataManipulation(void);
-	void displayBlockValues(void);
+	int displayBlockValues(void);
 	void setMatrixDimensions(int, int, int);
 };
 

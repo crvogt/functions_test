@@ -55,9 +55,11 @@ void ValueBlock::dataManip(void){
 }
 
 void ValueBlock::displayBlockVals(void){
-	cout << "\nAverage compass heading: " << averageWCS.compass;
-	cout << "\nAverage magnitude: " << averageWCS.magnitude;
-	cout << endl;
+	if(averageWCS.compass && averageWCS.magnitude){
+		cout << "\nAverage compass heading: " << averageWCS.compass;
+		cout << "\nAverage magnitude: " << averageWCS.magnitude;
+		cout << endl;
+	}
 }
 
 void ValueBlock::setMatrixDims(int x, int y, int z){
@@ -77,8 +79,8 @@ ValueBlock::~ValueBlock(){
 ValueBlock::ValueBlock(){
 	//Want to set cube dimensions here
 	//values in decimals of lat and long
-	latDim = 0.00003;
-	longDim = 0.00003;
+	latDim = 0.0001;
+	longDim = 0.0001;
 	altDim = 3;
 	isEmpty = 1;//equal to 1 for true
 }
@@ -155,7 +157,8 @@ void ValueBlock::dataManipulation(void){
 }
 
 void ValueBlock::displayBlockValues(void){
-	displayBlockVals();
+	int counter = 0;
+	counter = displayBlockVals();
 }
 
 void ValueBlock::setMatrixDimensions(int x, int y, int z){
@@ -245,46 +248,46 @@ void checkCube(extremes *values, vector<ValueBlock *> &cubeVector){
 	and creates a grid. Once this is done, the values are siphoned
 	into their respective grid location
 	*/
-	while(tempHoldLong <= values->largeLong){
-		while(tempHoldLat <= values->largeLat){	
-			while(tempHoldAlt <= values->largeAlt){
+	while(tempHoldAlt <= values->largeAlt){
+		while(tempHoldLong <= values->largeLong){
+			while(tempHoldLat <= values->largeLat){
 				cubePointer = new ValueBlock;
 				//cubePointer->adjustAltDim(values->largeAlt - values->smallAlt);
 				cubePointer->setGPSValues(&startValsStruct);
 				cubeVector.push_back(cubePointer);
 				cubePointer->setMatrixDimensions(counterLon, counterLat, counterAlt);
-				tempHoldAlt += cubePointer->returnAltDim();
-				startValsStruct.altitudeInd = tempHoldAlt;
-				counterAlt++;
+				tempHoldLat += cubePointer->returnLatDim();
+				startValsStruct.latitudeInd = tempHoldLat;
+				counterLat++;
 			}
-			counterAlt = 0;
-			tempHoldLat += cubePointer->returnLatDim();
-			startValsStruct.latitudeInd = tempHoldLat;
-			counterLat++;			
+			tempHoldLong += cubePointer->returnLongDim();
+			startValsStruct.longitudeInd = tempHoldLong;
+			counterLon++;
+			tempHoldLat = values->smallLat;
+			counterLat = 0;			
 		}
 		//This should start the previous while loop up again
-		tempHoldLat = values->smallLat;
-		counterLat = 0;
-		cout << "\ncounterLat: " << counterLat;
+		counterLon = 0;
+		tempHoldLong = values->smallLong;
 
 		//Continuing first while loop and updating startValStruct
-		tempHoldLong += cubePointer->returnLongDim();
-		startValsStruct.longitudeInd = tempHoldLong;
-		cout << "\n\nNumber of iterations (counterLon): " << (counterLon + 1)
-			 << endl;
-		counterLon++;
-	}
+		tempHoldAlt += cubePointer->returnAltDim();
+		startValsStruct.altitudeInd = tempHoldAlt;
 
-	cout << endl;
+		counterAlt++;
+	}
 }
 
 void cubeVectorPrint(vector<ValueBlock *> &cubeVector){
 	cout << "\n\n\nPrinting values for cubeVector..." << endl;
+	int emptyCount = 0;
 	int size = cubeVector.size();
 
 	for(int i = 0; i < size; i++){
-		cubeVector[i]->displayBlockValues();
+		emptyCount += cubeVector[i]->displayBlockValues();
 	}
+	cout << "\nsize: " << size << endl;
+	cout << "\nemptyCount: " << emptyCount << endl;
 }
 
 /*

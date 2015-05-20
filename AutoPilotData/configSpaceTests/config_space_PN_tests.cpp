@@ -5,7 +5,7 @@
 
 #include "csv_parser.h"
 #include "predictor_node_lib.h"
-#include "gaussian_process.h"
+//#include "gaussian_process.h"
 
 using namespace std;
 
@@ -28,8 +28,6 @@ int main(int argc, char **argv){
 	//Returns the highest and lowest values to create
 	//cube grid
 	returnExtremes(flightVec, &values);
-	
-	cout << "\n\nGotten past extremes\n\n";
 
 	//Function to create grid
 	checkCube(&values, cubeVector);	
@@ -38,7 +36,7 @@ int main(int argc, char **argv){
 	sortValues(flightVec, cubeVector);
 
 	//Test to print compass and mag
-	//cubeVectorPrint(cubeVector);
+	cubeVectorPrint(cubeVector);
 
 	//Pretty print of 3D matrix
 	//prettyPrint(cubeVector);
@@ -62,7 +60,7 @@ int main(int argc, char **argv){
 	monk number 16)
 	*/
 	
-	univarGauss(cubeVector);
+	//univarGauss(cubeVector);
 
 	return 0;
 }
