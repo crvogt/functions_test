@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "csv_parser.h"
+#include "predictor_node_lib.h"
 using namespace std;
 
 /***************************************************************************/
@@ -288,5 +289,17 @@ void returnExtremes(vector<autopilotData> &flightVec, extremes *values){
 	return;
 }
 
+/*****************************************************************************/
 
+void printToMatlabReadable(vector<ValueBlock *> &cubeVector){
+	/*
+	Want to write out to a csv file easily read by MATLAB to plot the data
+	quiver3(x,y,z,u,v,w)
+	u, v, and w are the directional vectors which, when resolved, will be
+	scaled automatically with respect to eachother and shown in the finished
+	direction (the combination of the three) i j k
+
+	Possible to normalize
+	*/
+}
 

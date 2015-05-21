@@ -50,8 +50,10 @@ void ValueBlock::dataManip(void){
 		averageWCS.pressure = pressureSum / size;
 		cout << "\npressureSum " << pressureSum
 			 << endl;
+		isEmpty = false;
 	}
-	isEmpty = 1;
+	else
+		isEmpty = true;
 }
 
 void ValueBlock::displayBlockVals(void){
@@ -82,7 +84,7 @@ ValueBlock::ValueBlock(){
 	latDim = 0.0001;
 	longDim = 0.0001;
 	altDim = 3;
-	isEmpty = 1;//equal to 1 for true
+	isEmpty = true;//equal to 1 for true
 }
 
 double ValueBlock::setGPSValues(GPSVals *gpsStruct){
@@ -140,7 +142,7 @@ int ValueBlock::returnZDimension(void) const{
 	return matZ;
 }
 
-float ValueBlock::returnNumOfMeasure(void) const{
+int ValueBlock::returnNumOfMeasure(void) const{
 	return numberOfMeasurements;
 }
 
@@ -157,12 +159,15 @@ void ValueBlock::dataManipulation(void){
 }
 
 void ValueBlock::displayBlockValues(void){
-	int counter = 0;
-	counter = displayBlockVals();
+	displayBlockVals();
 }
 
 void ValueBlock::setMatrixDimensions(int x, int y, int z){
 	setMatrixDims(x, y, z);
+}
+
+bool ValueBlock::returnIsEmpty(void) const{
+	return isEmpty;
 }
 /***********Outside of class*************/
 
@@ -188,7 +193,14 @@ void sortValues(vector<autopilotData> &flightVec, vector<ValueBlock *> &cubeVect
 				componentCarry.magnitude = flightVec[i].airspeed - flightVec[i].groundspeed;
 				
 				if(componentCarry.magnitude < 0){
-					componentCarry.compass -= 180; //to get correct direction
+					if(componentCarry.compass <= 180){
+						componentCarry.compass += 180; //to get correct direction
+					}
+					else if(componentCarry.compass > 180){
+						componentCarry.compass -= 180;
+					}
+
+					componentCarry.magnitude = abs(componentCarry.magnitude);
 				}
 				
 				componentCarry.windLatitude = flightVec[i].latitude;
@@ -284,10 +296,13 @@ void cubeVectorPrint(vector<ValueBlock *> &cubeVector){
 	int size = cubeVector.size();
 
 	for(int i = 0; i < size; i++){
-		emptyCount += cubeVector[i]->displayBlockValues();
+		cubeVector[i]->displayBlockValues();
+		if(!cubeVector[i]->returnIsEmpty()){
+			emptyCount++;	
+		}
 	}
 	cout << "\nsize: " << size << endl;
-	cout << "\nemptyCount: " << emptyCount << endl;
+	cout << "empty: " << emptyCount << endl;
 }
 
 /*

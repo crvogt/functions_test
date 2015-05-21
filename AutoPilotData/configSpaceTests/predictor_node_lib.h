@@ -25,7 +25,7 @@ private:
 	//Altitude values
 	double altitudeS, altitudeF;
 	//Let us know if windVectorAgg is empty
-	int isEmpty;
+	bool isEmpty;
 	
 	//Need a way to aggregate all of the measurements taken within a block
 	struct windComponents{
@@ -48,7 +48,7 @@ private:
 	void setAltDim(double);
 	void addToWindVec(windCompGlobal);
 	void dataManip(void);
-	int displayBlockVals(void);
+	void displayBlockVals(void);
 	void setMatrixDims(int, int, int);
 
 public:
@@ -71,13 +71,13 @@ public:
 	int returnYDimension(void) const;
 	int returnZDimension(void) const;
 	int returnNumOfMeasure(void) const;
-	int returnIsEmpty(void) const;
+	bool returnIsEmpty(void) const;
 	void adjustAltDim(double);
 	
 	void addToWindDat(windCompGlobal);
 	double setGPSValues(struct GPSVals *);
 	void dataManipulation(void);
-	int displayBlockValues(void);
+	void displayBlockValues(void);
 	void setMatrixDimensions(int, int, int);
 };
 

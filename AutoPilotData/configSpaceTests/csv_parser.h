@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 
+#include "predictor_node_lib.h"
+
 #define COLUMNS 16//22//not 21 columns? possible miscount
 #define NUMBEROFVALUES 11
 
@@ -48,5 +50,7 @@ void returnExtremes(std::vector<autopilotData> &, extremes *);
 void parseFile(std::vector<autopilotData> &);
 
 //void accessFiles(std::vector<autopilotData> &);
+
+void printToMatlabReadable(std::vector<ValueBlock *> &);
 
 #endif
