@@ -1,11 +1,15 @@
 #include <iostream>
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include <iomanip>
+#include <cstdlib>
+#include <fstream>
 
 #include "predictor_node_lib.h"
 #include "csv_parser.h"
 using namespace std;
+
+#define _USE_MATH_DEFINES
 
 /******************private*****************/
 void ValueBlock::setAltDim(double altitude){
@@ -36,20 +40,20 @@ void ValueBlock::dataManip(void){
 	float compassSum = 0, magnitudeSum = 0, pressureSum = 0;
 	for(int i = 0; i < size; i++){
 		compassSum += windVectorAgg[i].compass;	
-		cout << "\nwind vector agg value " << i << " compass " << windVectorAgg[i].compass;
+		//cout << "\nwind vector agg value " << i << " compass " << windVectorAgg[i].compass;
 		magnitudeSum += windVectorAgg[i].magnitude;
-		cout << "\nwind vector agg value " << i << " magnitude " << windVectorAgg[i].magnitude;
+		//cout << "\nwind vector agg value " << i << " magnitude " << windVectorAgg[i].magnitude;
 		pressureSum += windVectorAgg[i].pressure;
 	}
 	if(size){
-		cout << "\nwindVectorAgg size " << size;
+		//cout << "\nwindVectorAgg size " << size;
 		averageWCS.compass = compassSum / size;
-		cout << "\ncompassSum " << compassSum; 
+		//cout << "\ncompassSum " << compassSum; 
 		averageWCS.magnitude = magnitudeSum / size;
-		cout << "\nmagnitudeSum " << magnitudeSum;
+		//cout << "\nmagnitudeSum " << magnitudeSum;
 		averageWCS.pressure = pressureSum / size;
-		cout << "\npressureSum " << pressureSum
-			 << endl;
+		//cout << "\npressureSum " << pressureSum
+		//	 << endl;
 		isEmpty = false;
 	}
 	else
@@ -58,9 +62,9 @@ void ValueBlock::dataManip(void){
 
 void ValueBlock::displayBlockVals(void){
 	if(averageWCS.compass && averageWCS.magnitude){
-		cout << "\nAverage compass heading: " << averageWCS.compass;
-		cout << "\nAverage magnitude: " << averageWCS.magnitude;
-		cout << endl;
+		//cout << "\nAverage compass heading: " << averageWCS.compass;
+		//cout << "\nAverage magnitude: " << averageWCS.magnitude;
+		//cout << endl;
 	}
 }
 
@@ -169,6 +173,28 @@ void ValueBlock::setMatrixDimensions(int x, int y, int z){
 bool ValueBlock::returnIsEmpty(void) const{
 	return isEmpty;
 }
+
+double ValueBlock::returnAltMid(void) const{
+	return (altitudeF + altitudeS) / 2;
+}
+
+double ValueBlock::returnLatMid(void) const{
+	return (latitudeF + latitudeS) / 2;
+}
+
+double ValueBlock::returnLonMid(void) const{
+	return (longitudeF + longitudeS) / 2;
+}
+
+float ValueBlock::returnAvgCompass(void) const{
+	return averageWCS.compass;
+}
+
+float ValueBlock::returnAvgMagnitude(void) const{
+	return averageWCS.magnitude;
+}
+
+
 /***********Outside of class*************/
 
 void sortValues(vector<autopilotData> &flightVec, vector<ValueBlock *> &cubeVector){
@@ -192,15 +218,17 @@ void sortValues(vector<autopilotData> &flightVec, vector<ValueBlock *> &cubeVect
 				//going basic for the moment
 				componentCarry.magnitude = flightVec[i].airspeed - flightVec[i].groundspeed;
 				
+				//Atempt to resolve direction
 				if(componentCarry.magnitude < 0){
+					componentCarry.magnitude = fabs(componentCarry.magnitude);
+				}
+				else if(componentCarry.magnitude >= 0){
 					if(componentCarry.compass <= 180){
 						componentCarry.compass += 180; //to get correct direction
 					}
 					else if(componentCarry.compass > 180){
 						componentCarry.compass -= 180;
 					}
-
-					componentCarry.magnitude = abs(componentCarry.magnitude);
 				}
 				
 				componentCarry.windLatitude = flightVec[i].latitude;
@@ -212,6 +240,7 @@ void sortValues(vector<autopilotData> &flightVec, vector<ValueBlock *> &cubeVect
 			}
 		}
 	}
+
 	for(i = 0; i < sizeCV; i++){
 		cubeVector[i]->dataManipulation();
 	}	
@@ -223,7 +252,7 @@ void checkCube(extremes *values, vector<ValueBlock *> &cubeVector){
 	/*
 	Current issue, make sure to check back about negative values
 	*/
-	cout << "\n\nIn cube vector\n\n";
+	//cout << "\n\nIn cube vector\n\n";
 	//Debug counters
 	int counterLat = 0, counterLon = 0, counterAlt = 0;	
 
@@ -291,7 +320,7 @@ void checkCube(extremes *values, vector<ValueBlock *> &cubeVector){
 }
 
 void cubeVectorPrint(vector<ValueBlock *> &cubeVector){
-	cout << "\n\n\nPrinting values for cubeVector..." << endl;
+	//cout << "\n\n\nPrinting values for cubeVector..." << endl;
 	int emptyCount = 0;
 	int size = cubeVector.size();
 
@@ -303,6 +332,61 @@ void cubeVectorPrint(vector<ValueBlock *> &cubeVector){
 	}
 	cout << "\nsize: " << size << endl;
 	cout << "empty: " << emptyCount << endl;
+}
+
+/*****************************************************************/
+/*****************************************************************************/
+
+void printToMatlabReadable(vector<ValueBlock *> &cubeVector){
+	/*
+	Want to write out to a csv file easily read by MATLAB to plot the data
+	quiver3(x,y,z,u,v,w)
+	u, v, and w are the directional vectors which, when resolved, will be
+	scaled automatically with respect to eachother and shown in the finished
+	direction (the combination of the three) i j k
+
+	Possible to normalize
+
+	M_PI is pi val
+	*/
+	int size, i;
+	float u = 0, v = 0, w = 0;
+	double toRad;
+	string filename;
+	ofstream matlabQuiverData;
+	//float scalingFactor = 0.1;
+	double normMag = 0;
+
+	filename = "quiverData.csv";
+	matlabQuiverData.open(filename.c_str());
+
+	toRad = M_PI / 180;
+
+	size = cubeVector.size();
+	for(i = 0; i < size; i++){
+		
+		u = cubeVector[i]->returnAvgMagnitude() * sin(toRad * cubeVector[i]->returnAvgCompass());
+		v = cubeVector[i]->returnAvgMagnitude() * cos(toRad * cubeVector[i]->returnAvgCompass());
+
+		normMag = sqrt(pow(u,2.0) + pow(v,2) + pow(w,2));
+
+		u /= normMag;
+		v /= normMag;
+
+		matlabQuiverData << cubeVector[i]->returnLonMid() << ","
+						 << cubeVector[i]->returnLatMid() << ","
+						 << cubeVector[i]->returnAltMid() << ","
+						 << u << ","
+						 << v << ","
+						 << w << endl;
+	
+		u = 0;
+		v = 0;
+		w = 0;
+	}
+
+	matlabQuiverData.close();
+	matlabQuiverData.clear();
 }
 
 /*
@@ -319,41 +403,7 @@ void prettyPrint(vector<ValueBlock *> &cubeVector){
 		y = cubeVector[i].returnYDimension();
 		z = cubeVector[i].returnZDimension();
 		if(x == xCount && y == yCount && z == zCount){
-
 		}
 	}
-
-
-
 }
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -67,13 +67,18 @@ public:
 	double returnLatDim(void) const;
 	double returnLongDim(void) const;
 	double returnAltDim(void) const;
+	double returnAltMid(void) const;
+	double returnLatMid(void) const;
+	double returnLonMid(void) const;
 	int returnXDimension(void) const;
 	int returnYDimension(void) const;
 	int returnZDimension(void) const;
 	int returnNumOfMeasure(void) const;
 	bool returnIsEmpty(void) const;
+	float returnAvgCompass(void) const;
+	float returnAvgMagnitude(void) const;
+
 	void adjustAltDim(double);
-	
 	void addToWindDat(windCompGlobal);
 	double setGPSValues(struct GPSVals *);
 	void dataManipulation(void);
@@ -96,5 +101,7 @@ void sortValues(std::vector<autopilotData> &, std::vector<ValueBlock *> &);
 void cubeVectorPrint(std::vector<ValueBlock *> &);
 
 void prettyPrint(std::vector<ValueBlock *> &);
+
+void printToMatlabReadable(std::vector<ValueBlock *> &);
 
 #endif

@@ -38,6 +38,8 @@ int main(int argc, char **argv){
 	//Test to print compass and mag
 	cubeVectorPrint(cubeVector);
 
+	printToMatlabReadable(cubeVector);
+
 	//Pretty print of 3D matrix
 	//prettyPrint(cubeVector);
 

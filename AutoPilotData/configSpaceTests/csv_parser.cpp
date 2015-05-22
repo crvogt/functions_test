@@ -2,11 +2,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
 
 #include "csv_parser.h"
 #include "predictor_node_lib.h"
 using namespace std;
 
+#define _USE_MATH_DEFINES
 /***************************************************************************/
 
 void parseFile(vector<autopilotData> &flightVec){
@@ -291,7 +293,7 @@ void returnExtremes(vector<autopilotData> &flightVec, extremes *values){
 
 /*****************************************************************************/
 
-void printToMatlabReadable(vector<ValueBlock *> &cubeVector){
+//void printToMatlabReadable(vector<ValueBlock *> &cubeVector){
 	/*
 	Want to write out to a csv file easily read by MATLAB to plot the data
 	quiver3(x,y,z,u,v,w)
@@ -300,6 +302,41 @@ void printToMatlabReadable(vector<ValueBlock *> &cubeVector){
 	direction (the combination of the three) i j k
 
 	Possible to normalize
-	*/
+
+	M_PI is pi val
+	
+	int size, i;
+	float u = 0, v = 0, w = 0;
+	double toRad;
+	string filename;
+	ofstream matlabQuiverData;
+
+	filename = "quiverData.csv";
+	matlabQuiverData.open(filename.c_str());
+
+	toRad = M_PI / 180;
+
+	size = cubeVector.size();
+	for(i = 0; i < size; i++){
+		
+		u = cubeVector->returnAvgMagnitude() * sin(toRad * cubeVector->returnAvgCompass());
+		v = cubeVector->returnAvgMagnitude() * cos(toRad * cubeVector->returnAvgCompass());
+
+		matlabQuiverData << cubeVector->returnLonMid() << ","
+						 << cubeVector->returnLatMid() << ","
+						 << cubeVector->returnAltMid() << ","
+						 << u << ","
+						 << v << ","
+						 << w << endl;
+	
+		u = 0;
+		v = 0;
+		w = 0;
+	}
+
+	matlabQuiverData.close();
+	matlabQuiverData.clear();
 }
+	*/
+
 

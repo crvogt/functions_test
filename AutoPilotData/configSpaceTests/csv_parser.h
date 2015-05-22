@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 
-#include "predictor_node_lib.h"
+//#include "predictor_node_lib.h"
 
 #define COLUMNS 16//22//not 21 columns? possible miscount
 #define NUMBEROFVALUES 11
@@ -51,6 +51,6 @@ void parseFile(std::vector<autopilotData> &);
 
 //void accessFiles(std::vector<autopilotData> &);
 
-void printToMatlabReadable(std::vector<ValueBlock *> &);
+//void printToMatlabReadable(std::vector<ValueBlock *> &);
 
 #endif

@@ -1,5 +1,4 @@
 clc
-clear all
 %%%%%%%%%%%%%%%%%%%%%%%Mathematical Monk%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % kernel = 3
 % switch kernel
@@ -72,3 +71,9 @@ clear all
 
 %%%%%%%%%%%%%%%%%%%Sampling from a Gaussian%%%%%%%%%%%%%%%%%%%
 %Still not sure what this one was about...
+scale = 0.00015;
+
+quiver3(x,y,z,u,v,w, scale)
+hold on
+axis([-3.15349 -3.15153 55.8615 55.8623 0 50])
+hold off
