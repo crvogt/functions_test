@@ -407,3 +407,94 @@ void prettyPrint(vector<ValueBlock *> &cubeVector){
 	}
 }
 */
+
+/*
+void dataPrune(vector<ValueBlock *> &cubeVector){
+	int size, n = 0, i, clearCounter = 0, diffCount; //n is number of measurements
+	float stdDev = 0, powHold = 0;
+	float topMean = 0, bottomMean = 0, cubeComp = 0, valueForLargest = 0;
+	double compMean = 0, devSum = 0, bigDiff = 0, bigDiffTemp = 0;
+	bool goodFlag = true;
+
+	size = cubeVector.size();
+
+	for(i = 0; i < size; i++){
+		if(!(cubeVector[i]->returnIsEmpty()) && cubeVector[i]->returnNumOfMeasure()){
+			n++;
+			compMean += cubeVector[i]->returnAvgCompass(); 
+		}
+	}
+
+	//Average compass value
+	compMean /= n;
+
+	//Determine std deviation
+	for(i = 0; i < size; i++){
+		if(!(cubeVector[i]->returnIsEmpty()) && cubeVector[i]->returnNumOfMeasure()){
+			powHold = cubeVector[i]->returnAvgCompass() - compMean;
+			powHold = pow(powHold, 2);
+			devSum += powHold;
+		}
+	}
+	//Finish std dev calc
+	stdDev = sqrt(devSum / (n - 1));
+	cout << "\n\nMean is: " << compMean << endl;
+	cout << "Standard deviation is: " << stdDev << endl;
+
+	//Now filter out value outside of this
+	topMean = compMean + stdDev;
+	if(topMean > 360){
+		topMean -= 360; 
+	}
+	bottomMean = compMean - stdDev;
+	if(bottomMean < 0){
+		bottomMean += 360;
+	}
+
+	for(i = 0; i < size; i++){
+		cubeComp = cubeVector[i]->returnAvgCompass();
+
+		//Find the value farthest from mean.
+		bigDiffTemp = fabs(cubeComp - compMean);
+		if(bigDiffTemp > bigDiff){
+			bigDiff = bigDiffTemp;
+			diffCount = i;
+			valueForLargest = cubeVector[i]->returnAvgCompass();
+			cout << "\nLarge val: " << valueForLargest << endl;
+		}
+
+		if(topMean < compMean){
+			if(cubeComp >= compMean && cubeComp <= 360){
+				goodFlag = true;				
+			}
+			else if(cubeComp > 360 && cubeComp < topMean){
+				goodFlag = true;
+			}
+		}
+		else if(bottomMean > compMean){
+			if(cubeComp >= bottomMean && cubeComp <= 360){
+				goodFlag = true;
+			}
+			else if(cubeComp > 360 && cubeComp <= compMean){
+				goodFlag = true;
+			}
+		}
+		else if(cubeComp >= bottomMean && cubeComp <= topMean){
+			goodFlag = true;
+		}
+		else{
+			goodFlag = false;
+		}
+
+		if(!goodFlag){
+			//delete data
+			deleteCubeData(cubeVector, i);
+			clearCounter++;		
+		}
+	}	
+	cout << "\nNumber cleared: " << clearCounter << endl;
+	cout << "Biggest difference: " << bigDiffTemp << endl;
+	cout << "Value for biggest difference: " << valueForLargest;
+	cout << "\nIndex value for biggest difference: " << diffCount << endl;
+}
+*/
