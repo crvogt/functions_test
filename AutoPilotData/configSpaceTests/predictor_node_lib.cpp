@@ -45,7 +45,7 @@ void ValueBlock::dataManip(void){
 		//cout << "\nwind vector agg value " << i << " magnitude " << windVectorAgg[i].magnitude;
 		pressureSum += windVectorAgg[i].pressure;
 	}
-	if(size){
+	if(size > 0){
 		//cout << "\nwindVectorAgg size " << size;
 		averageWCS.compass = compassSum / size;
 		//cout << "\ncompassSum " << compassSum; 
@@ -247,7 +247,7 @@ void sortValues(vector<autopilotData> &flightVec, vector<ValueBlock *> &cubeVect
 }
 
 /****************************************/
-void checkCube(extremes *values, vector<ValueBlock *> &cubeVector){
+void checkCube(extremes *values, vector<ValueBlock *> &cubeVector){//, int choice){
 	
 	/*
 	Current issue, make sure to check back about negative values
@@ -352,14 +352,15 @@ void printToMatlabReadable(vector<ValueBlock *> &cubeVector){
 	int size, i;
 	float u = 0, v = 0, w = 0;
 	double toRad;
-	string filename;
-	ofstream matlabQuiverData;
+	string filename, filename2;
+	ofstream matlabQuiverData, matlabInterpolationData;
 	//float scalingFactor = 0.1;
 	double normMag = 0;
 
 	filename = "quiverData.csv";
 	matlabQuiverData.open(filename.c_str());
 
+	filename2 = "interpolationRun.csv";
 	toRad = M_PI / 180;
 
 	size = cubeVector.size();
@@ -387,6 +388,39 @@ void printToMatlabReadable(vector<ValueBlock *> &cubeVector){
 
 	matlabQuiverData.close();
 	matlabQuiverData.clear();
+
+	matlabInterpolationData.open(filename2.c_str());
+
+	int emptiness = 0;
+	for(i = 0; i < size; i++){
+		if(!cubeVector[i]->returnIsEmpty()){
+			cout << "\nNot empty!\n";
+			emptiness++;
+			u = cubeVector[i]->returnAvgMagnitude() * sin(toRad * cubeVector[i]->returnAvgCompass());
+			v = cubeVector[i]->returnAvgMagnitude() * cos(toRad * cubeVector[i]->returnAvgCompass());
+
+			normMag = sqrt(pow(u,2.0) + pow(v,2) + pow(w,2));
+
+			u /= normMag;
+			v /= normMag;
+
+			matlabInterpolationData << cubeVector[i]->returnLonMid() << ","
+						 << cubeVector[i]->returnLatMid() << ","
+						 << cubeVector[i]->returnAltMid() << ","
+						 << u << ","
+						 << v << ","
+						 << w << endl;
+	
+			u = 0;
+			v = 0;
+			w = 0;
+		}
+	}
+
+	matlabInterpolationData.close();
+	matlabInterpolationData.clear();
+
+	cout << "\nEmpty count: " << emptiness << endl;
 }
 
 /*

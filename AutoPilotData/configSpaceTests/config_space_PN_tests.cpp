@@ -7,9 +7,14 @@
 #include "predictor_node_lib.h"
 //#include "gaussian_process.h"
 
+int programRoute(void);
+
 using namespace std;
 
 int main(int argc, char **argv){
+	int choice = 0;
+
+	choice = programRoute();
 
 	//Call a struct that holds the data of interest
 	//Defined in csv_parser.h
@@ -65,5 +70,25 @@ int main(int argc, char **argv){
 	//univarGauss(cubeVector);
 
 	return 0;
+}
+
+int programRoute(void){
+	//Choose the direction of the program
+
+	int choice = 0;
+	
+	while(!choice){
+		cout << "\n\nFeature recognition?(1)"
+			 << "\nField Interpolation and Regression?(2)"
+			 << "\nWeather Prediction(3)"
+			 << "\nFeature recognition and regression?(4)\n";
+
+		cin >> choice;
+		if(!choice){
+			cout << "\nMust make a choice at this point\n";
+		}
+	}
+
+	return choice;
 }
 

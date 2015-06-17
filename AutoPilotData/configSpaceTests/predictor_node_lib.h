@@ -94,7 +94,7 @@ struct GPSVals{
 };
 
 //Check values against cubes.
-void checkCube(extremes *, std::vector<ValueBlock *> &);
+void checkCube(extremes *, std::vector<ValueBlock *> &);//, int);
 
 void sortValues(std::vector<autopilotData> &, std::vector<ValueBlock *> &);
 
