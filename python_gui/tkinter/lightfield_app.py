@@ -9,7 +9,7 @@ root.title("Simple Graph")
 
 root.resizable(0,0)
 
-path = "/home/carson/python_gui/tkinter/tutorials/ball.bmp"
+path = "/home/carson/functions_test/python_gui/tkinter/ughFlann.jpg"
 img = ImageTk.PhotoImage(Image.open(path))
 
 points = []
@@ -23,6 +23,7 @@ class Draw:
 			c.create_oval(event.x, event.y, event.x+1, event.y+1, fill="black")
 			points.append(event.x)
 			points.append(event.y)
+			print(points)
 			return points
 
 		def canxy(event):
@@ -50,6 +51,7 @@ class Draw:
 		c.bind("<Button-1>", point)
 
 		c.bind("<Button-3>", graph)
+		print(graph)
 
 		c.bind("<Button-2>", toggle)
 
