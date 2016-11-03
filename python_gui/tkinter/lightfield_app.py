@@ -36,13 +36,15 @@ class Draw:
 		        global spline
 			if spline == 0:
 				c.itemconfigure(tag1, smooth=1)
+				print(c.itemcget(tag1, "splinesteps"))
 				spline = 1
 			elif spline == 1:
 				c.itemconfigure(tag1, smooth=0)
+				print(points)
 				spline = 0
 			return spline
 
-		c = Canvas(root, bg="white", width = 300, height = 300)
+		c = Canvas(root, bg="white", width = 640, height = 400)
 
 		c.configure(cursor="crosshair")
 
@@ -51,7 +53,6 @@ class Draw:
 		c.bind("<Button-1>", point)
 
 		c.bind("<Button-3>", graph)
-		print(graph)
 
 		c.bind("<Button-2>", toggle)
 
@@ -69,7 +70,7 @@ class DrawSend:
 class Viewer:
 	def __init__(self, master, img):
 
-		panel = Label(root, image = img, width = 300, height = 300)
+		panel = Label(root, image = img, width = 640, height = 400)
 		panel.grid(row = 2, column = 0, columnspan = 2)
 
 class ViewerSelect:
