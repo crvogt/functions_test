@@ -1,7 +1,7 @@
 from Tkinter import *
 from PIL import ImageTk, Image
 
-import subprocess
+import os
 
 root = Tk()
 
@@ -57,10 +57,14 @@ class Draw:
 		c.bind("<Button-2>", toggle)
 
 class DrawSend:
-	def __init__(self, master):
-		
+	def __init__(self, master, val):
+		def listCom():
+			os.system("ls -l")
+			newval = "echo " + str(val) + " " + str(val)
+			os.system(newval)
+
 		save = Button(
-			text = "SEND", fg = "black")
+			text = "SEND", fg = "black", command=listCom)
 		save.grid(row = 1, column = 0)
 		
 		erase = Button(
@@ -84,10 +88,11 @@ class ViewerSelect:
 
 		
 
+val = 10456
 
 drawApp = Draw(root)
 
-sendSketch = DrawSend(root)
+sendSketch = DrawSend(root, val)
 
 viewApp = Viewer(root, img)
 
