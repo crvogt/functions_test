@@ -114,14 +114,14 @@ y = (maxR - 0.05) * y;
 z = (maxR - 0.05) * z;
 c = ones ( size ( z ) );
 % surf ( x, y, z, c );
-plot3 ( xg(:,1), xg(:,2), xg(:,3), 'b.', 'Markersize', 20 );
+plot3 ( xg(:,1), xg(:,2), xg(:,3), 'k.', 'Markersize', 15 );
 axis equal
 grid on
 view ( 3 )
-xlabel ( '<--X-->' )
-ylabel ( '<--Y-->' )
-zlabel ( '<--Z-->' )
-title ( sprintf ( '%d point Fibonacci Grid on Sphere', ng ), 'FontSize', 24 );
+xlabel ( 'X' )
+ylabel ( 'Y' )
+zlabel ( 'Z' )
+title ( sprintf ( '%d Point Fibonacci Lattice', ng ), 'FontSize', 20 );
 hold off
 
 print ( '-dpng', filename );
