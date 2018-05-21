@@ -19,7 +19,7 @@ tNum = 0:length(t)-1;
 y3 = amplitude*cos(2*frequency3*pi*t) + amplitude;
 y2 = amplitude*cos(2*frequency2*pi*t) + amplitude;
 y1 = amplitude*sin(2*frequency*pi*t) + amplitude;
-y = y1 + y2;% + y3;
+y = y1 + y2 + y3;
 
 r = y; 
 
