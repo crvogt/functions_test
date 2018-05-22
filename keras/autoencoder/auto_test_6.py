@@ -18,7 +18,7 @@ input_img = Input(shape=(28, 28, 1))
 x = Conv2D(16, (3, 3), activation='relu', padding='same')(input_img)
 x = MaxPooling2D((2, 2), padding='same')(x)
 x = Conv2D(8, (3, 3), activation='relu', padding='same')(x) 
-x = UpSampling2D((2, 2), padding='same')(x) 
+x = MaxPooling2D((2, 2), padding='same')(x) 
 x = Conv2D(8, (3, 3), activation='relu', padding='same')(x) 
 encoded = MaxPooling2D((2, 2), padding='same')(x)
 
@@ -35,11 +35,11 @@ decoded = Conv2D(1, (3, 3), activation='sigmoid', padding='same')(x)
 autoencoder = Model(input_img, decoded)
 autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 
-autoencoder.fit(x_train, 
+autoencoder.fit(x_train, x_train, 
 				epochs=5,
 				batch_size=128,
 				shuffle=True,
-				validation_data=(x_test, None))
+				validation_data=(x_test, x_test))
 
 decoded_imgs = autoencoder.predict(x_test)
 
