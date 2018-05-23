@@ -21,7 +21,7 @@ x_train = x_train.astype('float32') / 255
 x_test = x_test.astype('float32') / 255
 
 m = 50 
-n_z = 2 
+n_z = 8
 n_epoch = 10
 
 #First, we implement the encoder net Q(z|X) which takes input X and outputs two

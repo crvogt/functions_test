@@ -56,7 +56,7 @@ input_shape = (original_dim, )
 intermediate_dim = 512
 batch_size = 128
 latent_dim = 8
-epochs = 1
+epochs = 10
 
 # VAE model = encoder + decoder
 # build encoder model
