@@ -1,9 +1,10 @@
-from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D
+from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Flatten
 from keras.models import Model 
 from keras import backend as K
 import keras
 
 from keras.datasets import mnist 
+import matplotlib.pyplot as plt
 import numpy as np 
 
 (x_train, _), (x_test, _) = mnist.load_data() 
@@ -20,7 +21,9 @@ x = MaxPooling2D((2, 2), padding='same')(x)
 x = Conv2D(8, (3, 3), activation='relu', padding='same')(x) 
 x = MaxPooling2D((2, 2), padding='same')(x) 
 x = Conv2D(8, (3, 3), activation='relu', padding='same')(x) 
-encoded = MaxPooling2D((2, 2), padding='same')(x)
+x = MaxPooling2D((2, 2), padding='same')(x)
+encoded = Flatten()(x)
+print(encoded.shape)
 
 #At this point the representation is (4, 4, 8) ie 128 dimensional
 
