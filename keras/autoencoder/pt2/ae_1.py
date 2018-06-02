@@ -2,6 +2,8 @@ import keras
 from keras.layers import Input, Conv2D, MaxPooling2D, Dense, Flatten
 from keras.models import Model 
 
+def gen
+
 midDim = 1000
 latentDim = 10
 
