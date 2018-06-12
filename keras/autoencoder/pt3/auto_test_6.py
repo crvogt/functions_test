@@ -38,7 +38,7 @@ autoencoder = Model(input_img, decoded)
 autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 
 autoencoder.fit(x_train, x_train, 
-				epochs=20,
+				epochs=1,
 				batch_size=128,
 				shuffle=True,
 				validation_data=(x_test, x_test))
@@ -62,4 +62,5 @@ for i in range(n):
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
+plt.savefig('auto_test_6.png')
 plt.show()
