@@ -22,8 +22,8 @@ x_train = x_train.astype('float32') / 255
 x_test = x_test.astype('float32') / 255
 
 m = 50 
-n_z = 200 
-n_epoch = 1
+n_z = 128
+n_epoch = 50
 
 #First, we implement the encoder net Q(z|X) which takes input X and outputs two
 #things, mu and Sigma X, the parameters of the Gaussian 
@@ -132,5 +132,5 @@ for i in range(n):
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
-plt.savefig('auto_test_7.png')
+plt.savefig('7_auto_test_7.png')
 plt.show()

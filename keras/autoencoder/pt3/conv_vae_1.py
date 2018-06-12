@@ -63,8 +63,8 @@ input_shape = (image_size, image_size, 1)
 batch_size = 128
 kernel_size = 3
 filters = 16
-latent_dim = 200
-epochs = 20
+latent_dim = 128
+epochs = 50
 
 # VAE model = encoder + decoder
 # build encoder model
@@ -160,4 +160,5 @@ for i in range(n):
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
+plt.savefig('png_conv_vae_1.png')
 plt.show()
