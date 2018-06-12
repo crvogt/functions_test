@@ -13,6 +13,7 @@ import tensorflow as tf
 #Load mnist data
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
+
 image_size = x_train.shape[1]
 original_dim = image_size * image_size
 x_train = np.reshape(x_train, [-1, original_dim])

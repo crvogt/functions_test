@@ -28,7 +28,7 @@ def my_gen():
 	You might try to put everything in a while 1 loop, and make sure everything
 	is just constantly shuffling (ie, always a rand set of vertices and internal Points)
 	'''
-	dataPath = "/home/carson/libs/keras_tests"
+	dataPath = "/home/carson/libs/keras_tests/"
 	while 1:
 		trainSetIter = random.randint(1,(len(os.listdir(dataPath))))
 
@@ -72,7 +72,7 @@ def my_gen():
 		vert3Pose.append(float(individualVec[2][3] + "." + individualVec[2][4]))
 
 		possibleVals = []
-		bodyImg = []
+		# bodyImg = []
 		bodyPose = []
 		#Now do this for a random value in the body directory
 		for file in os.listdir(internalPath):
@@ -92,67 +92,85 @@ def my_gen():
 			splitResult = val.split("_")
 			individualVec.append(splitResult)
 
-		bodyImg.append(individualVec[0][0]+".jpg")
+		bodyImgPath = individualVec[0][0] + ".jpg"
+		# print(bodyImgPath)
 
 		bodyPose.append(float(individualVec[0][1] + "." + individualVec[0][2]))
 		bodyPose.append(float(individualVec[0][3] + "." + individualVec[0][4]))
 
 		#Now we have bodyPose, bodyImg, vert1Pose, vert2Pose, vert3Pose, vertImages
+		vertImage1 = image.load_img(vertPath + '/' + vertImages[0])
+		vertImage1 = image.img_to_array(vertImage1)
+		vertImage1 = vertImage1/255.
+		vertImage2 = image.load_img(vertPath + '/' + vertImages[0])
+		vertImage2 = image.img_to_array(vertImage1)
+		vertImage2 = vertImage1/255.
+		vertImage3 = image.load_img(vertPath + '/' + vertImages[0])
+		vertImage3 = image.img_to_array(vertImage1)
+		vertImage3 = vertImage1/255.
+
 		imgLength = vertImage1.shape[0]*vertImage1.shape[1]*vertImage1.shape[2]
-		vertImage1 = image.load_img(vertImages[0])
-	    vertImage1 = image.img_to_array(vertImage1)
-	    vertImage1 = vertImage1/255.
-	    vertImage2 = image.load_img(vertImages[0])
-	    vertImage2 = image.img_to_array(vertImage1)
-	    vertImage2 = vertImage1/255.
-	    vertImage3 = image.load_img(vertImages[0])
-	    vertImage3 = image.img_to_array(vertImage1)
-	    vertImage3 = vertImage1/255.
 
-	    bodyImg = image.load_img(bodyImg)   
-	    bodyImg = image.img_to_array(bodyImg)
-	    bodyImg = bodyImg/255.
+		bodyImg = image.load_img(internalPath + '/' + bodyImgPath)   
+		bodyImg = image.img_to_array(bodyImg)
+		bodyImg = bodyImg/255.
 
-	    vertImage1 = np.reshape(vertImage1, [-1, imgLength])
-	    vertImage2 = np.reshape(vertImage2, [-1, imgLength])
-	    vertImage3 = np.reshape(vertImage3, [-1, imgLength])
-	    bodyImg = np.reshape(bodyImg, [-1, imgLength])
+		vertImage1 = np.reshape(vertImage1, [-1, imgLength])
+		vertImage2 = np.reshape(vertImage2, [-1, imgLength])
+		vertImage3 = np.reshape(vertImage3, [-1, imgLength])
+		bodyImg = np.reshape(bodyImg, [-1, imgLength])
 
 	    # yield[vertImage1, vertImage2, vertImage3, bodyImg]
 	    # returnList = list(vertImage1, vertImage2, vertImage3, vert1Pose, vert2Pose, vert3Pose, bodyImg, bodyPose)
 	    # returnList = tuple([vertImage1, vertImage2, vertImage3, vert1Pose, vert2Pose, vert3Pose, bodyImg, bodyPose])
 	    #We want the bodyImg to be the target variable
-	    inputList = [vertImage1, vertImage2, vertImage3, vert1Pose, vert2Pose, vert3Pose, bodyPose]
-	    returnTuple = ([inputList, bodyImg])
-	    yield returnTuple
+		inputList = [vertImage1, vertImage2, vertImage3, vert1Pose, vert2Pose, vert3Pose, bodyPose]
+		returnTuple = ([inputList, bodyImg])
+		yield returnTuple
 	    # return returnTuple
 	    # return returnList
 
 midDim = 1000
 latentDim = 10
 
-encoder_in = Input(shape=(480, 640, 3))
-x = Conv2D(64, (3, 3), padding='same', activation='relu')(encoder_in)
-x = MaxPooling2D((2,2))(x)
-x = Conv2D(64, (1, 1), padding='same', activation='relu')(x)
-x = MaxPooling2D((2,2))(x)
-encoded = Flatten()(x)
-encoder_model = Model(encoder_in, encoded)
-print(encoded.shape)
+encoder_in = Input(shape=(921600,))
+x = Dense(midDim, activation='relu')(encoder_in)
+encoded = Dense(latentDim, activation='relu')(x)
 
-image1 = Input(shape=(480, 640, 3))
-image2 = Input(shape=(480, 640, 3))
-image3 = Input(shape=(480, 640, 3))
+encoder_model = Model(encoder_in, encoded)
+# print(encoded.shape)
+
+image1 = Input(shape=(921600,))
+image2 = Input(shape=(921600,))
+image3 = Input(shape=(921600,))
 
 #This ensures the model will be shared, including weights
 encoded1 = encoder_model(image1)
 encoded2 = encoder_model(image2)
 encoded3 = encoder_model(image3)
 
+#Try and get poses
+pose1 = Input(shape=(2,))
+pose2 = Input(shape=(2,))
+pose3 = Input(shape=(2,))
+pose4 = Input(shape=(2,))
+
 #Now concatenate
-latent_z = keras.layers.concatenate([encoded1, encoded2, encoded3])
+latent_z = keras.layers.concatenate([encoded1, encoded2, encoded3, pose1, pose2, pose3, pose4])
 
 #Now add the other inputs to this latent_z
 
-#
-fit_generator()
+#Now write the decoder
+decoder_in = Dense(midDim, activation='relu')(latent_z)
+decoder_out = Dense(921600, activation='sigmoid')(decoder_in)
+
+# decoder_model = Model(latent_z, decoder_out)
+
+ae = Model([image1, image2, image3, pose1, pose2, pose3, pose4], decoder_out)
+# ae = Model(inputs=[image1, image2, image3], outputs=encoded)
+trainGenerator = my_gen()
+ae.compile(loss='mse', optimizer='adam')
+
+ae.fit_generator(trainGenerator, 
+			  steps_per_epoch=1,
+			  validation_steps=1)
