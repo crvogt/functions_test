@@ -24,7 +24,7 @@ x_test = x_test.astype('float32') / 255
 
 m = 50 
 n_z = 8
-n_epoch = 10
+n_epoch = 50
 
 #First, we implement the encoder net Q(z|X) which takes input X and outputs two
 #things, mu and Sigma X, the parameters of the Gaussian 
