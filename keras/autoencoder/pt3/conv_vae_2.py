@@ -62,7 +62,7 @@ x_test = x_test.astype('float32') / 255
 input_shape = (image_size, image_size, 1)
 batch_size = 128
 kernel_size = 3
-filters = 16
+filters = 32
 latent_dim = 128
 epochs = 50
 
@@ -70,21 +70,23 @@ epochs = 50
 # build encoder model
 inputs = Input(shape=input_shape, name='encoder_input')
 x = inputs
-for i in range(2):
-    filters *= 2
-    print(filters)
-    x = Conv2D(filters=filters,
-               kernel_size=kernel_size,
-               activation='relu',
-               strides=2,
-               padding='same')(x)
+x = Conv2D(filters=filters, kernel_size=kernel_size, activation='relu', strides=2, padding='same')(x)
+print(x.shape)
+filters = 64
+x = Conv2D(filters=filters, kernel_size=kernel_size, activation='relu', strides=2, padding='same')(x)
+print(x.shape)
 
 # shape info needed to build decoder model
 shape = K.int_shape(x)
+print(shape)
+# shape2 = x.shape #I think this and the above are equivalent
+# print(shape2)
 
 # generate latent vector Q(z|X)
 x = Flatten()(x)
+print(x.shape)
 x = Dense(16, activation='relu')(x)
+print(x.shape)
 z_mean = Dense(latent_dim, name='z_mean')(x)
 z_log_var = Dense(latent_dim, name='z_log_var')(x)
 
@@ -97,7 +99,6 @@ encoder = Model(inputs, [z_mean, z_log_var, z], name='encoder')
 
 # build decoder model
 latent_inputs = Input(shape=(latent_dim,), name='z_sampling')
-print(shape)
 x = Dense(shape[1] * shape[2] * shape[3], activation='relu')(latent_inputs)
 x = Reshape((shape[1], shape[2], shape[3]))(x)
 
@@ -162,5 +163,5 @@ for i in range(n):
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
-plt.savefig('png_conv_vae_1.png')
+plt.savefig('png_conv_vae_2.png')
 plt.show()
