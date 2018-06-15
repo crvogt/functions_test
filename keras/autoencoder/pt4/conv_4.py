@@ -263,16 +263,16 @@ decoder_in = Dense(shape[1]*shape[2]*shape[3], activation='relu')(latent_z)
 x = keras.layers.Reshape((shape[1], shape[2], shape[3]))(decoder_in)
 print('decoder in shape')
 print(x.shape)
-x = Conv2D(20, (1, 1), activation='relu', padding='same')(x)
+x = Conv2D(20, (2, 2), activation='relu', padding='same')(x)
 x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-x = Conv2D(12, (1, 1), activation='relu')(x) 
+x = Conv2D(12, (2, 2), padding='same', activation='relu')(x) 
 x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-x = Conv2D(10, (1, 1), padding='same', activation='relu')(x) 
+x = Conv2D(10, (2, 2), padding='same', activation='relu')(x) 
 x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-x = Conv2D(8, (1, 1), padding='same', activation='relu')(x) 
+x = Conv2D(8, (2, 2), padding='same', activation='relu')(x) 
 x = UpSampling2D((2, 2))(x) 
 print(x.shape)
 x = Conv2D(6, (3, 3), padding='same', activation='relu')(x)
@@ -289,7 +289,7 @@ ae.compile(loss='mse', optimizer='adam')
 
 ae.fit_generator(trainGenerator, 
 			  steps_per_epoch=15,
-			  epochs=20,
+			  epochs=30,
 			  validation_steps=1,
 			  use_multiprocessing=False,
 			  max_queue_size=10)
@@ -419,7 +419,7 @@ vPoseB = np.reshape(vPoseB, [1, 2])
 testVal = [vImage1, vImage2, vImage3, vPose1, vPose2, vPose3, vPoseB]
 
 bodyImgPath = individualVec[0][0] + ".jpg"
-
+print(bodyImgPath)
 bodyImg = image.load_img(internalPath + '/' + bodyImgPath, grayscale=False)   
 bodyImg = image.img_to_array(bodyImg)
 bodyImg = bodyImg/255.
@@ -435,4 +435,5 @@ plt.show()
 
 plt.imshow(newImage)
 plt.gray()
+plt.savefig('newImage30.png')
 plt.show()
