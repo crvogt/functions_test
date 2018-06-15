@@ -48,7 +48,7 @@ def my_gen():
 	is just constantly shuffling (ie, always a rand set of vertices and internal Points)
 	'''
 	dataPath = "/home/carson/libs/keras_tests/"
-	batch_size = 15
+	batch_size = 5
 	batch_count = 0
 	vImage1 = [] 
 	vImage2 = [] 
@@ -288,11 +288,11 @@ trainGenerator = my_gen()
 ae.compile(loss='mse', optimizer='adam')
 
 ae.fit_generator(trainGenerator, 
-			  steps_per_epoch=15,
-			  epochs=30,
+			  steps_per_epoch=5,
+			  epochs=2000,
 			  validation_steps=1,
 			  use_multiprocessing=False,
-			  max_queue_size=10)
+			  max_queue_size=1)
 
 
 
@@ -435,5 +435,5 @@ plt.show()
 
 plt.imshow(newImage)
 plt.gray()
-plt.savefig('newImage30.png')
+plt.savefig('newImage2000.png')
 plt.show()
