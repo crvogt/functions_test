@@ -428,10 +428,11 @@ bodyImg = bodyImg/255.
 newImage = ae.predict(testVal)
 newImage = np.reshape(newImage, [imgShape[0], imgShape[1], imgShape[2]])
 print(newImage.shape)
+
+fig = plt.figure(figsize=(10,4))
+fig.add_subplot(1,2,1)
 plt.imshow(bodyImg)
-plt.show()
-
-
+fig.add_subplot(1,2,2)
 plt.imshow(newImage)
-plt.savefig('newImage5.png')
+plt.savefig('newImage10.png')
 plt.show()
