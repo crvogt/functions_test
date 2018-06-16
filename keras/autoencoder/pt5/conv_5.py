@@ -289,7 +289,7 @@ ae.compile(loss='mse', optimizer='adam')
 
 ae.fit_generator(trainGenerator, 
 			  steps_per_epoch=5,
-			  epochs=10,
+			  epochs=20000,
 			  validation_steps=1,
 			  use_multiprocessing=False,
 			  max_queue_size=1)
@@ -434,5 +434,5 @@ fig.add_subplot(1,2,1)
 plt.imshow(bodyImg)
 fig.add_subplot(1,2,2)
 plt.imshow(newImage)
-plt.savefig('newImage10.png')
+plt.savefig('newImage20000.png')
 plt.show()
