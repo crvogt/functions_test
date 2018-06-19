@@ -48,7 +48,7 @@ def my_gen():
 	is just constantly shuffling (ie, always a rand set of vertices and internal Points)
 	'''
 	dataPath = "/home/carson/libs/keras_tests_orig/"
-	batch_size = 1
+	batch_size = 5
 	batch_count = 0
 	vImage1 = [] 
 	vImage2 = [] 
@@ -208,18 +208,26 @@ pose2 = Input(shape=(2,))
 pose3 = Input(shape=(2,))
 pose4 = Input(shape=(2,))
 
-#Shapes based on inverse deep graphics network
-#...but to work on my work computer
 encoder_in = Input(shape=(h,w,channels))
-x = Conv2D(64, (5, 5), padding='same', activation='relu')(encoder_in)
+x = Conv2D(10, (5, 5), padding='same', activation='relu')(encoder_in)
 print(x.shape)
 x = MaxPooling2D((2,2))(x)
 print(x.shape)
-x = Conv2D(32, (5, 5), padding='same', activation='relu')(x)
+x = Conv2D(20, (5, 5), padding='same', activation='relu')(x)
 print(x.shape)
 x = MaxPooling2D((2,2))(x)
 print(x.shape)
-x = Conv2D(16, (5, 5), padding='same', activation='relu')(x)
+x = Conv2D(30, (5, 5), padding='same', activation='relu')(x)
+print(x.shape)
+x = MaxPooling2D((2,2))(x)
+print(x.shape)
+x = Conv2D(35, (5, 5), padding='same', activation='relu')(x)
+print(x.shape)
+x = MaxPooling2D((2,2))(x)
+print(x.shape)
+x = Conv2D(40, (5, 5), padding='same', activation='relu')(x)
+print(x.shape)
+x = MaxPooling2D((2,2))(x)
 print(x.shape)
 print('pre flatten shape')
 shape = K.int_shape(x)
@@ -255,15 +263,23 @@ decoder_in = Dense(shape[1]*shape[2]*shape[3], activation='relu')(latent_z)
 x = keras.layers.Reshape((shape[1], shape[2], shape[3]))(decoder_in)
 print('decoder in shape')
 print(x.shape)
-x = Conv2D(16, (7, 7), activation='relu', padding='same')(x)
+x = Conv2D(40, (5, 5), activation='relu', padding='same')(x)
 x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-x = Conv2D(32, (7, 7), padding='same', activation='relu')(x) 
+x = Conv2D(35, (5, 5), padding='same', activation='relu')(x) 
 x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-x = Conv2D(64, (7, 7), padding='same', activation='relu')(x) 
+x = Conv2D(30, (5, 5), padding='same', activation='relu')(x) 
+x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-decoder_out = Conv2D(3, (7, 7), activation='sigmoid', padding='same')(x) 
+x = Conv2D(20, (5, 5), padding='same', activation='relu')(x) 
+x = UpSampling2D((2, 2))(x) 
+print(x.shape)
+x = Conv2D(10, (5, 5), padding='same', activation='relu')(x)
+x = UpSampling2D((2, 2))(x)
+print(x.shape)
+x = Conv2D(5, (5,5), padding='same', activation='relu')(x)
+decoder_out = Conv2D(3, (5, 5), activation='sigmoid', padding='same')(x) 
 print('decoder out')
 print(decoder_out.shape)
 
@@ -273,8 +289,8 @@ trainGenerator = my_gen()
 ae.compile(loss='mse', optimizer='adam')
 
 ae.fit_generator(trainGenerator, 
-			  steps_per_epoch=1,
-			  epochs=50,
+			  steps_per_epoch=5,
+			  epochs=1000,
 			  validation_steps=1,
 			  use_multiprocessing=False,
 			  max_queue_size=1)
@@ -293,7 +309,7 @@ ae.fit_generator(trainGenerator,
 
 
 
-dataPath = "/home/carson/libs/keras_tests/"
+dataPath = "/home/carson/libs/keras_tests_orig/"
 vImage1 = [] 
 vImage2 = [] 
 vImage3 = [] 
@@ -419,5 +435,5 @@ fig.add_subplot(1,2,1)
 plt.imshow(bodyImg)
 fig.add_subplot(1,2,2)
 plt.imshow(newImage)
-plt.savefig('newImage1.png')
+plt.savefig('newImagelatent104.png')
 plt.show()
