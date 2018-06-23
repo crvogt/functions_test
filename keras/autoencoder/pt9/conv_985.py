@@ -47,7 +47,7 @@ def my_gen():
 	You might try to put everything in a while 1 loop, and make sure everything
 	is just constantly shuffling (ie, always a rand set of vertices and internal Points)
 	'''
-	dataPath = "/home/carson/libs/keras_tests_orig/"
+	dataPath = "/home/carson/libs/keras_tests/"
 	batch_size = 5
 	batch_count = 0
 	vImage1 = [] 
@@ -73,12 +73,12 @@ def my_gen():
 		splitResult = []
 
 		for file in os.listdir(vertPath):
-		    if file.endswith(".mat"):
+		    if file.endswith(".mat") or file.endswith(".txt"):
 		    	splitResult = file.split("_")
 
 		resultVec = []
 		for file in os.listdir(vertPath):
-		    if file.endswith(".mat"):
+		    if file.endswith(".mat") or file.endswith(".txt"):
 		    	splitResult = file.split(".")
 		    	resultVec.append(splitResult[0])
 
@@ -86,7 +86,8 @@ def my_gen():
 		for val in resultVec:
 			splitResult = val.split("_")
 			individualVec.append(splitResult)
-
+	
+		#print(individualVec[0][0])
 		vertImages.append(individualVec[0][0]+".jpg")
 		vertImages.append(individualVec[1][0]+".jpg")
 		vertImages.append(individualVec[2][0]+".jpg")
@@ -106,7 +107,7 @@ def my_gen():
 		bodyPose = []
 		#Now do this for a random value in the body directory
 		for file in os.listdir(internalPath):
-		    if file.endswith(".mat"):
+		    if file.endswith(".mat") or file.endswith(".txt"):
 		    	possibleVals.append(file)
 
 		#Choose random file
@@ -275,10 +276,11 @@ print(x.shape)
 x = Conv2D(20, (5, 5), padding='same', activation='relu')(x) 
 x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-x = Conv2D(10, (5, 5), padding='same', activation='relu')(x)
+x = Conv2D(15, (5, 5), padding='same', activation='relu')(x)
 x = UpSampling2D((2, 2))(x)
 print(x.shape)
-x = Conv2D(5, (5,5), padding='same', activation='relu')(x)
+x = Conv2D(10, (5,5), padding='same', activation='relu')(x)
+#x = Conv2D(5, (5,5), padding='same', activation='relu')(x)
 decoder_out = Conv2D(3, (5, 5), activation='sigmoid', padding='same')(x) 
 print('decoder out')
 print(decoder_out.shape)
@@ -309,7 +311,7 @@ ae.fit_generator(trainGenerator,
 
 
 
-dataPath = "/home/carson/libs/keras_tests_orig/"
+dataPath = "/home/carson/libs/keras_tests/"
 vImage1 = [] 
 vImage2 = [] 
 vImage3 = [] 
@@ -333,12 +335,12 @@ vert3Pose = []
 splitResult = []
 
 for file in os.listdir(vertPath):
-    if file.endswith(".mat"):
+    if file.endswith(".mat") or file.endswith(".txt"):
     	splitResult = file.split("_")
 
 resultVec = []
 for file in os.listdir(vertPath):
-    if file.endswith(".mat"):
+    if file.endswith(".mat") or file.endswith(".txt"):
     	splitResult = file.split(".")
     	resultVec.append(splitResult[0])
 
@@ -364,7 +366,7 @@ possibleVals = []
 bodyPose = []
 #Now do this for a random value in the body directory
 for file in os.listdir(internalPath):
-    if file.endswith(".mat"):
+    if file.endswith(".mat") or file.endswith(".txt"):
     	possibleVals.append(file)
 
 #Choose random file
@@ -435,5 +437,5 @@ fig.add_subplot(1,2,1)
 plt.imshow(bodyImg)
 fig.add_subplot(1,2,2)
 plt.imshow(newImage)
-plt.savefig('newImagelatent104.png')
+plt.savefig('newImagelatent1008.png')
 plt.show()
