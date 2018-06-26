@@ -10,23 +10,25 @@ Also, it could be a list, in which casex is expected to map 1:1 to the inputs de
 
 import keras 
 from keras.layers import Input, Conv2D, MaxPooling2D, Dense, Flatten, Lambda, UpSampling2D
-from keras.models import Model 
+from keras.models import Model, load_model
 from keras.preprocessing import image 
 import keras.backend as K 
+from keras.callbacks import ModelCheckpoint
 import matplotlib.pyplot as plt
 import numpy as np
 import random
 import tensorflow as tf
-from keras.backend.tensorflow_backend import set_session
 
 import os
 from PIL import Image
 import sys
 
-config = tf.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.9
-# config.gpu_options.visible_device
-set_session(tf.Session(config=config))
+# from keras.backend.tensorflow_backend import set_session
+
+# config = tf.ConfigProto()
+# config.gpu_options.per_process_gpu_memory_fraction = 1
+# config.gpu_options.visible_device_list = "0"
+# set_session(tf.Session(config=config))
 
 def get_model_memory_usage(batch_size, model):
 	shapes_mem_count = 0
@@ -41,7 +43,6 @@ def get_model_memory_usage(batch_size, model):
 		shapes_mem_count += single_layer_mem
 
 	trainable_count = np.sum([K.count_params(p) for p in set(model.trainable_weights)])
-	print('trainable params = ' + str(trainable_count))
 	non_trainable_count = np.sum([K.count_params(p) for p in set(model.non_trainable_weights)])
 
 	total_memory = 4.0*batch_size*(shapes_mem_count + trainable_count + non_trainable_count)
@@ -75,7 +76,7 @@ def my_gen():
 	is just constantly shuffling (ie, always a rand set of vertices and internal Points)
 	'''
 	dataPath = "/home/carson/libs/keras_tests/"
-	batch_size = 1
+	batch_size = 4
 	batch_count = 0
 	vImage1 = [] 
 	vImage2 = [] 
@@ -100,12 +101,12 @@ def my_gen():
 		splitResult = []
 
 		for file in os.listdir(vertPath):
-		    if file.endswith(".mat"):
+		    if file.endswith(".mat") or file.endswith(".txt"):
 		    	splitResult = file.split("_")
 
 		resultVec = []
 		for file in os.listdir(vertPath):
-		    if file.endswith(".mat"):
+		    if file.endswith(".mat") or file.endswith(".txt"):
 		    	splitResult = file.split(".")
 		    	resultVec.append(splitResult[0])
 
@@ -113,7 +114,8 @@ def my_gen():
 		for val in resultVec:
 			splitResult = val.split("_")
 			individualVec.append(splitResult)
-
+	
+		#print(individualVec[0][0])
 		vertImages.append(individualVec[0][0]+".jpg")
 		vertImages.append(individualVec[1][0]+".jpg")
 		vertImages.append(individualVec[2][0]+".jpg")
@@ -133,7 +135,7 @@ def my_gen():
 		bodyPose = []
 		#Now do this for a random value in the body directory
 		for file in os.listdir(internalPath):
-		    if file.endswith(".mat"):
+		    if file.endswith(".mat") or file.endswith(".txt"):
 		    	possibleVals.append(file)
 
 		#Choose random file
@@ -223,7 +225,7 @@ h = 480
 w = 640
 channels = 3
 midDim = 1000
-latentDim = 10
+latentDim = 150
 
 #Inputs
 image1 = Input(shape=(h, w, channels))
@@ -235,17 +237,26 @@ pose2 = Input(shape=(2,))
 pose3 = Input(shape=(2,))
 pose4 = Input(shape=(2,))
 
-#Shapes based on inverse deep graphics network
 encoder_in = Input(shape=(h,w,channels))
-x = Conv2D(96, (5, 5), padding='same', activation='relu')(encoder_in)
+x = Conv2D(10, (5, 5), padding='same', activation='relu')(encoder_in)
 print(x.shape)
 x = MaxPooling2D((2,2))(x)
 print(x.shape)
-x = Conv2D(64, (5, 5), padding='same', activation='relu')(x)
+x = Conv2D(20, (5, 5), padding='same', activation='relu')(x)
 print(x.shape)
 x = MaxPooling2D((2,2))(x)
 print(x.shape)
-x = Conv2D(32, (5, 5), padding='same', activation='relu')(x)
+x = Conv2D(30, (5, 5), padding='same', activation='relu')(x)
+print(x.shape)
+x = MaxPooling2D((2,2))(x)
+print(x.shape)
+x = Conv2D(35, (5, 5), padding='same', activation='relu')(x)
+print(x.shape)
+x = MaxPooling2D((2,2))(x)
+print(x.shape)
+x = Conv2D(40, (5, 5), padding='same', activation='relu')(x)
+print(x.shape)
+x = MaxPooling2D((2,2))(x)
 print(x.shape)
 print('pre flatten shape')
 shape = K.int_shape(x)
@@ -281,19 +292,30 @@ decoder_in = Dense(shape[1]*shape[2]*shape[3], activation='relu')(latent_z)
 x = keras.layers.Reshape((shape[1], shape[2], shape[3]))(decoder_in)
 print('decoder in shape')
 print(x.shape)
-x = Conv2D(32, (7, 7), activation='relu', padding='same')(x)
+x = Conv2D(40, (5, 5), activation='relu', padding='same')(x)
 x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-x = Conv2D(64, (7, 7), padding='same', activation='relu')(x) 
+x = Conv2D(35, (5, 5), padding='same', activation='relu')(x) 
 x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-x = Conv2D(96, (7, 7), padding='same', activation='relu')(x) 
+x = Conv2D(30, (5, 5), padding='same', activation='relu')(x) 
+x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-decoder_out = Conv2D(3, (7, 7), activation='sigmoid', padding='same')(x) 
+x = Conv2D(20, (5, 5), padding='same', activation='relu')(x) 
+x = UpSampling2D((2, 2))(x) 
+print(x.shape)
+x = Conv2D(15, (5, 5), padding='same', activation='relu')(x)
+x = UpSampling2D((2, 2))(x)
+print(x.shape)
+x = Conv2D(10, (5,5), padding='same', activation='relu')(x)
+#x = Conv2D(5, (5,5), padding='same', activation='relu')(x)
+decoder_out = Conv2D(3, (5, 5), activation='sigmoid', padding='same')(x) 
 print('decoder out')
 print(decoder_out.shape)
 
 ae = Model([image1, image2, image3, pose1, pose2, pose3, pose4], decoder_out)
+
+print('model params = ' + str(ae.count_params()))
 
 get_model_memory_usage(5, ae)
 
@@ -301,23 +323,16 @@ get_model_memory_usage(5, ae)
 trainGenerator = my_gen()
 ae.compile(loss='mse', optimizer='adam')
 
+checkpointer = ModelCheckpoint(filepath='/home/carson/functions_test/keras/autoencoder/pt10/weights.hdf5', verbose=1, save_best_only=True)
+
 ae.fit_generator(trainGenerator, 
-			  steps_per_epoch=1,
-			  epochs=5,
+			  steps_per_epoch=4,
+			  epochs=20000,
 			  validation_steps=1,
 			  use_multiprocessing=False,
 			  max_queue_size=1)
 
-
-
-
-
-
-
-
-
-
-
+ae.save('ae_1.h5')
 
 
 
@@ -346,12 +361,12 @@ vert3Pose = []
 splitResult = []
 
 for file in os.listdir(vertPath):
-    if file.endswith(".mat"):
+    if file.endswith(".mat") or file.endswith(".txt"):
     	splitResult = file.split("_")
 
 resultVec = []
 for file in os.listdir(vertPath):
-    if file.endswith(".mat"):
+    if file.endswith(".mat") or file.endswith(".txt"):
     	splitResult = file.split(".")
     	resultVec.append(splitResult[0])
 
@@ -377,7 +392,7 @@ possibleVals = []
 bodyPose = []
 #Now do this for a random value in the body directory
 for file in os.listdir(internalPath):
-    if file.endswith(".mat"):
+    if file.endswith(".mat") or file.endswith(".txt"):
     	possibleVals.append(file)
 
 #Choose random file
@@ -448,5 +463,5 @@ fig.add_subplot(1,2,1)
 plt.imshow(bodyImg)
 fig.add_subplot(1,2,2)
 plt.imshow(newImage)
-plt.savefig('newImage20000.png')
+plt.savefig('newImage001.png')
 plt.show()

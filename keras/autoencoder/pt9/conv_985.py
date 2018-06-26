@@ -22,6 +22,33 @@ import os
 from PIL import Image
 import sys
 
+# from keras.backend.tensorflow_backend import set_session
+
+# config = tf.ConfigProto()
+# config.gpu_options.per_process_gpu_memory_fraction = 1
+# config.gpu_options.visible_device_list = "0"
+# set_session(tf.Session(config=config))
+
+def get_model_memory_usage(batch_size, model):
+	shapes_mem_count = 0
+	for l in model.layers:
+		single_layer_mem = 1
+		for s in l.output_shape:
+			if type(s) is tuple:
+				s = s[1]
+			if s is None:
+				continue
+			single_layer_mem *= s 
+		shapes_mem_count += single_layer_mem
+
+	trainable_count = np.sum([K.count_params(p) for p in set(model.trainable_weights)])
+	non_trainable_count = np.sum([K.count_params(p) for p in set(model.non_trainable_weights)])
+
+	total_memory = 4.0*batch_size*(shapes_mem_count + trainable_count + non_trainable_count)
+	gbytes = np.round(total_memory / (1024.0 ** 3), 3)
+	print('number of gbytes = ' + str(gbytes))
+	return gbytes
+
 def sampling(args):
     """Reparameterization trick by sampling fr an isotropic unit Gaussian.
     # Arguments:
@@ -197,7 +224,7 @@ h = 480
 w = 640
 channels = 3
 midDim = 1000
-latentDim = 100
+latentDim = 250
 
 #Inputs
 image1 = Input(shape=(h, w, channels))
@@ -286,13 +313,18 @@ print('decoder out')
 print(decoder_out.shape)
 
 ae = Model([image1, image2, image3, pose1, pose2, pose3, pose4], decoder_out)
+
+print('model params = ' + str(ae.count_params()))
+
+get_model_memory_usage(5, ae)
+
 # ae = Model(inputs=[image1, image2, image3], outputs=encoded)
 trainGenerator = my_gen()
 ae.compile(loss='mse', optimizer='adam')
 
 ae.fit_generator(trainGenerator, 
 			  steps_per_epoch=5,
-			  epochs=1000,
+			  epochs=1,
 			  validation_steps=1,
 			  use_multiprocessing=False,
 			  max_queue_size=1)
@@ -437,5 +469,5 @@ fig.add_subplot(1,2,1)
 plt.imshow(bodyImg)
 fig.add_subplot(1,2,2)
 plt.imshow(newImage)
-plt.savefig('newImagelatent1008.png')
+plt.savefig('newImagelatent10009.png')
 plt.show()
