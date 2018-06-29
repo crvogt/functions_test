@@ -76,8 +76,8 @@ def my_gen():
 	You might try to put everything in a while 1 loop, and make sure everything
 	is just constantly shuffling (ie, always a rand set of vertices and internal Points)
 	'''
-	dataPath = "/home/carson/libs/keras_tests/"
-	batch_size = 24
+	dataPath = "/home/carson/data_files/all_training_data/"
+	batch_size = 2
 	batch_count = 0
 	vImage1 = [] 
 	vImage2 = [] 
@@ -305,17 +305,16 @@ ae.compile(loss='mse', optimizer='adam')
 checkpointer = ModelCheckpoint(filepath='/home/carson/functions_test/keras/autoencoder/pt10/weights.hdf5', verbose=1, save_best_only=True)
 
 ae.fit_generator(trainGenerator, 
-			  steps_per_epoch=12,
+			  steps_per_epoch=2,
 			  epochs=4,
-			  validation_steps=1,
-			  use_multiprocessing=False)
+			  validation_steps=1)
 
 # ae.save('ae_1.h5')
 
 
 
 
-dataPath = "/home/carson/libs/keras_tests/"
+dataPath = "/home/carson/data_files/all_training_data/"
 vImage1 = [] 
 vImage2 = [] 
 vImage3 = [] 
@@ -435,7 +434,7 @@ bodyImg = bodyImg/255.
 newImage = ae.predict(testVal)
 newImage = np.reshape(newImage, [imgShape[0], imgShape[1], imgShape[2]])
 
-scipy.misc.imwrite('newImage_1.jpg', newImage)
+scipy.misc.imsave('newImage_1.jpg', newImage)
 # print(newImage.shape)
 '''
 fig = plt.figure(figsize=(10,4))
