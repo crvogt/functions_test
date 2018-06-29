@@ -306,7 +306,7 @@ checkpointer = ModelCheckpoint(filepath='/home/carson/functions_test/keras/autoe
 
 ae.fit_generator(trainGenerator, 
 			  steps_per_epoch=2,
-			  epochs=1000,
+			  epochs=6000,
 			  validation_steps=1)
 
 # ae.save('ae_1.h5')
@@ -434,7 +434,7 @@ bodyImg = bodyImg/255.
 newImage = ae.predict(testVal)
 newImage = np.reshape(newImage, [imgShape[0], imgShape[1], imgShape[2]])
 
-scipy.misc.imsave('newImage_1000.jpg', newImage)
+scipy.misc.imsave('newImage_6000.jpg', newImage)
 # print(newImage.shape)
 '''
 fig = plt.figure(figsize=(10,4))
