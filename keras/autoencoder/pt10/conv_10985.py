@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 import tensorflow as tf
+import scipy.misc
 
 import os
 from PIL import Image
@@ -456,8 +457,10 @@ bodyImg = bodyImg/255.
 # print(testVal)
 newImage = ae.predict(testVal)
 newImage = np.reshape(newImage, [imgShape[0], imgShape[1], imgShape[2]])
-print(newImage.shape)
 
+scipy.misc.imwrite('newImage.jpg', newImage)
+# print(newImage.shape)
+'''
 fig = plt.figure(figsize=(10,4))
 fig.add_subplot(1,2,1)
 plt.imshow(bodyImg)
@@ -465,3 +468,4 @@ fig.add_subplot(1,2,2)
 plt.imshow(newImage)
 plt.savefig('newImage001.png')
 plt.show()
+'''

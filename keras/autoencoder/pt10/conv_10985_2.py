@@ -10,13 +10,15 @@ Also, it could be a list, in which casex is expected to map 1:1 to the inputs de
 
 import keras 
 from keras.layers import Input, Conv2D, MaxPooling2D, Dense, Flatten, Lambda, UpSampling2D
-from keras.models import Model 
+from keras.models import Model, load_model
 from keras.preprocessing import image 
 import keras.backend as K 
+from keras.callbacks import ModelCheckpoint
 import matplotlib.pyplot as plt
 import numpy as np
 import random
 import tensorflow as tf
+import scipy.misc
 
 import os
 from PIL import Image
@@ -75,7 +77,7 @@ def my_gen():
 	is just constantly shuffling (ie, always a rand set of vertices and internal Points)
 	'''
 	dataPath = "/home/carson/libs/keras_tests/"
-	batch_size = 2
+	batch_size = 24
 	batch_count = 0
 	vImage1 = [] 
 	vImage2 = [] 
@@ -224,7 +226,7 @@ h = 480
 w = 640
 channels = 3
 midDim = 1000
-latentDim = 250
+latentDim = 150
 
 #Inputs
 image1 = Input(shape=(h, w, channels))
@@ -237,29 +239,16 @@ pose3 = Input(shape=(2,))
 pose4 = Input(shape=(2,))
 
 encoder_in = Input(shape=(h,w,channels))
-x = Conv2D(5, (5, 5), padding='same', activation='relu')(encoder_in)
+x = Conv2D(64, (5, 5), padding='same', activation='relu')(encoder_in)
 print(x.shape)
 x = MaxPooling2D((2,2))(x)
 print(x.shape)
-x = Conv2D(5, (5, 5), padding='same', activation='relu')(x)
+x = Conv2D(32, (5, 5), padding='same', activation='relu')(x)
 print(x.shape)
 x = MaxPooling2D((2,2))(x)
 print(x.shape)
-x = Conv2D(10, (5, 5), padding='same', activation='relu')(x)
-print(x.shape)
-x = MaxPooling2D((2,2))(x)
-print(x.shape)
-x = Conv2D(15, (5, 5), padding='same', activation='relu')(x)
-print(x.shape)
-x = MaxPooling2D((2,2))(x)
-print(x.shape)
-x = Conv2D(20, (5, 5), padding='same', activation='relu')(x)
-print(x.shape)
-x = MaxPooling2D((2,2))(x)
-print(x.shape)
-print('pre flatten shape')
+x = Conv2D(16, (5, 5), padding='same', activation='relu')(x)
 shape = K.int_shape(x)
-print(shape)
 x = Flatten()(x)
 
 z_mean = Dense(latentDim, name='z_mean')(x)
@@ -291,24 +280,15 @@ decoder_in = Dense(shape[1]*shape[2]*shape[3], activation='relu')(latent_z)
 x = keras.layers.Reshape((shape[1], shape[2], shape[3]))(decoder_in)
 print('decoder in shape')
 print(x.shape)
-x = Conv2D(10, (7, 7), activation='relu', padding='same')(x)
+x = Conv2D(16, (7, 7), activation='relu', padding='same')(x)
 x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-x = Conv2D(15, (7, 7), padding='same', activation='relu')(x) 
+x = Conv2D(32, (7, 7), padding='same', activation='relu')(x) 
 x = UpSampling2D((2, 2))(x) 
 print(x.shape)
-x = Conv2D(20, (7, 7), padding='same', activation='relu')(x) 
-x = UpSampling2D((2, 2))(x) 
+x = Conv2D(64, (7, 7), padding='same', activation='relu')(x) 
 print(x.shape)
-x = Conv2D(30, (7, 7), padding='same', activation='relu')(x) 
-x = UpSampling2D((2, 2))(x) 
-print(x.shape)
-x = Conv2D(35, (7, 7), padding='same', activation='relu')(x)
-x = UpSampling2D((2, 2))(x)
-print(x.shape)
-x = Conv2D(40, (5,5), padding='same', activation='relu')(x)
-#x = Conv2D(5, (5,5), padding='same', activation='relu')(x)
-decoder_out = Conv2D(3, (5, 5), activation='sigmoid', padding='same')(x) 
+decoder_out = Conv2D(3, (7, 7), activation='sigmoid', padding='same')(x) 
 print('decoder out')
 print(decoder_out.shape)
 
@@ -322,23 +302,15 @@ get_model_memory_usage(5, ae)
 trainGenerator = my_gen()
 ae.compile(loss='mse', optimizer='adam')
 
+checkpointer = ModelCheckpoint(filepath='/home/carson/functions_test/keras/autoencoder/pt10/weights.hdf5', verbose=1, save_best_only=True)
+
 ae.fit_generator(trainGenerator, 
-			  steps_per_epoch=2,
-			  epochs=1500,
+			  steps_per_epoch=12,
+			  epochs=4,
 			  validation_steps=1,
-			  use_multiprocessing=False,
-			  max_queue_size=1)
+			  use_multiprocessing=False)
 
-
-
-
-
-
-
-
-
-
-
+# ae.save('ae_1.h5')
 
 
 
@@ -462,12 +434,15 @@ bodyImg = bodyImg/255.
 # print(testVal)
 newImage = ae.predict(testVal)
 newImage = np.reshape(newImage, [imgShape[0], imgShape[1], imgShape[2]])
-print(newImage.shape)
 
+scipy.misc.imwrite('newImage_1.jpg', newImage)
+# print(newImage.shape)
+'''
 fig = plt.figure(figsize=(10,4))
 fig.add_subplot(1,2,1)
 plt.imshow(bodyImg)
 fig.add_subplot(1,2,2)
 plt.imshow(newImage)
-plt.savefig('newImagelatent10009_1.png')
+plt.savefig('newImage001.png')
 plt.show()
+'''
