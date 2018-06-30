@@ -30,9 +30,9 @@ h=120
 w=160
 
 batchGlob = 8
-epochNum = 5000
+epochNum = 25000
 dataLoc = "/home/carson/libs/keras_tests/"
-imageName = 'epoch_5000_2.png'
+imageName = 'epoch_25000_2.png'
 
 # from keras.backend.tensorflow_backend import set_session
 
