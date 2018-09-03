@@ -47,7 +47,7 @@ for counter = 1:1:numLenses
 	end
 	lensImg = imcrop(img,[colVal-effR, rowVal-effR, effR*2, effR*2]);
 	
-	chosenLenses = lensImg; 
+	chosenLenses(:,:,:,counter) = lensImg; 
 end
 
 figure()
