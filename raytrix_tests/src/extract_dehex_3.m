@@ -43,6 +43,7 @@ effR = 12;
 numLenses = 29;
 lensImg = zeros(effR*2+1, effR*2+1, 3);
 chosenLenses = zeros(effR*2+1, effR*2+1, 3, numLenses, 'uint16');
+chosenLenses2 = zeros(effR*2+1, effR, 3, 'uint16');
 for counter = 1:1:numLenses
 
 	% counter
@@ -59,7 +60,13 @@ for counter = 1:1:numLenses
 	lensImg = imcrop(img,[colVal-effR, rowVal-effR, effR*2, effR*2]);
 	
 	chosenLenses(:,:,:,counter) = lensImg; 
+	chosenLenses2 = cat(2, chosenLenses2, lensImg);
 end
+
+chosenLenses2 = cat(2, chosenLenses2, zeros(effR*2+1, effR, 3, 'uint16'));
 
 figure()
 montage(chosenLenses, 'Size', [1 numLenses])
+
+figure()
+imshow(chosenLenses2)
