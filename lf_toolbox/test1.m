@@ -21,7 +21,7 @@ graySrc = imread(strcat(dataPath, 'gray.png'));
 src = imread(strcat(dataPath, 'processed.png'));
 fprintf('Images loaded...\n');
 
-[LF, DecodeOptions, DebayerLensletImage, CorrectedLensletImage] = LFDecodeLensletImageSimple_crv(src);
+[LF, DecodeOptions] = LFDecodeLensletImageSimple_crv(src);
 
 size(LF)
 % size(CorrectedLensletImage)

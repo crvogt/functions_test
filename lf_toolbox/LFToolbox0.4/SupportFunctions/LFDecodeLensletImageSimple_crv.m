@@ -1,4 +1,4 @@
-function [LF, DecodeOptions, DebayerLensletImage, CorrectedLensletImage] = ...
+function [LF, DecodeOptions] = ...
     LFDecodeLensletImageSimple(LensletImage)
 
 % %---Defaults---
@@ -8,49 +8,19 @@ DecodeOptions = LFDefaultField( 'DecodeOptions', 'Precision', 'single' );
 DecodeOptions = LFDefaultField( 'DecodeOptions', 'DoDehex', true );
 DecodeOptions = LFDefaultField( 'DecodeOptions', 'DoSquareST', true );
 
-% %---Rescale image values, remove black level---
-% DecodeOptions.LevelLimits = cast(DecodeOptions.LevelLimits, DecodeOptions.Precision);
-% BlackLevel = DecodeOptions.LevelLimits(1);
-% WhiteLevel = DecodeOptions.LevelLimits(2);
-% WhiteImage = cast(WhiteImage, DecodeOptions.Precision);
-% WhiteImage = (WhiteImage - BlackLevel) ./ (WhiteLevel - BlackLevel);
-
-% LensletImage = cast(LensletImage, DecodeOptions.Precision);
-% LensletImage = (LensletImage - BlackLevel) ./ (WhiteLevel - BlackLevel);
-% LensletImage = LensletImage ./ WhiteImage; % Devignette
-% % Clip -- this is aggressive and throws away bright areas; there is a potential for an HDR approach here
-% LensletImage = min(1, max(0, LensletImage));
-
-% if( nargout < 2 )
-%     clear WhiteImage
-% end
-
-%---Demosaic---
-% This uses Matlab's demosaic, which is "gradient compensated". This likely has implications near
-% the edges of lenslet images, where the contrast is due to vignetting / aperture shape, and is not
-% a desired part of the image
-% LensletImage = cast(LensletImage.*double(intmax('uint16')), 'uint16');
-% LensletImage = demosaic(LensletImage, DecodeOptions.DemosaicOrder);
-% LensletImage = cast(LensletImage, DecodeOptions.Precision);
-% LensletImage = LensletImage ./  double(intmax('uint16'));
 DecodeOptions.NColChans = 3;
-
-% if( nargout >= 2 )
-%     DecodeOptions.NWeightChans = 1;
-% else
-    DecodeOptions.NWeightChans = 0;
-% end
-
-% if( nargout > 3 )
-    DebayerLensletImage = LensletImage;
-% end
+DecodeOptions.NWeightChans = 0;
 
 LensletGridModel.HSpacing = 11.585;
 LensletGridModel.VSpacing = 11.589;
-LensletGridModel.UMax = 101;
-LensletGridModel.VMax = 87;
-
-
+% LensletGridModel.UMax = 101;
+% LensletGridModel.VMax = 87;
+LensletGridModel.UMax = 300;
+LensletGridModel.VMax = 250;
+% LensletGridModel.HSpacing = 101;
+% LensletGridModel.VSpacing = 87;
+% LensletGridModel.UMax = 11.585;
+% LensletGridModel.VMax = 11.589;
 LensletGridModel.HOffset = 0;
 LensletGridModel.VOffset = 0;
 LensletGridModel.Orientation = 'horz';
@@ -90,16 +60,7 @@ RTrans(end,1:2) = XformTrans;
 % todo[optimization]: attempt to keep these regions, offer greater user-control of what's kept
 FixAll = maketform('affine', RRot*RScale*RTrans);
 NewSize = size(LensletImage(:,:,1)) .* XformScale(2:-1:1);
-% LensletImage = imtransform( LensletImage, FixAll, 'YData',[1 NewSize(1)], 'XData',[1 NewSize(2)]);
-% figure()
-% imshow(LensletImage)
-% pause(10)
-% if( nargout >= 2 )
-%     WhiteImage = imtransform( WhiteImage, FixAll, 'YData',[1 NewSize(1)], 'XData',[1 NewSize(2)]);
-% end
-% if( nargout >= 4 )
-    CorrectedLensletImage = LensletImage;
-% end
+
 
 LF = SliceXYImage( NewLensletGridModel, LensletImage, DecodeOptions );
 fprintf('\nLF size after SliceXYImage\n');
@@ -277,8 +238,14 @@ LF = zeros(TSize, SSize, VSize, USize, DecodeOptions.NColChans + DecodeOptions.N
 
 TVec = cast(floor((-(TSize-1)/2):((TSize-1)/2)), 'int16');
 SVec = cast(floor((-(SSize-1)/2):((SSize-1)/2)), 'int16');
+% fprintf('\nsvec size\n')
+% size(SVec)
 VVec = cast(0:VSize-1, 'int16');
-UBlkSize = 32;
+% fprintf('\nvvec size\n')
+% size(VVec)
+% pause(2)
+UBlkSize = 2
+
 for( UStart = 0:UBlkSize:USize-1 )  % note zero-based indexing
     UStop = UStart + UBlkSize - 1;
     UStop = min(UStop, USize-1);  
