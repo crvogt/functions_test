@@ -24,9 +24,21 @@ fprintf('Images loaded...\n');
 [LF, DecodeOptions, DebayerLensletImage, CorrectedLensletImage] = LFDecodeLensletImageSimple_crv(src);
 
 size(LF)
-size(CorrectedLensletImage)
+% size(CorrectedLensletImage)
+% figure()
+[lfToShow, imgOut] = LFDisp(LF);
+size(imgOut)
+tmpImg = LF(1,1,:,:,:);
+size(tmpImg)
+tmpImg = squeeze(tmpImg);
+size(tmpImg)
 figure()
-[lfToShow, imgOut] = LFDisp(LF)
+imshow(uint16(tmpImg))
+figure()
 imshow(imgOut)
-figure()
-imshow(CorrectedLensletImage)
+% imshow(imgOut)
+% figure()
+% imshow(CorrectedLensletImage)
+% figure()
+% tmpImg = 
+% imshow(LF(1,1,:,:,:))

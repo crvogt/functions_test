@@ -90,7 +90,10 @@ RTrans(end,1:2) = XformTrans;
 % todo[optimization]: attempt to keep these regions, offer greater user-control of what's kept
 FixAll = maketform('affine', RRot*RScale*RTrans);
 NewSize = size(LensletImage(:,:,1)) .* XformScale(2:-1:1);
-LensletImage = imtransform( LensletImage, FixAll, 'YData',[1 NewSize(1)], 'XData',[1 NewSize(2)]);
+% LensletImage = imtransform( LensletImage, FixAll, 'YData',[1 NewSize(1)], 'XData',[1 NewSize(2)]);
+% figure()
+% imshow(LensletImage)
+% pause(10)
 % if( nargout >= 2 )
 %     WhiteImage = imtransform( WhiteImage, FixAll, 'YData',[1 NewSize(1)], 'XData',[1 NewSize(2)]);
 % end

@@ -27,10 +27,11 @@
 
 
 function [lfToShow ImgOut] = LFDisp( LF )
-fprintf('\nsize in LFDisp\n');
+fprintf('\nPre squeeze LFDisp\n');
 size(LF)
 LF = squeeze(LF);
-LFSize = size(LF);
+fprintf('\npost squeeze LF\n');
+LFSize = size(LF)
 
 HasWeight = (ndims(LF)>2 && LFSize(end)==2 || LFSize(end)==4);
 HasColor = (ndims(LF)>2 && (LFSize(end)==3 || LFSize(end)==4) );
@@ -43,7 +44,10 @@ else
 	GoalDims = 2;
 end
 while( ndims(LF) > GoalDims )
-	LF = squeeze(LF(round(end/2),:,:,:,:,:,:));
+	fprintf('\nIn goal dims\n');
+	size(LF)
+	LF = squeeze(LF(round(end/2),:,:,:,:));
+	size(LF)
 end
 if( HasWeight )
 	fprintf('\nHas weight:\n');
@@ -54,15 +58,15 @@ end
 
 if( nargout > 0 )
 	fprintf('\nnargout greater than 0\n');
-	ImgOut = zeros(87,117,3,'uint16')
+	ImgOut = zeros(87,117,3,'uint16');
 	ImgOut = uint16(LF);
-	lfToShow = zeros(87,117,3,'uint16')
+	lfToShow = zeros(87,117,3,'uint16');
 	lfToShow = uint16(LF);
 else
 	fprintf('\nBefore Showing\n');
 	size(LF)
 	lfToShow = LF;
-	lfToShow
+	% lfToShow
 	% imagesc(LF);
 	imshow(LF);
 end
