@@ -13,10 +13,10 @@ DecodeOptions.NWeightChans = 0;
 
 LensletGridModel.HSpacing = 11.585;
 LensletGridModel.VSpacing = 11.589;
-% LensletGridModel.UMax = 101;
-% LensletGridModel.VMax = 87;
-LensletGridModel.UMax = 300;
-LensletGridModel.VMax = 250;
+LensletGridModel.UMax = 101;
+LensletGridModel.VMax = 87;
+% LensletGridModel.UMax = 170; %left right
+% LensletGridModel.VMax = 170;
 % LensletGridModel.HSpacing = 101;
 % LensletGridModel.VSpacing = 87;
 % LensletGridModel.UMax = 11.585;
@@ -236,6 +236,10 @@ TSize = MaxSpacing + 1;
 
 LF = zeros(TSize, SSize, VSize, USize, DecodeOptions.NColChans + DecodeOptions.NWeightChans, DecodeOptions.Precision);
 
+fprintf('\nLF size\n')
+size(LF)
+% pause(3)
+
 TVec = cast(floor((-(TSize-1)/2):((TSize-1)/2)), 'int16');
 SVec = cast(floor((-(SSize-1)/2):((SSize-1)/2)), 'int16');
 % fprintf('\nsvec size\n')
@@ -244,7 +248,7 @@ VVec = cast(0:VSize-1, 'int16');
 % fprintf('\nvvec size\n')
 % size(VVec)
 % pause(2)
-UBlkSize = 2
+UBlkSize = 32
 
 for( UStart = 0:UBlkSize:USize-1 )  % note zero-based indexing
     UStop = UStart + UBlkSize - 1;
@@ -255,11 +259,22 @@ for( UStart = 0:UBlkSize:USize-1 )  % note zero-based indexing
     
     %---Build indices into 2D image---
     LFSliceIdxX = LensletGridModel.HOffset + uu.*LensletGridModel.HSpacing + ss;
+    LensletGridModel.HOffset
+    size(uu)
+    size(vv)
+    size(ss)
+    size(tt)
     LFSliceIdxY = LensletGridModel.VOffset + vv.*LensletGridModel.VSpacing + tt;
     
+    fprintf('\nFirst of Slice:\n')
+    size(LFSliceIdxX)
+    pause(2)
+
     HexShiftStart = LensletGridModel.FirstPosShiftRow;
     LFSliceIdxX(:,:,HexShiftStart:2:end,:) = LFSliceIdxX(:,:,HexShiftStart:2:end,:) + LensletGridModel.HSpacing/2;
     
+
+
     %---Lenslet mask in s,t and clip at image edges---
     CurSTAspect = DecodeOptions.OutputScale(1)/DecodeOptions.OutputScale(2);
     R = sqrt((cast(tt,DecodeOptions.Precision)*CurSTAspect).^2 + cast(ss,DecodeOptions.Precision).^2);
@@ -269,8 +284,30 @@ for( UStart = 0:UBlkSize:USize-1 )  % note zero-based indexing
     %--clip -- the interp'd values get ignored via ValidIdx--
     LFSliceIdxX = max(1, min(size(LensletImage,2), LFSliceIdxX ));
     LFSliceIdxY = max(1, min(size(LensletImage,1), LFSliceIdxY ));
+
+    fprintf('\nSize LensletImage\n')
+    size(LensletImage)
+    fprintf('\nLFSliceIdxX: \n')
+    size(LFSliceIdxX)
+    fprintf('\nLFSliceIdxY\n')
+    size(LFSliceIdxY)
+    pause(4);
     
     %---
+    fprintf('\nFor LFSliceIdx:\n')
+    fprintf('size LensletImage\n')
+    size(LensletImage)
+    pause(2)
+    fprintf('\ncast LFSliceIdxY\n')
+    cast(LFSliceIdxY, 'int32');
+    pause(2)
+    fprintf('\ncast LFSliceIdxX\n')
+    cast(LFSliceIdxX, 'int32');
+    pause(2)
+    fprintf('\nOnes size LFSliceIdxX\n')
+    ones(size(LFSliceIdxX), 'int32');
+
+    pause(2)
     LFSliceIdx = sub2ind(size(LensletImage), cast(LFSliceIdxY,'int32'), ...
         cast(LFSliceIdxX,'int32'), ones(size(LFSliceIdxX),'int32'));
     
