@@ -58,9 +58,9 @@ end
 
 if( nargout > 0 )
 	fprintf('\nnargout greater than 0\n');
-	ImgOut = zeros(87,117,3,'uint16');
+	% ImgOut = zeros(87,117,3,'uint16');
 	ImgOut = uint16(LF);
-	lfToShow = zeros(87,117,3,'uint16');
+	% lfToShow = zeros(87,117,3,'uint16');
 	lfToShow = uint16(LF);
 else
 	fprintf('\nBefore Showing\n');

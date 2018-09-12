@@ -3,7 +3,7 @@ function [LF, DecodeOptions] = ...
 
 % %---Defaults---
 % DecodeOptions = LFDefaultField( 'DecodeOptions', 'LevelLimits', [min(WhiteImage(:)), max(WhiteImage(:))] );
-DecodeOptions = LFDefaultField( 'DecodeOptions', 'ResampMethod', 'fast' ); %'fast', 'triangulation'
+DecodeOptions = LFDefaultField( 'DecodeOptions', 'ResampMethod', 'triangulation' ); %'fast', 'triangulation'
 DecodeOptions = LFDefaultField( 'DecodeOptions', 'Precision', 'single' );
 DecodeOptions = LFDefaultField( 'DecodeOptions', 'DoDehex', true );
 DecodeOptions = LFDefaultField( 'DecodeOptions', 'DoSquareST', true );
@@ -11,10 +11,10 @@ DecodeOptions = LFDefaultField( 'DecodeOptions', 'DoSquareST', true );
 DecodeOptions.NColChans = 3;
 DecodeOptions.NWeightChans = 0;
 
-LensletGridModel.HSpacing = 11.585;
-LensletGridModel.VSpacing = 11.589;
-LensletGridModel.UMax = 101;
-LensletGridModel.VMax = 87;
+LensletGridModel.HSpacing = 11.585*2;
+LensletGridModel.VSpacing = 11.589*2;
+LensletGridModel.UMax = 87;
+LensletGridModel.VMax = 101;
 % LensletGridModel.UMax = 170; %left right
 % LensletGridModel.VMax = 170;
 % LensletGridModel.HSpacing = 101;
@@ -25,7 +25,7 @@ LensletGridModel.HOffset = 0;
 LensletGridModel.VOffset = 0;
 LensletGridModel.Orientation = 'horz';
 LensletGridModel.Rot = 0;
-LensletGridModel.FirstPosShiftRow = 2;
+LensletGridModel.FirstPosShiftRow = 1;
 
 %---Tranform to an integer-spaced grid---
 fprintf('\nAligning image to lenslet array...');
@@ -63,6 +63,29 @@ NewSize = size(LensletImage(:,:,1)) .* XformScale(2:-1:1);
 
 
 LF = SliceXYImage( NewLensletGridModel, LensletImage, DecodeOptions );
+% size(LF)
+% for iter = 1:size(LF,3)
+% for jter = 1:size(LF,4)
+
+%         if jter == 1
+%             basicImg = LF(:,:,iter,jter,:);
+%             basicImg = squeeze(uint16(basicImg));
+%         else 
+%             lensImg = LF(:,:,iter,jter,:);
+%             lensImg = squeeze(uint16(lensImg));
+%             basicImg = cat(2, basicImg, lensImg);
+%         end 
+%     end
+%     if iter == 1
+%         fullImg = basicImg;
+%     else
+%         fullImg = cat(1,fullImg,basicImg);
+%     end      
+% end 
+
+% imshow(fullImg)
+% pause(1000)
+
 fprintf('\nLF size after SliceXYImage\n');
 size(LF)
 % clear WhiteImage LensletImage
@@ -70,7 +93,7 @@ clear LensletImage
 
 %---Correct for hex grid and resize to square u,v pixels---
 LFSize = size(LF);
-HexAspect = 2/sqrt(3);
+HexAspect =2/sqrt(3);
 switch( DecodeOptions.ResampMethod )
     case 'fast'
         fprintf('\nResampling (1D approximation) to square u,v pixels');
@@ -93,8 +116,6 @@ switch( DecodeOptions.ResampMethod )
             ShiftUVec = NewUVec;
             fprintf('...');
         end
-        fprintf('\nlf 5 size \n');
-        size(LF,5)
         for( ColChan = 1:size(LF,5) )
             CurUVec = ShiftUVec;
             for( RowIter = 1:2 )
@@ -111,7 +132,8 @@ switch( DecodeOptions.ResampMethod )
         end
         clear ShiftRows
         DecodeOptions.OutputScale(3) = DecodeOptions.OutputScale(3) * HexAspect;
-        
+        fprintf('\nPaused...\n');
+        % pause(10)
     case 'triangulation'
         fprintf('\nResampling (triangulation) to square u,v pixels');
         OldVVec = (0:size(LF,3)-1);
@@ -166,7 +188,7 @@ size(LF)
 % Assumes only a very slight resampling is required, resulting in an identically-sized output light field
 if( DecodeOptions.DoSquareST )
     fprintf('\nResizing to square s,t pixels using 1D linear interp...');
-    pause(4)
+    % pause(4)
     ResizeScale = DecodeOptions.OutputScale(1)/DecodeOptions.OutputScale(2);
     ResizeDim1 = 1;
     ResizeDim2 = 2;
@@ -250,83 +272,105 @@ VVec = cast(0:VSize-1, 'int16');
 % pause(2)
 UBlkSize = 32
 
-for( UStart = 0:UBlkSize:USize-1 )  % note zero-based indexing
-    UStop = UStart + UBlkSize - 1;
-    UStop = min(UStop, USize-1);  
-    UVec = cast(UStart:UStop, 'int16');
-    
-    [tt,ss,vv,uu] = ndgrid( TVec, SVec, VVec, UVec );
-    
-    %---Build indices into 2D image---
-    LFSliceIdxX = LensletGridModel.HOffset + uu.*LensletGridModel.HSpacing + ss;
-    LensletGridModel.HOffset
-    size(uu)
-    size(vv)
-    size(ss)
-    size(tt)
-    LFSliceIdxY = LensletGridModel.VOffset + vv.*LensletGridModel.VSpacing + tt;
-    
-    fprintf('\nFirst of Slice:\n')
-    size(LFSliceIdxX)
-    pause(2)
+    for( UStart = 0:UBlkSize:USize-1 )  % note zero-based indexing
+        UStop = UStart + UBlkSize - 1;
+        UStop = min(UStop, USize-1);  
+        UVec = cast(UStart:UStop, 'int16');
+        
+        [tt,ss,vv,uu] = ndgrid( TVec, SVec, VVec, UVec );
+        
+        %---Build indices into 2D image---
+        LFSliceIdxX = LensletGridModel.HOffset + uu.*LensletGridModel.HSpacing + ss;
+        LensletGridModel.HOffset
+        size(uu)
+        size(vv)
+        size(ss)
+        size(tt)
+        LFSliceIdxY = LensletGridModel.VOffset + vv.*LensletGridModel.VSpacing + tt;
+        
+        fprintf('\nFirst of Slice:\n')
+        size(LFSliceIdxX)
+        % pause(2)
 
-    HexShiftStart = LensletGridModel.FirstPosShiftRow;
-    LFSliceIdxX(:,:,HexShiftStart:2:end,:) = LFSliceIdxX(:,:,HexShiftStart:2:end,:) + LensletGridModel.HSpacing/2;
-    
+        HexShiftStart = LensletGridModel.FirstPosShiftRow;
+        LFSliceIdxX(:,:,HexShiftStart:2:end,:) = LFSliceIdxX(:,:,HexShiftStart:2:end,:) + LensletGridModel.HSpacing/2;
+        
 
 
-    %---Lenslet mask in s,t and clip at image edges---
-    CurSTAspect = DecodeOptions.OutputScale(1)/DecodeOptions.OutputScale(2);
-    R = sqrt((cast(tt,DecodeOptions.Precision)*CurSTAspect).^2 + cast(ss,DecodeOptions.Precision).^2);
-    ValidIdx = find(R < LensletGridModel.HSpacing/2 & ...
-        LFSliceIdxX >= 1 & LFSliceIdxY >= 1 & LFSliceIdxX <= size(LensletImage,2) & LFSliceIdxY <= size(LensletImage,1) );
-    
-    %--clip -- the interp'd values get ignored via ValidIdx--
-    LFSliceIdxX = max(1, min(size(LensletImage,2), LFSliceIdxX ));
-    LFSliceIdxY = max(1, min(size(LensletImage,1), LFSliceIdxY ));
+        %---Lenslet mask in s,t and clip at image edges---
+        CurSTAspect = DecodeOptions.OutputScale(1)/DecodeOptions.OutputScale(2);
+        % fprintf('\nCurSTAspect:\n')
+        % CurSTAspect
+        % fprintf('\nDecodeOptions.OutputScale(1) and (2)\n')
+        % DecodeOptions.OutputScale(1)
+        % DecodeOptions.OutputScale(2)
+        % pause(10)
 
-    fprintf('\nSize LensletImage\n')
-    size(LensletImage)
-    fprintf('\nLFSliceIdxX: \n')
-    size(LFSliceIdxX)
-    fprintf('\nLFSliceIdxY\n')
-    size(LFSliceIdxY)
-    pause(4);
+        R = sqrt((cast(tt,DecodeOptions.Precision)*CurSTAspect).^2 + cast(ss,DecodeOptions.Precision).^2);
     
-    %---
-    fprintf('\nFor LFSliceIdx:\n')
-    fprintf('size LensletImage\n')
-    size(LensletImage)
-    pause(2)
-    fprintf('\ncast LFSliceIdxY\n')
-    cast(LFSliceIdxY, 'int32');
-    pause(2)
-    fprintf('\ncast LFSliceIdxX\n')
-    cast(LFSliceIdxX, 'int32');
-    pause(2)
-    fprintf('\nOnes size LFSliceIdxX\n')
-    ones(size(LFSliceIdxX), 'int32');
+        % LFSliceIdxX(6,6,87,32) = 0;
+        ValidIdx = find(R < LensletGridModel.HSpacing/2 & ...
+            LFSliceIdxX >= 1 & LFSliceIdxY >= 1 & LFSliceIdxX <= size(LensletImage,2) & LFSliceIdxY <= size(LensletImage,1) );
+        % fprintf('LensletImage size\n')
+        % R(:,:,87,32)
+        % length(ValidIdx)
+        % size(LensletImage)
+        % size(R)
+        % size(LFSliceIdxX)
+        % LFSliceIdxX <= 1
+        % pause(10)
+        
+        %--clip -- the interp'd values get ignored via ValidIdx--
+        fprintf('\nLensletImage,2\n')
+        size(LensletImage,2);
+        min(size(LensletImage,2), LFSliceIdxX);
+        LFSliceIdxX(:,:,1,1);
+        % pause(10)
 
-    pause(2)
-    LFSliceIdx = sub2ind(size(LensletImage), cast(LFSliceIdxY,'int32'), ...
-        cast(LFSliceIdxX,'int32'), ones(size(LFSliceIdxX),'int32'));
-    
-    tt = tt - min(tt(:)) + 1;
-    ss = ss - min(ss(:)) + 1;
-    vv = vv - min(vv(:)) + 1;
-    uu = uu - min(uu(:)) + 1 + UStart;
-    LFOutSliceIdx = sub2ind(size(LF), cast(tt,'int32'), cast(ss,'int32'), ...
-        cast(vv,'int32'),cast(uu,'int32'), ones(size(ss),'int32'));
-    
-    %---
-    for( ColChan = 1:DecodeOptions.NColChans )
-        LF(LFOutSliceIdx(ValidIdx) + numel(LF(:,:,:,:,1)).*(ColChan-1)) = ...
-            LensletImage( LFSliceIdx(ValidIdx) + numel(LensletImage(:,:,1)).*(ColChan-1) );
+        LFSliceIdxX = max(1, min(size(LensletImage,2), LFSliceIdxX ));
+        LFSliceIdxY = max(1, min(size(LensletImage,1), LFSliceIdxY ));
+        fprintf('\nPost max operation\n')
+        % LFSliceIdxX(:,:,1,1)
+        % LFSliceIdxY(:,:,1,1)
+        size(LFSliceIdxY)
+        size(LFSliceIdxX)
+        size(LensletImage)
+
+        LFSliceIdx = sub2ind(size(LensletImage), cast(LFSliceIdxY,'int32'), ...
+            cast(LFSliceIdxX,'int32'), ones(size(LFSliceIdxX),'int32'));
+        % size(LFSliceIdx)
+        % LFSliceIdx;
+        % pause(10)
+        % tt(:,:,87,32)
+        % min(tt(:))
+        % pause(2)
+        tt = tt - min(tt(:)) + 1;
+        % pause(2)
+        % tt(:,:,87,32)
+        % pause(10)
+        ss = ss - min(ss(:)) + 1;
+        % ss(:,:,87,32)
+        % pause(10)
+        vv = vv - min(vv(:)) + 1;
+        % vv(:,:,86,32)
+        % pause(10)
+        uu = uu - min(uu(:)) + 1 + UStart;
+        LFOutSliceIdx = sub2ind(size(LF), cast(tt,'int32'), cast(ss,'int32'), ...
+            cast(vv,'int32'),cast(uu,'int32'), ones(size(ss),'int32'));
+        
+        %---
+        for( ColChan = 1:DecodeOptions.NColChans )
+            LF(LFOutSliceIdx(ValidIdx) + numel(LF(:,:,:,:,1)).*(ColChan-1)) = ...
+                LensletImage( LFSliceIdx(ValidIdx) + numel(LensletImage(:,:,1)).*(ColChan-1) );
+        end
+        % if( DecodeOptions.NWeightChans ~= 0 )
+        %     LF(LFOutSliceIdx(ValidIdx) + numel(LF(:,:,:,:,1)).*(DecodeOptions.NColChans)) = ...
+        %         WhiteImage( LFSliceIdx(ValidIdx) );
+        % end
+        fprintf('.');
     end
-    % if( DecodeOptions.NWeightChans ~= 0 )
-    %     LF(LFOutSliceIdx(ValidIdx) + numel(LF(:,:,:,:,1)).*(DecodeOptions.NColChans)) = ...
-    %         WhiteImage( LFSliceIdx(ValidIdx) );
-    % end
-    fprintf('.');
-end
+    vv.*LensletGridModel.VSpacing
+    max(max(max(max(LFSliceIdxX(:,:,:,:)))))
+    max(max(max(max(LFSliceIdxY(:,:,:,:)))))
+    % pause(20);
 end

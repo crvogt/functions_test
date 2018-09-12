@@ -11,3 +11,5 @@ vvec = 0:86;
 
 LFSliceIdxX = uu.*11.58 + ss;
 LFSliceIdxY = vv.*11.58 + tt;
+
+tt
