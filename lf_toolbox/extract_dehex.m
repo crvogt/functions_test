@@ -121,17 +121,17 @@ lensImg = zeros(effR*2, effR*2, 3);
 
 I2 = imcrop(img,[0 0 400 800]);
 imshow(I2);
-% for counter = 1:100:2000
-% 	% counter = 1000;
+for counter = 1:100:2000
+	% counter = 1000;
 
-% 	for iRow = -12:1:12
-% 		for iCol = -12:1:12
-% 			lensImg(iRow+13,iCol+13,:) = img(floor(lens0(counter,2))+iRow+upDown,floor(lens0(counter,1))+iCol+leftRight,:);
-% 		end
-% 	end
+	for iRow = -12:1:12
+		for iCol = -12:1:12
+			lensImg(iRow+13,iCol+13,:) = img(floor(lens0(counter,2))+iRow+upDown,floor(lens0(counter,1))+iCol+leftRight,:);
+		end
+	end
 
-% 	figure()
-% 	imshow(lensImg);
-% 	pause(1)
-% 	close all
-% end
+	figure()
+	imshow(lensImg);
+	pause(1)
+	close all
+end

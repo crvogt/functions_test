@@ -279,6 +279,10 @@ UBlkSize = 32
         
         [tt,ss,vv,uu] = ndgrid( TVec, SVec, VVec, UVec );
         
+        % tt(:,:,101,32)
+        % ss(:,:,101,32)
+        % pause(100)
+
         %---Build indices into 2D image---
         LFSliceIdxX = LensletGridModel.HOffset + uu.*LensletGridModel.HSpacing + ss;
         LensletGridModel.HOffset
