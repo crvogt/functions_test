@@ -131,11 +131,11 @@ end
 
 LF = flip(LF, 4);
 
-size(LF)
-LFLens = squeeze(LF(:,:,round(end/2),round(end/2),:));
-size(LFLens)
-figure()
-imshow(LFLens)
+% size(LF)
+% LFLens = squeeze(LF(:,:,round(end/2),round(end/2),:));
+% size(LFLens)
+% figure()
+% imshow(LFLens)
 
 for iter = 1:size(LF,3)
 	for jter = 1:size(LF,4)
@@ -156,8 +156,21 @@ for iter = 1:size(LF,3)
     end      
 end 
 
-figure()
-imshow(fullImg)
+% figure()
+% imshow(fullImg)
 
+% close all
+% LFDisp_crv(LF)
+% pause(5)
 close all
-LFDisp_crv(LF)
+
+fprintf('\nDehexing\n');
+% pause(2)
+LF = LFDehex_crv(LF);
+% size(LF)
+% LFDispMousePan(LF,4)
+LFDisplayGrid_crv(LF);
+
+% fprintf('\ndisplaying\n');
+% pause(2)
+% [~, ~]=LFDisp_crv(LF);

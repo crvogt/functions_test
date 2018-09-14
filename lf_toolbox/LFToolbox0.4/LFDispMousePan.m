@@ -73,7 +73,7 @@ fprintf('Click and drag to shift perspective\n');
 
 function ButtonDownCallback(FigureHandle,varargin) 
 set(FigureHandle, 'WindowButtonMotionFcn', @ButtonMotionCallback);
-DragStart = get(gca,'CurrentPoint')';
+DragStart = get(gca,'CurrentPoint')'
 DragStart = DragStart(1:2,1)';
 end
 

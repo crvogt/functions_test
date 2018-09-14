@@ -70,3 +70,5 @@ montage(chosenLenses, 'Size', [1 numLenses])
 
 figure()
 imshow(chosenLenses2)
+
+close all
