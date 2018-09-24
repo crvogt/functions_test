@@ -1,3 +1,6 @@
+% The purpose of this program is to display the sub aperture images pulled from the 
+% original lf image. 
+
 function LFDisplayGrid_crv(LF)
     
     nCols = 3;
@@ -13,6 +16,8 @@ function LFDisplayGrid_crv(LF)
     end
 
     % extract the images from the LF
+    % This chooses specific directional images to pull
+    % from, resulting in the images from different angles
     cX = size(LF,1)/2+1;
     cY = cX;
     pxStart = 5;
@@ -22,12 +27,7 @@ function LFDisplayGrid_crv(LF)
     counter = 1
     for iter = pxStart:pxDist:pxEnd
         for jter = pxStart:pxDist:pxEnd
-
             img = squeeze(LF(iter,jter,:,:,:));
-            
-            % imshow(uint16(img))
-            % pause(2);
-            % close all
             image(uint16(img),'Parent',h(counter));
             pause(2)
             counter = counter + 1;

@@ -2,11 +2,14 @@ clc
 close all;
 clear all;
 
-onWindows = true;
+onWindows = false;
 
 if onWindows
 	imgPath = 'C:\Users\carson\Desktop\libs\data\processed.png';
 	dataPath = 'C:\Users\carson\Desktop\libs\data\mxa_details.txt';
+else 
+	imgPath = 'processed.png';
+	dataPath = 'mxa_details.txt';
 end
 
 %Load image

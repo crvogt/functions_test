@@ -36,8 +36,6 @@ slope = (pt2Y - pt1Y)/(pt2X - pt1X);
 
 ang = asin(slope) * 180 / pi
 
-
-
 % Get an individual lens. Effective radius ~11.5, so call it 12.
 effR = 12;
 numLenses = 29;
