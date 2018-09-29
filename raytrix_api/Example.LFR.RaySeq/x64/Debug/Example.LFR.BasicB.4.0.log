@@ -1,0 +1,4 @@
+﻿  BasicB.cpp
+c:\users\carson\desktop\raytrix_api_tests\example.lfr.rayseq\basicb.cpp(83): warning C4018: '<': signed/unsigned mismatch
+  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\carson\Desktop\raytrix_api_tests\Example.LFR.RaySeq\x64\Debug\Example.LFR.BasicB.4.0.exe
+  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\carson\Desktop\raytrix_api_tests\Example.LFR.RaySeq\x64\Debug\Example.LFR.BasicB.4.0.pdb (Full PDB)
