@@ -29,7 +29,7 @@ function LFDisplayGrid_crv(LF)
         for jter = pxStart:pxDist:pxEnd
             img = squeeze(LF(iter,jter,:,:,:));
             image(uint16(img),'Parent',h(counter));
-            pause(2)
+            % pause(2)
             counter = counter + 1;
         end
     end

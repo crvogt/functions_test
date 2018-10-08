@@ -24,16 +24,17 @@ function LFDisplayGridAll_crv(LF)
     pxStart = 5;
     pxEnd = 21;
     pxDist = 1;
-
-    counter = 1
+    hold on;
+    counter = 1;
     for iter = pxStart:pxDist:pxEnd
         for jter = pxStart:pxDist:pxEnd
             img = squeeze(LF(iter,jter,:,:,:));
             image(uint16(img),'Parent',h(counter));
             axis off
-            % set(gca,'xtick',[],'ytick',[])
+            set(gca,'xtick',[],'ytick',[])
             % pause(0.5);
             counter = counter + 1;
         end
     end
+    hold off;
 end

@@ -172,5 +172,6 @@ LF = LFDehex_crv(LF);
 % LFDispMousePan(LF,4)
 % LFDisplayGrid_crv(LF);
 LFDisplayGridAll_crv(LF);
+% LFWriteOutGridAll_crv(LF);
 
 % LFCompareSubApImgs_crv(LF);
