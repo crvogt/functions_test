@@ -50,20 +50,20 @@ def get_model_memory_usage(batch_size, model):
 	print('number of gbytes = ' + str(gbytes))
 	return gbytes
 
-def sampling(args):
-    """Reparameterization trick by sampling fr an isotropic unit Gaussian.
-    # Arguments:
-        args (tensor): mean and log of variance of Q(z|X)
-    # Returns:
-        z (tensor): sampled latent vector
-    """
+# def sampling(args):
+#     """Reparameterization trick by sampling fr an isotropic unit Gaussian.
+#     # Arguments:
+#         args (tensor): mean and log of variance of Q(z|X)
+#     # Returns:
+#         z (tensor): sampled latent vector
+#     """
 
-    z_mean, z_log_var = args
-    batch = K.shape(z_mean)[0]
-    dim = K.int_shape(z_mean)[1]
-    # by default, random_normal has mean=0 and std=1.0
-    epsilon = K.random_normal(shape=(batch, dim))
-    return z_mean + K.exp(0.5 * z_log_var) * epsilon
+#     z_mean, z_log_var = args
+#     batch = K.shape(z_mean)[0]
+#     dim = K.int_shape(z_mean)[1]
+#     # by default, random_normal has mean=0 and std=1.0
+#     epsilon = K.random_normal(shape=(batch, dim))
+#     return z_mean + K.exp(0.5 * z_log_var) * epsilon
 
 testVal = []
 
@@ -238,50 +238,49 @@ pose3 = Input(shape=(2,))
 pose4 = Input(shape=(2,))
 
 encoder_in = Input(shape=(h,w,channels))
-xa1 = Conv2D(10, (5, 5), padding='same', activation='relu')(encoder_in)
-extra = xa1
-print(xa1.shape)
-x = MaxPooling2D((2,2))(xa1)
-print(x.shape)
-x = Conv2D(20, (5, 5), padding='same', activation='relu')(x)
-print(x.shape)
-x = MaxPooling2D((2,2))(x)
-print(x.shape)
-x = Conv2D(30, (5, 5), padding='same', activation='relu')(x)
-print(x.shape)
-x = MaxPooling2D((2,2))(x)
-print(x.shape)
-x = Conv2D(35, (5, 5), padding='same', activation='relu')(x)
-print(x.shape)
-x = MaxPooling2D((2,2))(x)
-print(x.shape)
-x = Conv2D(40, (5, 5), padding='same', activation='relu')(x)
-print(x.shape)
-x = MaxPooling2D((2,2))(x)
-print(x.shape)
+x1 = Conv2D(10, (5, 5), padding='same', activation='relu')(encoder_in)
+print(x1.shape)
+x2 = MaxPooling2D((2,2))(x1)
+print(x2.shape)
+x3 = Conv2D(20, (5, 5), padding='same', activation='relu')(x2)
+print(x3.shape)
+x4 = MaxPooling2D((2,2))(x3)
+print(x4.shape)
+x5 = Conv2D(30, (5, 5), padding='same', activation='relu')(x4)
+print(x5.shape)
+x6 = MaxPooling2D((2,2))(x5)
+print(x6.shape)
+x7 = Conv2D(35, (5, 5), padding='same', activation='relu')(x6)
+print(x7.shape)
+x8 = MaxPooling2D((2,2))(x7)
+print(x8.shape)
+x9 = Conv2D(40, (5, 5), padding='same', activation='relu')(x8)
+print(x9.shape)
+x10 = MaxPooling2D((2,2))(x9)
+print(x10.shape)
 print('pre flatten shape')
-shape = K.int_shape(x)
+shape = K.int_shape(x10)
 print(shape)
-x = Flatten()(x)
+x11 = Flatten()(x10)
 
-z_mean = Dense(latentDim, name='z_mean')(x)
-z_log_var = Dense(latentDim, name='z_log_var')(x)
+# z_mean = Dense(latentDim, name='z_mean')(x)
+# z_log_var = Dense(latentDim, name='z_log_var')(x)
 
-print(z_mean.shape)
-print(z_log_var.shape)
+# print(z_mean.shape)
+# print(z_log_var.shape)
 
 # z = Lambda(sampling, output_shape=(latentDim,), name='z')([z_mean, z_log_var])
 
-encoder_model = Model(encoder_in, [z_mean, z_log_var])
+encoder_model = Model(encoder_in, x11])
 
 #This ensures the model will be shared, including weights
 encoded1 = encoder_model(image1)
 encoded2 = encoder_model(image2)
 encoded3 = encoder_model(image3)
 
-z1 = Lambda(sampling, output_shape=(latentDim,), name='z1')([encoded1[0], encoded1[1]])
-z2 = Lambda(sampling, output_shape=(latentDim,), name='z2')([encoded2[0], encoded2[1]])
-z3 = Lambda(sampling, output_shape=(latentDim,), name='z3')([encoded3[0], encoded3[1]])
+# z1 = Lambda(sampling, output_shape=(latentDim,), name='z1')([encoded1[0], encoded1[1]])
+# z2 = Lambda(sampling, output_shape=(latentDim,), name='z2')([encoded2[0], encoded2[1]])
+# z3 = Lambda(sampling, output_shape=(latentDim,), name='z3')([encoded3[0], encoded3[1]])
 #Now concatenate
 # latent_z = keras.layers.concatenate([encoded1, encoded2, encoded3, pose1, pose2, pose3, pose4])
 latent_z = keras.layers.concatenate([z1, z2, z3, pose1, pose2, pose3, pose4])

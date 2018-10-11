@@ -61,7 +61,7 @@ autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 #See the beginning
 
 #Let's train our autoencoder for 50 epochs
-autoencoder.fit(x_train, x_train, epochs=100,
+autoencoder.fit(x_train, x_train, epochs=10,
 								  batch_size=256,
 								  shuffle=True,
 								  validation_data=(x_test, x_test))

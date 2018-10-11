@@ -132,11 +132,11 @@ midDim = 1000
 latentDim = 10
 
 encoder_in = Input(shape=(480, 640, 3))
-x = Conv2D(64, (3, 3), padding='same', activation='relu')(encoder_in)
-x = MaxPooling2D((2,2))(x)
-x = Conv2D(64, (1, 1), padding='same', activation='relu')(x)
-x = MaxPooling2D((2,2))(x)
-encoded = Flatten()(x)
+x1 = Conv2D(64, (3, 3), padding='same', activation='relu')(encoder_in)
+x2 = MaxPooling2D((2,2))(x1)
+x3 = Conv2D(64, (1, 1), padding='same', activation='relu')(x2)
+x4 = MaxPooling2D((2,2))(x3)
+encoded = Flatten()(x4)
 encoder_model = Model(encoder_in, encoded)
 print(encoded.shape)
 

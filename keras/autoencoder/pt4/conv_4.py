@@ -289,7 +289,7 @@ ae.compile(loss='mse', optimizer='adam')
 
 ae.fit_generator(trainGenerator, 
 			  steps_per_epoch=5,
-			  epochs=2000,
+			  epochs=20,
 			  validation_steps=1,
 			  use_multiprocessing=False,
 			  max_queue_size=1)
