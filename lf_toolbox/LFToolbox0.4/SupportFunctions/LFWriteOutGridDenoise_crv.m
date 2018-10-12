@@ -4,10 +4,17 @@
 function LFDisplayGridAll_crv(LF)
     
     mkdir('/home/carson/libs/gridOutTest');
-    delete('/home/carson/libs/gridOutTest/*.png');
+    % delete('/home/carson/libs/gridOutTest/*.png');
+    delete('/home/carson/lightfield_ws/dla/denoising/LFBM5D/testing/basicLF/*.png');
+    delete('/home/carson/lightfield_ws/dla/denoising/LFBM5D/testing/denoisedLF/*.png');
+    delete('/home/carson/lightfield_ws/dla/denoising/LFBM5D/testing/diffLF/*.png');
+    delete('/home/carson/lightfield_ws/dla/denoising/LFBM5D/testing/noisyLF/*.png');
+    delete('/home/carson/lightfield_ws/dla/denoising/LFBM5D/testing/sourceLF/*.png');
 
     nCols = 3;
     nRows = 3;
+
+    gain = 1;
     denoisingOrder = true;
 
     cX = size(LF,1)/2+1;
@@ -24,8 +31,9 @@ function LFDisplayGridAll_crv(LF)
     if(denoisingOrder)
         for iter = pxEnd:-pxDist:pxStart
             for jter = pxEnd:-pxDist:pxStart
-                img = uint16(squeeze(LF(iter,jter,:,:,:)));
-                filename = cat(2,'/home/carson/libs/gridOutTest/CRV_0',int2str(icounter),'_0',int2str(jcounter),'.png');
+                img = gain * uint16(squeeze(LF(iter,jter,:,:,:)));
+                % filename = cat(2,'/home/carson/libs/gridOutTest/CRV_0',int2str(icounter),'_0',int2str(jcounter),'.png');
+                filename = cat(2,'/home/carson/lightfield_ws/dla/denoising/LFBM5D/testing/noisyLF/CRV_0',int2str(icounter),'_0',int2str(jcounter),'.png');
                 imwrite(img,filename)
                 jcounter = jcounter + 1;
             end

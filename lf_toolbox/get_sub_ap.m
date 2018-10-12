@@ -9,7 +9,9 @@ function LF = get_sub_ap
 		cd('LFToolbox0.4');
 		LFMatlabPathSetup();
 		cd('..');
-		imgPath = 'processed.png';
+		% imgPath = 'processed.png';
+		imgPath = 'l5_s5_g25.png';
+		fprintf('\nOpening %s...\n', imgPath);
 		dataPath = 'mxa_details.txt';
 	end
 
