@@ -33,6 +33,4 @@ delta = 2*deltaDisparity/(depthResolution-1);
 
 for curDepth = -deltaDisparity:delta:deltaDisparity
 	shearedLF = zeros(height, width, angHeight*angWidth);
-
-
 end
