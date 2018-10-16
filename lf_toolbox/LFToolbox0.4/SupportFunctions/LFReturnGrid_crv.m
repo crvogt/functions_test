@@ -7,13 +7,13 @@ function subApGrid = LFReturnGrid_crv(LF)
     nRows = 3;
     distPx = 5;
 
-    figure();
+    % figure();
     % Create the subplot
-    h = [];
-    for iter = 1:(nCols*nRows)
-        h(iter) = subplot(nCols,nRows,iter);
-        axis off
-    end
+    % h = [];
+    % for iter = 1:(nCols*nRows)
+        % h(iter) = subplot(nCols,nRows,iter);
+        % axis off
+    % end
 
     % extract the images from the LF
     % This chooses specific directional images to pull
@@ -32,7 +32,7 @@ function subApGrid = LFReturnGrid_crv(LF)
     for iter = pxStart:pxDist:pxEnd
         for jter = pxStart:pxDist:pxEnd
             img = squeeze(LF(iter,jter,:,:,:));
-            image(uint16(img),'Parent',h(counter));
+            % image(uint16(img),'Parent',h(counter));
             subApGrid(:,:,:,iterCount,jterCount) = img;
             counter = counter + 1;
             jterCount = jterCount + 1;

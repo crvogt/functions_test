@@ -2,10 +2,10 @@ clc
 clear all
 close all
 
-deltaDisparity = 21;
-depthResolution = 100; %Number of depth channels
+imgPath1 = 'l5_s5_g25.png';
+imgPath2 = 'l1_s5_g100.png';
 
-LF = get_sub_ap();
-subApGrid = LFReturnGrid_crv(LF);
-[height, width, ~, angHeight, angWidth] = size(subApGrid);
-LFWriteOutGridDenoise_crv(LF)
+LFBright = get_sub_ap(imgPath1);
+LFDim = get_sub_ap(imgPath2);
+
+LFWriteOutGridDenoise_crv(LFBright, LFDim, true)

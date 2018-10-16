@@ -1,4 +1,4 @@
-function LF = get_sub_ap
+function LF = get_sub_ap(imgPath)
 
 	onWindows = false;
 
@@ -10,7 +10,8 @@ function LF = get_sub_ap
 		LFMatlabPathSetup();
 		cd('..');
 		% imgPath = 'processed.png';
-		imgPath = 'l5_s5_g25.png';
+		% imgPath = 'l5_s5_g25.png';
+		% imgPath = 'l1_s5_g100.png';
 		fprintf('\nOpening %s...\n', imgPath);
 		dataPath = 'mxa_details.txt';
 	end
@@ -117,8 +118,6 @@ function LF = get_sub_ap
 			end
 		end
 
-		% LF(:,:,Vcount, Ucount,:)
-		% lensImg = double(lensImg);
 		LF(:,:,Vcount, Ucount,:) = lensImg;
 
 		Ucount = Ucount - 1;
@@ -136,12 +135,6 @@ function LF = get_sub_ap
 	end
 
 	LF = flip(LF, 4);
-
-	% size(LF)
-	% LFLens = squeeze(LF(:,:,round(end/2),round(end/2),:));
-	% size(LFLens)
-	% figure()
-	% imshow(LFLens)
 
 	for iter = 1:size(LF,3)
 		for jter = 1:size(LF,4)
