@@ -19,8 +19,8 @@ def interp2(grayImg, moveX, moveY):
     x = np.arange(0, width, 1)
     y = np.arange(0, height, 1)
 
-    print("moveX: " + str(moveX))
-    print("moveY: " + str(moveY))
+    # print("moveX: " + str(moveX))
+    # print("moveY: " + str(moveY))
 
     interped = RectBivariateSpline(y, x, grayImg)
 
@@ -31,12 +31,17 @@ def interp2(grayImg, moveX, moveY):
     Z = Z.astype(np.uint8)
 
     # Going to leave this for now, might have to revisit
-    # Z[0:height, 0:int(moveY)] = 0
-    # Z[0:int(moveX), 0:width] = 0
+    # if moveY <= 0:
+    #     Z[0:height, 0:int(moveY)] = 0
+    #     Z[0:int(moveX), 0:width] = 0
+    # else
+    #     Z[0:height, 0:int(moveY)] = 0
+    #     Z[0:int(moveX), 0:width] = 0
 
-    cv2.imshow("sheared lf", Z)
-    cv2.imwrite("shearTests/"+str(moveX)+"_"+str(moveY)+".png", Z)
-    cv2.waitKey(100)
+
+    # cv2.imshow("sheared lf", Z)
+    # cv2.imwrite("shearTests/"+str(moveX)+"_"+str(moveY)+".png", Z)
+    # cv2.waitKey(100)
 
     return Z
 
@@ -98,6 +103,7 @@ depthResolution = 100.0
 deltaDisparity = 21.0
 angRes = nRows
 delta = np.linspace(-deltaDisparity, deltaDisparity, 100)
+depthNum = 0
 
 for curDepth in delta:
     saiInd = 0
@@ -111,7 +117,19 @@ for curDepth in delta:
 
             shearedLF[:, :, saiInd] = interp2(grayLF[:, :, iY, iX], moveX[saiInd], moveY[saiInd])
 
+            if iY == 0 and iX == 0:
+                print("showing lf: " + str(depthNum))
+                cv2.imshow("sheared lf", shearedLF[:, :, saiInd])
+                print("Larger version")
+                bigImg = cv2.resize(shearedLF[:, :, saiInd], (2*101, 2*101))
+                cv2.imshow("bigImg", bigImg)
+                # cv2.imwrite("shearTests/"+str(moveX)+"_"+str(moveY)+".png", shearedLF[:, :, saiInd])
+                cv2.imwrite("shearTests/" +str(depthNum)+".png", shearedLF[:, :, saiInd])
+                cv2.waitKey(200)
+
             saiInd = saiInd + 1
+
+    depthNum = depthNum + 1
 
 
 
