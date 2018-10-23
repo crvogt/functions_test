@@ -22,7 +22,7 @@ def interp2(grayImg, moveX, moveY):
     # print("moveX: " + str(moveX))
     # print("moveY: " + str(moveY))
 
-    interped = RectBivariateSpline(y, x, grayImg)
+    interped = RectBivariateSpline(y, x, grayImg, kx=1, ky=1)
 
     x2 = np.linspace(moveX, width + moveX, width)
     y2 = np.linspace(moveY, height + moveY, height)
@@ -44,6 +44,18 @@ def interp2(grayImg, moveX, moveY):
     # cv2.waitKey(100)
 
     return Z
+
+
+def DefocusResp(input):
+    curMean = np.nanmean(input, axis=2)
+    np.nan_to_num(curMean, copy=False)
+    return curMean
+
+
+def CorrespResp(input):
+    curVar = np.nanvar(input, axis=2)
+    np.nan_to_num(curVar, copy=False)
+    return curVar
 
 
 nRows = 15
@@ -97,7 +109,7 @@ grayLF = np.zeros((101, 101, nRows, nCols), dtype=np.uint8)
 
 defocusStack = np.zeros((101, 101, 100))
 correspStack = np.zeros((101, 101, 100))
-featuresStack = np.zeros((101, 101, 200))
+# featuresStack = np.zeros((101, 101, 200))
 
 depthResolution = 100.0
 deltaDisparity = 21.0
@@ -108,6 +120,7 @@ depthNum = 0
 for curDepth in delta:
     saiInd = 0
     shearedLF = np.zeros((101, 101, nRows * nCols), dtype=np.uint8)
+    print("At depth: " + str(depthNum) + " of " + str(len(delta)))
     for iX in range(0, nCols):
         for iY in range(0, nRows):
             grayLF[:, :, iY, iX] = cv2.cvtColor(LF[:, :, :, iY, iX], cv2.COLOR_BGR2GRAY)
@@ -117,19 +130,31 @@ for curDepth in delta:
 
             shearedLF[:, :, saiInd] = interp2(grayLF[:, :, iY, iX], moveX[saiInd], moveY[saiInd])
 
-            if iY == 0 and iX == 0:
-                print("showing lf: " + str(depthNum))
-                cv2.imshow("sheared lf", shearedLF[:, :, saiInd])
-                print("Larger version")
-                bigImg = cv2.resize(shearedLF[:, :, saiInd], (2*101, 2*101))
-                cv2.imshow("bigImg", bigImg)
+            # if iY == 0 and iX == 0:
+                # print("showing lf: " + str(depthNum))
+                # cv2.imshow("sheared lf", shearedLF[:, :, saiInd])
+                # print("Larger version")
+                # bigImg = cv2.resize(shearedLF[:, :, saiInd], (2*101, 2*101))
+                # cv2.imshow("bigImg", bigImg)
                 # cv2.imwrite("shearTests/"+str(moveX)+"_"+str(moveY)+".png", shearedLF[:, :, saiInd])
-                cv2.imwrite("shearTests/" +str(depthNum)+".png", shearedLF[:, :, saiInd])
-                cv2.waitKey(200)
+                # cv2.imwrite("shearTests/" + str(depthNum)+".png", shearedLF[:, :, saiInd])
+                # cv2.waitKey(200)
 
             saiInd = saiInd + 1
 
+    defocusStack[:, :, depthNum] = DefocusResp(shearedLF)
+    correspStack[:, :, depthNum] = CorrespResp(shearedLF)
+
+    # cv2.imshow("defoc", defocusStack[:, :, depthNum].astype(np.uint8))
+    # cv2.imshow("corresp", correspStack[:, :, depthNum].astype(np.uint8))
+    # cv2.waitKey(200)
+
     depthNum = depthNum + 1
+
+print("Adding to featuresStack...")
+featuresStack = np.concatenate((defocusStack, correspStack), axis=2)
+print("featuresStack shape: ")
+print(featuresStack.shape)
 
 
 
