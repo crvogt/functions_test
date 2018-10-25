@@ -1,9 +1,9 @@
-from keras.datasets import mnist 
+import keras
+from keras.datasets import mnist
 from keras.layers import Input, Dense, Lambda
 from keras.models import Model 
 from keras.objectives import binary_crossentropy 
 from keras.callbacks import LearningRateScheduler
-import keras 
 
 import numpy as np 
 import matplotlib.pyplot as plt 
