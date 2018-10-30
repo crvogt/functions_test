@@ -3,8 +3,9 @@
 
 function LFWriteOutDepthSAI_crv(LF)
     
-    mkdir('/home/carson/libs/SAI_output');
-    delete('/home/carson/libs/SAI_output/*.png');
+%    mkdir('/home/carson/libs/SAI_output');
+    delete('/home/carson/libs/SAI_output/scene_1/l1/*.png');
+    writeDir = '/home/carson/libs/SAI_output/scene_1/l1/';
 
 
     pxStart = 6;
@@ -20,13 +21,13 @@ function LFWriteOutDepthSAI_crv(LF)
         for jter = pxStart:pxDist:pxEnd
             img = uint16(squeeze(LF(iter,jter,:,:,:)));
             if icounter < 10 && jcounter < 10
-                filename = cat(2,'/home/carson/libs/SAI_output/CRV_0',int2str(icounter),'_0',int2str(jcounter),'.png');
+                filename = cat(2, writeDir, 'CRV_0',int2str(icounter),'_0',int2str(jcounter),'.png');
             elseif icounter > 9 && jcounter > 9
-                filename = cat(2,'/home/carson/libs/SAI_output/CRV_',int2str(icounter),'_',int2str(jcounter),'.png');
+                filename = cat(2, writeDir, 'CRV_',int2str(icounter),'_',int2str(jcounter),'.png');
             elseif icounter > 9 && jcounter < 10
-                filename = cat(2,'/home/carson/libs/SAI_output/CRV_',int2str(icounter),'_0',int2str(jcounter),'.png');
+                filename = cat(2, writeDir, 'CRV_',int2str(icounter),'_0',int2str(jcounter),'.png');
             else
-                filename = cat(2,'/home/carson/libs/SAI_output/CRV_0',int2str(icounter),'_',int2str(jcounter),'.png');
+                filename = cat(2, writeDir, 'CRV_0',int2str(icounter),'_',int2str(jcounter),'.png');
             end
             
             imwrite(img,filename)
