@@ -4,8 +4,8 @@
 function LFWriteOutDepthSAI_crv(LF)
     
 %    mkdir('/home/carson/libs/SAI_output');
-    delete('/home/carson/libs/SAI_output/scene_1/l1/*.png');
-    writeDir = '/home/carson/libs/SAI_output/scene_1/l1/';
+    delete('/home/carson/libs/SAI_output/scene_1/light/*.png');
+    writeDir = '/home/carson/libs/SAI_output/scene_1/light/';
 
 
     pxStart = 6;
@@ -30,7 +30,7 @@ function LFWriteOutDepthSAI_crv(LF)
                 filename = cat(2, writeDir, 'CRV_0',int2str(icounter),'_',int2str(jcounter),'.png');
             end
             
-            imwrite(img,filename)
+            imwrite(img(1:100,1:100,:),filename)
             jcounter = jcounter + 1;
         end
         icounter = icounter + 1;
