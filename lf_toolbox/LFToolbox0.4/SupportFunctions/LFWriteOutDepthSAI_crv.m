@@ -4,8 +4,8 @@
 function LFWriteOutDepthSAI_crv(LF)
     
 %    mkdir('/home/carson/libs/SAI_output');
-    delete('/home/carson/libs/SAI_output/scene_1/light/*.png');
-    writeDir = '/home/carson/libs/SAI_output/scene_1/light/';
+    delete('/home/carson/libs/SAI_output/scene_1/dark/*.png');
+    writeDir = '/home/carson/libs/SAI_output/scene_1/dark/';
 
 
     pxStart = 6;
