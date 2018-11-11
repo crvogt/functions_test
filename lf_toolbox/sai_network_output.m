@@ -10,7 +10,7 @@ list([list.isdir] == 0)=[];
 
 contNames = setdiff({list.name}, {'.', '..'});
 
-for iter=1:2%length(contNames)
+for iter=1:length(contNames)
     % Find all Processed Images
     curDir = strcat(baseDir, '/', contNames{iter});
     % Getting all processed images
