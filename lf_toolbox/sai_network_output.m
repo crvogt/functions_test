@@ -25,7 +25,7 @@ for iter=1:length(contNames)
        if mkdirSuccess
            fprintf('successfully created %s\n', folderName);
            imgName = strcat(curDir, '/', curDirNames(lightLevel));
-           getSais(imgName, folderName);
+           get_sais(imgName, folderName);
        else
            fprintf('there was an error creating %s\n', folderName);
        end

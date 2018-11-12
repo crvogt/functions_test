@@ -1,5 +1,5 @@
 function LF = get_sub_ap(imgPath)
-
+    imgPath = imgPath{1};
 	onWindows = false;
 
 	if onWindows
