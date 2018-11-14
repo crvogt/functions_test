@@ -9,7 +9,8 @@ Also, it could be a list, in which casex is expected to map 1:1 to the inputs de
 
 
 import keras 
-from keras.layers import Input, Conv2D, MaxPooling2D, Dense, Flatten, Lambda, UpSampling2D
+from keras.layers import Input, Conv2D, MaxPooling2D
+from keras.layers import Dense, Flatten, Lambda, UpSampling2D
 from keras.models import Model, load_model
 from keras.preprocessing import image 
 import keras.backend as K 
