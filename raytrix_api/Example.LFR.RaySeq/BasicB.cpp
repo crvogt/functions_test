@@ -86,7 +86,7 @@ int main(int argc, char* argv[]){
 		for (int iter = 0; iter < readObj.GetFrameCount(); iter=iter+10) {
 
 			Rx::FileIO::CImage saveImg;
-			saveImg.
+			//saveImg.write() //See example in another file, b or something...
 			// Assign the CUDA device and the calibration
 			printf("Selecting CUDA device...\n");
 			//Rx::LFR::CCudaCompute xCudaCompute;
