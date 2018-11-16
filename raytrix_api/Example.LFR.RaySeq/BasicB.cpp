@@ -55,7 +55,8 @@ int main(int argc, char* argv[]){
 		// Enumerate allCUDA devices at the beginning
 		Rx::LFR::CCuda::EnumerateCudaDevices();
 	
-		Rx::CRxString sxFile = "C:\\Users\\carson\\Desktop\\raytrix_api_tests\\test_rays.rays";
+		//Rx::CRxString sxFile = "C:\\Users\\carson\\Desktop\\raytrix_api_tests\\test_rays.rays";
+		Rx::CRxString sxFile = "C:\\Users\\carson\\Pictures\\Raytrix\\Export\\test_set_3\\ray_test_3.rays.rays";
 
 		unsigned int uFrameBufferCount = 2;
 		
@@ -63,6 +64,8 @@ int main(int argc, char* argv[]){
 		
 		//Rx::LFR::CApiLF::RxRaySeqOpen(sxFile, Rx::LFR::ERaySeqMode::ID::Read, uFrameBufferCount);
 		Rx::LFR::CSeqFileReader readObj;
+		
+		
 		readObj.Open(sxFile, uFrameBufferCount);
 
 		std::cout << "file size: " << readObj.GetFileSize();
@@ -80,8 +83,10 @@ int main(int argc, char* argv[]){
 
 		readObj.StartReading(xInputImage);
 
-		for (int iter = 0; iter < readObj.GetFrameCount(); iter=iter+100) {
+		for (int iter = 0; iter < readObj.GetFrameCount(); iter=iter+10) {
 
+			Rx::FileIO::CImage saveImg;
+			saveImg.
 			// Assign the CUDA device and the calibration
 			printf("Selecting CUDA device...\n");
 			//Rx::LFR::CCudaCompute xCudaCompute;
@@ -115,6 +120,13 @@ int main(int argc, char* argv[]){
 			printf("Download image from CUDA device...\n");
 			Rx::CRxImage xOutputImage;
 			pxImages->Download(Rx::LFR::EImage::Processed_Normalized, &xOutputImage);
+
+			//Show processed light field image
+			printf("Displaying raw light field image...\n");
+			CLUViz::Tool::ViewSetImage(iHandle, &xOutputImage);
+			printf("Press any key...\n");
+			printf("\n");
+			_getch();
 
 			//Set depth parameters
 			printf("Set depth parameters...");
