@@ -110,7 +110,13 @@ int main(int argc, char* argv[]){
 			CLUViz::Tool::ViewSetImage(iHandle, &xInputImage);
 			printf("Press any key...\n");
 			printf("\n");
-			_getch();
+			int myVal = 0;
+			myVal = _getch();
+			std::cout << "return from getch " << myVal << std::endl;
+			while (true) {
+				myVal = _getch();
+				std::cout << "return from getch " << myVal << std::endl;
+			}
 
 			// Pre-process raw light field image before calling any processing functions
 			printf("Pre-processing light field image...\n");
