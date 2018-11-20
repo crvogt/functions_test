@@ -1,5 +1,5 @@
 function LF = get_sub_ap(imgPath)
-    imgPath = imgPath{1};
+%     imgPath = imgPath{1};
 	onWindows = false;
 
 	if onWindows
@@ -17,7 +17,8 @@ function LF = get_sub_ap(imgPath)
 	end
 
 	%Load image
-	[img, daMap] = imread(imgPath, 'png');
+	%[img, daMap] = imread(imgPath, 'png');
+    [img, daMap] = imread(imgPath);
 
 	A = importdata(dataPath);
 	lens0 = A(1:2929,1:2);
@@ -161,6 +162,7 @@ function LF = get_sub_ap(imgPath)
 	pause(2)
 
 	LF = LFDehex_crv(LF);
+    LFDisp_crv(LF);
 
 
 end

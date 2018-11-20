@@ -14,6 +14,6 @@ end
 imgOut = uint16(LF);
 lfToShow = uint16(LF);
 
-% size(imgOut)
+img
 
-% imshow(uint8(imgOut));
+imshow(imgOut);
