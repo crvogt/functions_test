@@ -11,6 +11,7 @@ Also, it could be a list, in which casex is expected to map 1:1 to the inputs de
 import keras 
 from keras.layers import Input, Conv2D, MaxPooling2D
 from keras.layers import Dense, Flatten, Lambda, UpSampling2D
+from keras.layers import concatenate
 from keras.models import Model, load_model
 from keras.preprocessing import image 
 import keras.backend as K 
@@ -24,6 +25,7 @@ import scipy.misc
 import os
 from PIL import Image
 import sys
+import time
 
 # from keras.backend.tensorflow_backend import set_session
 
@@ -61,10 +63,19 @@ def sampling(args):
     """
 
     z_mean, z_log_var = args
+    print('z_mean shape')
+    print(z_mean.shape)
+    print('z_log_var shape')
+    print(z_log_var.shape)
+    # time.sleep(2)
     batch = K.shape(z_mean)[0]
     dim = K.int_shape(z_mean)[1]
     # by default, random_normal has mean=0 and std=1.0
     epsilon = K.random_normal(shape=(batch, dim))
+    f = K.exp(0.5*z_log_var)
+    print('f shape')
+    print(K.shape(f))
+    # time.sleep(20)
     return z_mean + K.exp(0.5 * z_log_var) * epsilon
 
 testVal = []
@@ -200,6 +211,7 @@ def my_gen():
 			vPose3 = np.reshape(vPose3, [batch_size, 2])
 			vPoseB = np.reshape(vPoseB, [batch_size, 2])
 
+			imageConcat = concatenate
 			inputList = [vImage1, vImage2, vImage3, vPose1, vPose2, vPose3, vPoseB]
 			returnTuple = ([inputList, vBody])
 			# if releasedVals == 0:
@@ -264,28 +276,29 @@ print('pre flatten shape')
 shape = K.int_shape(x)
 print(shape)
 x = Flatten()(x)
+print(x.get_shape())
+# time.sleep(20)
+# z_mean = Dense(latentDim, name='z_mean')(x)
+# z_log_var = Dense(latentDim, name='z_log_var')(x)
 
-z_mean = Dense(latentDim, name='z_mean')(x)
-z_log_var = Dense(latentDim, name='z_log_var')(x)
-
-print(z_mean.shape)
-print(z_log_var.shape)
+# print(z_mean.shape)
+# print(z_log_var.shape)
 
 # z = Lambda(sampling, output_shape=(latentDim,), name='z')([z_mean, z_log_var])
 
-encoder_model = Model(encoder_in, [z_mean, z_log_var])
+encoder_model = Model(encoder_in, x)
 
 #This ensures the model will be shared, including weights
 encoded1 = encoder_model(image1)
 encoded2 = encoder_model(image2)
 encoded3 = encoder_model(image3)
 
-z1 = Lambda(sampling, output_shape=(latentDim,), name='z1')([encoded1[0], encoded1[1]])
-z2 = Lambda(sampling, output_shape=(latentDim,), name='z2')([encoded2[0], encoded2[1]])
-z3 = Lambda(sampling, output_shape=(latentDim,), name='z3')([encoded3[0], encoded3[1]])
+# z1 = Lambda(sampling, output_shape=(latentDim,), name='z1')([encoded1[0], encoded1[1]])
+# z2 = Lambda(sampling, output_shape=(latentDim,), name='z2')([encoded2[0], encoded2[1]])
+# z3 = Lambda(sampling, output_shape=(latentDim,), name='z3')([encoded3[0], encoded3[1]])
 #Now concatenate
 # latent_z = keras.layers.concatenate([encoded1, encoded2, encoded3, pose1, pose2, pose3, pose4])
-latent_z = keras.layers.concatenate([z1, z2, z3, pose1, pose2, pose3, pose4])
+latent_z = keras.layers.concatenate([encoded1, encoded2, encoded3, pose1, pose2, pose3, pose4])
 print('latent_z shape')
 print(latent_z.shape)
 
