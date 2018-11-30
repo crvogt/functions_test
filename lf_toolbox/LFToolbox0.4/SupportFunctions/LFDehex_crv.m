@@ -7,15 +7,25 @@ function LFOut = LFDehex_crv(LF)
     doSquareST = false;
 
     fprintf('\nResampling (1D approximation) to square u,v pixels');
+    size(LF,4)
+    LFSize(4)
+
     NewUVec = 0:1/HexAspect:(size(LF,4)+1);  % overshoot then trim
     NewUVec = NewUVec(1:ceil(LFSize(4)*HexAspect));
+    length(NewUVec)
+    fprintf('\nLF size\n');
+    size(LF)
     OrigUSize = size(LF,4);
+    fprintf('\nOrigUSize: %d\n', OrigUSize);
+    LFSize
     LFSize(4) = length(NewUVec);
+    LFSize
+
     %---Allocate dest and copy orig LF into it (memory saving vs. keeping both separately)---
     LF2 = zeros(LFSize);
     LF2(:,:,:,1:OrigUSize,:) = LF;
-    % fprintf('\nLF2 size\n')
-    % size(LF2)
+    fprintf('\nLF2 size\n')
+    size(LF2)
     LF = LF2;
     clear LF2
     
