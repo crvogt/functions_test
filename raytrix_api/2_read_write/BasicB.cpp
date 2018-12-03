@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 		Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\raytrix_api_tests\\rx_img.ray";
 		//Get png files
 		Rx::CRxString grayPng = "C:\\Users\\carson\\Desktop\\gray_to_png\\5_Gray.png";
-		Rx::CRxString lowShut = "C:\\Users\\carson\\Desktop\\gray_to_png\\100_Raw.png";
+		Rx::CRxString lowShut = "C:\\Users\\carson\\Desktop\\gray_to_png\\5.png";
 		Rx::CRxImage xRawPNGImage;
 		Rx::FileIO::CImage xImageFile;
 		xImageFile.Read(&xRawPNGImage, lowShut);
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 		
 		// Start importing the .png files
 		//Rx::FileIO::CImage xImageFile;
-		Rx::CRxString sxRawPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\100_Raw.png";
+		Rx::CRxString sxRawPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\5.png";
 		Rx::CRxImage xRawImage;
 		Rx::CRxString sxGrayPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\5_Gray.png";
 		Rx::CRxImage xGrayImage;
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
 		printf("Preprocessing normalized...\n");
 		Rx::LFR::CApiLF::RxPreProcess();
 
-		sxRayFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\Demo_03_NEW.ray";
+		sxRayFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\Demo_04_NEW.ray";
 		//Rx::LFR::CApiLF::RxRaySave()
 		Rx::LFR::CApiLF::RxRaySave(sxRayFile, true);
 

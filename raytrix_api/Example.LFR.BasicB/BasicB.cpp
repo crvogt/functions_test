@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
 		// Construct path to ray image
 		//Rx::CRxString sxFile = "C:\\Users\\carson\\Desktop\\raytrix_api_tests\\rx_img.ray";
-		Rx::CRxString sxFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\Non_Demo.ray";
+		Rx::CRxString sxFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\Demo_04_NEW.ray";
 
 		//Variables used for saving
 		Rx::CRxString sxFile2;
@@ -160,11 +160,11 @@ int main(int argc, char* argv[])
 		/************************************************************************/
 		/* Refocus				                                                */
 		/************************************************************************/
-		double depthVal = 0;
+		double depthVal = 0.99;
 		//Rx::CRxString sxFile2;
 		//Rx::FileIO::CImage xImageFile;
-		for(int i = 0; i < 10; i++){
-		depthVal += 0.1;
+		//for(int i = 0; i < 10; i++){
+		//depthVal = 0.1;
 		// Focus the image on 50% depth range
 		printf("Focusing on calculated scene depth...");
 		xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Focus_RelativeFocusPlane, depthVal);
@@ -187,7 +187,9 @@ int main(int argc, char* argv[])
 		printf("\n");
 		//std::cout << i << std::endl;
 		_getch();
-		}
+		sxFile2 = "C:\\Users\\carson\\Desktop\\gray_to_png\\dval2.png";
+		xImageFile.Write(&xOutputImage, sxFile2);
+		//}
 
 		/************************************************************************/
 		/*Get Grid Positions*/
