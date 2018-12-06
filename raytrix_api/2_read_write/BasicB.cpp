@@ -130,6 +130,7 @@ int main(int argc, char* argv[])
 		//Rx::ApiLF::RxSetPar(Rx::ApiLF::EPar::Ray_ApplyWhiteImage, 1U);
 		//How about this????
 		//Rx::LFR::CApiLF::RxCalibDBReloadBoundCalib(1);
+		//Rx::LFR::CApiLF::
 		
 		// Process image with no white image
 		printf("Preprocessing normalized...\n");

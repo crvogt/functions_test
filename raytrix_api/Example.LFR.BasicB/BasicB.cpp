@@ -48,7 +48,8 @@ int main(int argc, char* argv[])
 
 		// Construct path to ray image
 		//Rx::CRxString sxFile = "C:\\Users\\carson\\Desktop\\raytrix_api_tests\\rx_img.ray";
-		Rx::CRxString sxFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\Demo_04_NEW.ray";
+		Rx::CRxString sxFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\arm.ray";
+
 
 		//Variables used for saving
 		Rx::CRxString sxFile2;
@@ -85,6 +86,7 @@ int main(int argc, char* argv[])
 		Rx::LFR::CCudaCompute xCudaCompute;
 		xCudaCompute.SetCudaDevice(Rx::LFR::CCuda::GetDevice(Rx::LFR::CCuda::GetDeviceCount() - 1));
 		xCudaCompute.ApplyCalibration(xInputImage.GetCalibration(), true);
+		
 		//Rx::LFR::CCalibration inputCalib = xInputImage.GetCalibration();
 		xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DataType, (unsigned)Rx::Interop::Runtime28::EDataType::UByte);
 
@@ -125,8 +127,10 @@ int main(int argc, char* argv[])
 		Rx::CRxImage xOutputImage;
 		pxImages->Download(Rx::LFR::EImage::Processed_Normalized, &xOutputImage);
 		Rx::FileIO::CImage saveImg;
-		saveImg.Write(&xOutputImage, "C:\\Users\\carson\\Desktop\\gray_to_png\\test_eh.png");
+		//saveImg.Write(&xOutputImage, "C:\\Users\\carson\\Desktop\\gray_to_png\\test_eh.png");
 		// Display the image
+		sxFile2 = "C:\\Users\\carson\\Desktop\\gray_to_png\\dval2.png";
+		//xImageFile.Write(&xOutputImage, sxFile2);
 		CLUViz::Tool::ViewSetImage(iHandle, &xOutputImage);
 
 		// Wait for user to press any key.
@@ -160,7 +164,7 @@ int main(int argc, char* argv[])
 		/************************************************************************/
 		/* Refocus				                                                */
 		/************************************************************************/
-		double depthVal = 0.99;
+		double depthVal = 0;
 		//Rx::CRxString sxFile2;
 		//Rx::FileIO::CImage xImageFile;
 		//for(int i = 0; i < 10; i++){
@@ -178,17 +182,17 @@ int main(int argc, char* argv[])
 		CLUViz::Tool::ViewSetImage(iHandle, &xOutputImage);
 
 		// Save image
-		//sxFile2 = "rx_Focused.png";
-		//printf("Saving focused image as '%s'...\n", sxFile2.ToCString());
-		//xImageFile.Write(&xOutputImage, sxFile2);
+		sxFile2 = "C:\\Users\\carson\\Desktop\\gray_to_png\\rx_Focused.png";
+		printf("Saving focused image as '%s'...\n", sxFile2.ToCString());
+		xImageFile.Write(&xOutputImage, sxFile2);
 
 		// Wait for user to press any key.
 		printf("Press any key...\n");
 		printf("\n");
 		//std::cout << i << std::endl;
 		_getch();
-		sxFile2 = "C:\\Users\\carson\\Desktop\\gray_to_png\\dval2.png";
-		xImageFile.Write(&xOutputImage, sxFile2);
+		//sxFile2 = "C:\\Users\\carson\\Desktop\\gray_to_png\\dval2.png";
+		//xImageFile.Write(&xOutputImage, sxFile2);
 		//}
 
 		/************************************************************************/
