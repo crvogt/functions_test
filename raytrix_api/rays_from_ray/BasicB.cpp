@@ -13,16 +13,6 @@
 #include "Rx.LFR\RayFileReader.h"
 #include "Rx.LFR\SeqFileWriter.h"
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// <summary>
-/// 	Main entry-point for this application.
-/// </summary>
-///
-/// <param name="argc"> Number of command-line arguments. </param>
-/// <param name="argv"> Array of command-line argument strings. </param>
-///
-/// <returns> Exit-code for the process - 0 for success, else an error code. </returns>
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
 	try
