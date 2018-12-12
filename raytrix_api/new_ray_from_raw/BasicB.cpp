@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 	try{
 	// Construct path to ray image
 	//Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\raytrix_api_tests\\rx_img.ray";
-		Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\arm.ray";
+	Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\arm.ray";
 
 	// Initialize CLUVizTool
 	printf("Initializing CLUVizTool...\n");
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 
 	// Start importing the .png files
 	Rx::FileIO::CImage xImageFile;
-	Rx::CRxString sxRawPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\5_orig_low.png";
+	Rx::CRxString sxRawPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\5_orig.png";
 	Rx::CRxImage xRawImage;
 	Rx::CRxImage xImgLum, xImgBayer;
 	Rx::CRxImage imageLumGray;
@@ -156,6 +156,7 @@ int main(int argc, char* argv[])
 	//Rx::LFR::CApiLF::
 	//Rx::LFR::CApiLF::RxTotalFocus(Rx::LF::ESpace::ID::View_Virtual);
 	//Rx::LFR::CApiLF::RxRaySave()
+	
 	Rx::LFR::CApiLF::RxRaySave(sxRayFile, true);
 
 	// Get normalized image from CUDA device
@@ -173,7 +174,7 @@ int main(int argc, char* argv[])
 	// Wait for user to press any key.
 	printf("Press any key...\n");
 	_getch();
-
+	/*
 	//Rx::LFR::CApiLF::RxRefocusBasic()
 	//Rx::LFR::Params::ECudaCompute::ID::Focus_RelativeFocusPlane(0.4);    //Focus_RelativeFocusPlane = 0.4;
 	//Rx::LFR::Params::ECudaCompute::Focus_RelativeFocusPlane
@@ -193,6 +194,7 @@ int main(int argc, char* argv[])
 		std::cout << "refocVal: " << refocVal << std::endl;
 	}
 	*/
+	/*
 	Rx::LFR::CApiLF::RxDepthRay();
 	Rx::LFR::CApiLF::RxDepthMap(Rx::LF::ESpace::ID::View_Virtual);
 	Rx::LFR::CApiLF::RxTotalFocus(Rx::LF::ESpace::ID::View_Virtual);

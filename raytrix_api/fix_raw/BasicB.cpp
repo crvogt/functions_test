@@ -19,9 +19,11 @@ Refer to new_ray_from_raw
 #include "Rx.LFR\CudaCompute.h"
 #include "Rx.LFR\RayFileReader.h"
 
+#include "Rx.LFR\ApiLF.h"
+
 int main(int argc, char* argv[]){
 	try{
-		Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\arm.ray";
+		Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\Demo_04_NEW.ray";
 
 		// Initialize CLUVizTool
 		printf("Initializing CLUVizTool...\n");
