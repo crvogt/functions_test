@@ -1,17 +1,40 @@
+clc
+close all
+clear all
+
+f = '/home/carson/libs/raytrix_gp_data/raytrixImages/high_light_raw'
+
+f0 = strcat(f, '/0.png');
+src0 = imread(f0);
+f1 = strcat(f, '/1.png');
+src1 = imread(f1);
+
+f = figure;
+uit = uitable(f,'Data',src0,'Position',[20 20 262 204]);
+
+% pic = fullfile(matlabroot, 'toolbox', 'image', 'icon', 'icon_info.png');
+% uitable('Data', {[src0]})
+
+% T = table(src0, src1);
+
+% TString = evalc('disp(T)');
+
+% annotation(gcf, 'Textbox', TString)
+
+% dinfo = dir('/home/carson/libs/raytrix_gp_data/raytrixImages/high_light_raw/*.png');
+
 % Set up an example table.
-LastName = {'Smith';'Johnson';'Williams';'Jones';'Brown'};
-Age = [38;43;38;40;49];
-Height = [71;69;64;67;64];
-Weight = [176;163;131;133;119];
-BloodPressure = [124 93; 109 77; 125 83; 117 75; 122 80];
-T = table(Age,Height,Weight,BloodPressure,'RowNames',LastName);
-% Get the table in string form.
-TString = evalc('disp(T)');
-% Use TeX Markup for bold formatting and underscores.
-TString = strrep(TString,'<strong>','\bf');
-TString = strrep(TString,'</strong>','\rm');
-TString = strrep(TString,'_','\_');
-% Get a fixed-width font.
-FixedWidth = get(0,'FixedWidthFontName');
-% Output the table using the annotation command.
-annotation(gcf,'Textbox','String',TString,'Interpreter','Tex','FontName',FixedWidth,'Units','Normalized','Position',[0 0 1 1]);
+% num_imgs = numel(dinfo); %numel is safer than length
+% T = table(cell(1, num_imgs), 'VariableNames', {'image'}, 'RowNames', {'row name'});
+% for K = 1 : numimage
+
+
+
+
+% dinfo = dir('*.jpg');
+% T = table();
+% for K = 1 : length(dinfo)
+% filename = dinfo(K).name;
+% filecontent = imread(filename);
+% T{filename,1} = filecontent;
+% end
