@@ -90,7 +90,8 @@ int main(int argc, char* argv[])
 
 	// Start importing the .png files
 	Rx::FileIO::CImage xImageFile;
-	Rx::CRxString sxRawPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\5_orig.png";
+	// Rx::CRxString sxRawPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\5_orig.png";
+	Rx::CRxString sxRawPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\imgs_to_enhance\\raw\\enh\\24.png";
 	Rx::CRxImage xRawImage;
 	Rx::CRxImage xImgLum, xImgBayer;
 	Rx::CRxImage imageLumGray;
@@ -164,7 +165,7 @@ int main(int argc, char* argv[])
 	//Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::TotalFocus_View_Virtual, xRayImage);
 
 	Rx::FileIO::CImage writeImg;
-	Rx::CRxString writeOut = "C:\\Users\\carson\\Desktop\\gray_to_png\\check.png";
+	Rx::CRxString writeOut = "C:\\Users\\carson\\Desktop\\gray_to_png\\imgs_to_enhance\\processed\\enh\\24.png";
 	writeImg.Write(&xRayImage, writeOut);
 	//sxRayFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\Demo_04_NEW.ray";
 
@@ -174,7 +175,7 @@ int main(int argc, char* argv[])
 	// Wait for user to press any key.
 	printf("Press any key...\n");
 	_getch();
-	/*
+	
 	//Rx::LFR::CApiLF::RxRefocusBasic()
 	//Rx::LFR::Params::ECudaCompute::ID::Focus_RelativeFocusPlane(0.4);    //Focus_RelativeFocusPlane = 0.4;
 	//Rx::LFR::Params::ECudaCompute::Focus_RelativeFocusPlane
@@ -194,14 +195,15 @@ int main(int argc, char* argv[])
 		std::cout << "refocVal: " << refocVal << std::endl;
 	}
 	*/
-	/*
+	
+	
 	Rx::LFR::CApiLF::RxDepthRay();
 	Rx::LFR::CApiLF::RxDepthMap(Rx::LF::ESpace::ID::View_Virtual);
 	Rx::LFR::CApiLF::RxTotalFocus(Rx::LF::ESpace::ID::View_Virtual);
 	Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::TotalFocus_View_Virtual, xRayImage);
 	CLUViz::Tool::ViewSetImage(iView, &xRayImage);
 	
-	Rx::CRxString outFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\origLowTF.png";
+	Rx::CRxString outFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\imgs_to_enhance\\total_focus\\enh\\24.png";
 	writeImg.Write(&xRayImage, outFile);
 
 	//// Wait for user to press any key.
