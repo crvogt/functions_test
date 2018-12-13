@@ -1,0 +1,13 @@
+base_dir = '/home/carson/libs/raytrix_gp_data/raytrixImages/low_light_proc/devignette';
+
+dark_read = strcat(base_dir, '/10.png');
+light_read = strcat(base_dir, '_enhance/10.png');
+
+dark_src = imread(dark_read);
+light_src = imread(light_read);
+
+light_src(1025:2048, 1:2048, :)
+
+dark_src(1:1024, 1:2048, :) = light_src(1025:2048, 1:2048, :);
+
+imshow(dark_src)
