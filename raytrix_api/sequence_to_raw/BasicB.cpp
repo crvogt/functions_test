@@ -40,7 +40,7 @@
 int main(int argc, char* argv[]){
 	try {
 
-		int scene_num = 4;
+		int scene_num = 1;
 
 		// Initialize CLUVizTool
 		//printf("Initializing CluVizTool...\n");
@@ -53,9 +53,11 @@ int main(int argc, char* argv[]){
 		// Enumerate allCUDA devices at the beginning
 		Rx::LFR::CCuda::EnumerateCudaDevices();
 
-		Rx::CRxString sxFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\raytrix_iccp\\video\\";
+		//Rx::CRxString sxFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\raytrix_iccp\\video\\";
+		Rx::CRxString sxFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\raytrix_iccp\\still_video\\";
 		sxFile += scene_num;
-		sxFile += "\\s6.rays";
+		sxFile += "\\h";
+		sxFile += "\\s250.rays";
 		Rx::CRxString wImgFile, dImgFile;
 		unsigned int uFrameBufferCount = 2;
 
@@ -86,9 +88,9 @@ int main(int argc, char* argv[]){
 		Rx::FileIO::CImage saveImg;
 		while (iter < readObj.GetFrameCount()) {
 			std::cout << "On: " << iter << " of " << readObj.GetFrameCount() << std::endl;
-			Rx::CRxString myString = "C:\\Users\\carson\\Desktop\\low_light_video\\";
+			Rx::CRxString myString = "C:\\Users\\carson\\Desktop\\gray_to_png\\video_compare\\";
 			myString += scene_num;
-			myString += "\\";
+			myString += "\\ref\\";
 			myString += frameCount;
 			myString += ".png";		
 			wImgFile = myString;
