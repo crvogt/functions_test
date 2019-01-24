@@ -1,4 +1,3 @@
 ﻿  BasicB.cpp
-c:\users\cvogt\desktop\functions_test\raytrix_api\camera_bind\basicb.cpp(59): warning C4101: 'uDeviceID': unreferenced local variable
   Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\camera_bind\x64\Debug\Example.LFR.BasicB.4.0.exe
   Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\camera_bind\x64\Debug\Example.LFR.BasicB.4.0.pdb (Full PDB)

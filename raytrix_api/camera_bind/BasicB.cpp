@@ -1,47 +1,68 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2015 Raytrix GmbH. All rights reserved.
+// Copyright (c) 2016 Raytrix GmbH. All rights reserved.
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/************************************************************************/
+/*  This example demonstrates:                                          */
+/*      - Working with a camera.                                        */
+/*      - Calculating refocus image                                     */
+/*      - Displaying result                                             */
+/************************************************************************/
+
 #include <conio.h>
 
-// The Raytrix Light Field API
-#include "Rx.Core\RxException.h"
-#include "Rx.LFR\ApiLF.h"
-#include "Rx.LFR\Cuda.h"
-#include "Rx.LFR\CudaCompute.h"
-#include "Rx.LFR\CudaDevice.h"
-// Include CLUViz Tool DLL to display/load/save images.
-#include "Rx.CluViz.Core.CluVizTool\CvCluVizTool.h"
+#include "Rx.LFR/LightFieldRuntime.h"
+#include "Rx.LFR/ICudaData.h"
+#include "Rx.LFR/CameraServer.h"
+#include "Rx.LFR/CalibrationManager.h"
+#include "Rx.LFR/Cuda.h"
+#include "Rx.LFR/CudaCompute.h"
+#include "Rx.LFR/ImageQueue.h"
 
-bool m_bImageAvailable = false;
+#include "Rx.Core\RxException.h"
+#include "Rx.CluViz.Core.CluVizTool/CvCluVizTool.h"
+
+/// <summary> The camera buffer loop. </summary>
+Rx::LFR::CImageQueue m_xCamBuffer;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>
-/// 	Process the image.
+/// 	Executes the image captured action.
 /// </summary>
+///
+/// <param name="xImage">  The image. </param>
+/// <param name="uCamIdx"> The camera index. </param>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void ProcessImage()
+void OnImageCaptured(const Rx::CRxImage& xImage, unsigned uCamIdx)
 {
-	// Preprocess image
-	Rx::LFR::CApiLF::RxPreProcess();
-	// Focus ray image to plane at depth dDepth
-	Rx::LFR::CApiLF::RxRefocusBasic();
+	try
+	{
+		// Make a copy of the provided image. We don't know if this image is reused by the camera SDK or by another handler
+		Rx::CRxImage xCapturedImage;
+		xCapturedImage.Create(&xImage);
+
+		/************************************************************************/
+		/* Write into buffer                                                    */
+		/************************************************************************/
+		if (!m_xCamBuffer.MoveIn(std::move(xCapturedImage)))
+		{
+			// Buffer is full and overwrite is disabled
+			// This is a lost frame
+			return;
+		}
+	}
+	catch (Rx::CRxException& ex)
+	{
+		printf("Exception occured:\n%s\n\n", ex.ToString(true).ToCString());
+		printf("Press any key to end program...\n");
+		_getch();
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// <summary>
-/// 	Callback, called when an image has been captured.
-/// </summary>
-///
-/// <param name="uCamIdx">   The camera index that captured the image. </param>
-/// <param name="pvContext"> The context pointer passed to Rx::ApiLF::RxCamRegisterImageCallback. </param>
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void ImageCallback(unsigned uCamIdx, void* pvContext)
+static void ImageCaptured(const Rx::CRxImage& xImage, unsigned uCamIdx, void* pvContext)
 {
-	// Retrieve the image from the image and write the image data into the bound image.
-	Rx::LFR::CApiLF::RxCamRetrieveImage();
-	ProcessImage();
-
-	m_bImageAvailable = true;
+	OnImageCaptured(xImage, uCamIdx);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,131 +77,133 @@ void ImageCallback(unsigned uCamIdx, void* pvContext)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-	unsigned uDeviceID, uMajor, uMinor;
-
-	Rx::CRxString sxPath, sxFile;
-	Rx::CRxString sxDevName, sxValue;
-
-	// Initialize CLUVizTool
-	printf("Initializing CLUVizTool...\n");
-	CLUViz::Tool::Init();
-
-	// Create an image view
-	printf("Creating image view window...\n");
-	int iView = 0;
-	CLUViz::Tool::CreateViewImage(iView, 600, 100, 800, 600, "Image");
-
 	try
 	{
-		// Initialize Raytrix Library with CUDA support using default library paths
-		printf("Initializing API...\n");
-		Rx::LFR::CApiLF::RxInit(true);
+		/************************************************************************/
+		/* Initialize and Prepare                                               */
+		/************************************************************************/
 
-		////////////////////////////////////////////////////////////////////
-		// List available CUDA devices and select one
-		int iDevCnt = Rx::LFR::CApiLF::RxCudaDeviceCount();
-		for (int iDev = 0; iDev < iDevCnt; ++iDev)
+		// Initialize CLUVizTool
+		printf("Initializing CLUVizTool...\n");
+		CLUViz::Tool::Init();
+
+		// Create an image view
+		printf("Creating image view window...\n");
+
+		// Authenticate MGPU runtime
+		printf("Authenticate LFR...\n");
+		Rx::LFR::CLightFieldRuntime::Authenticate();
+
+		/// <summary> The camera server class that is able to find attached cameras. </summary>
+		Rx::LFR::CCameraServer xCamServer;
+		/// <summary> This is the Cuda compute instance. </summary>
+		Rx::LFR::CCudaCompute xCudaCompute;
+
+		// Enumerate all CUDA devices at the beginning
+		Rx::LFR::CCuda::EnumerateCudaDevices();
+
+		// Iterate over all available Cuda devices
+		printf("Listing Cuda devices...\n");
+		for (int iIdx = 0; iIdx < Rx::LFR::CCuda::GetDeviceCount(); iIdx++)
 		{
-			Rx::LFR::CApiLF::RxCudaDeviceProp(iDev, sxDevName, uMajor, uMinor);
-			printf("CUDA Device %d: %s (%d.%d)\n", iDev, sxDevName.ToCString(), uMajor, uMinor);
+			const Rx::LFR::CCudaDevice& xCuda = Rx::LFR::CCuda::GetDevice(iIdx);
+
+			Rx::CRxString sxName;
+			xCuda.GetParams().GetValue(Rx::LFR::Params::ECudaDevice::Name, sxName);
+
+			double dClockMHz;
+			xCuda.GetParams().GetValue(Rx::LFR::Params::ECudaDevice::ClockFrequencyMHz, dClockMHz);
+
+			double dGlobalMemMB;
+			xCuda.GetParams().GetValue(Rx::LFR::Params::ECudaDevice::TotalGlobalMemoryMB, dGlobalMemMB);
+
+			printf("%d: %s, Clock: %.0f MHz, Memory: %.0f MB\n", iIdx, sxName.ToCString(), dClockMHz, dGlobalMemMB);
 		}
 
-		// Automatic selection if no device ID or a negative device ID is given.
-		Rx::LFR::CApiLF::RxCudaSelectDevice();
+		// Start to find cameras. This is an synchronous call and we wait here until the find process has been finished
+		xCamServer.FindCameras();
 
-		// Get information on selected CUDA device
-		//Rx::LFR::CApiLF:
-		//Rx::LFR::CApiLF::RxGetPar(Rx::LFR::Params::EApiL)
-		//Rx::LFR::CApiLF::RxGetPar(Rx::LFR::Params::ECudaDevice::ID::Name, sxDevName);
-		//Rx::LFR::CApiLF::RxGetPar()
-		//Rx::LFR::CApiLF::RxGetPar(Rx::LFR::Params::ECudaDevice::Name, sxDevName);
-
-		/*
-		Rx::LFR::CApiLF::RxGetPar(Rx::LFR::CApiLF::EPar::Cuda_DeviceName, sxDevName);
-		Rx::LFR::CApiLF::RxGetPar(Rx::LFR::CApiLF::EPar::Cuda_DeviceID, uDeviceID);
-		Rx::LFR::CApiLF::RxGetPar(Rx::ApiLF::EPar::Cuda_CapaMajor, uMajor);
-		Rx::LFR::CApiLF::RxGetPar(Rx::ApiLF::EPar::Cuda_CapaMinor, uMinor);
-
-		Rx::LFR::CApiLF::RxGetPar(Rx::LFR::Params::ECudaDevice::Name, sxDevName);
-		*/
-
-
-		//Rx::LFR::CApiLF::RxGetPar(Rx::LFR::Params::ECalib::ID::)
-
-		//printf("Selected CUDA Device: %d, %s, (%d.%d)\n", uDeviceID, sxDevName.ToCString(), uMajor, uMinor);
-		//printf("\n\n");
-
-		////////////////////////////////////////////////////////////////////
-		// Initialize cameras
-		////////////////////////////////////////////////////////////////////
-
-		printf("Initializing camera drivers...");
-		unsigned uCamID = 1;
-		Rx::LFR::CApiLF::RxCamOpen(uCamID);
-		Rx::LFR::CApiLF::RxCamRegister();
-		/*
-		printf("done.\n");
-
-		printf("Registering cameras...");
-		Rx::ApiLF::RxCamRegister();
-		printf("done.\n");
-
-		// Register the image callback in the API
-		Rx::ApiLF::RxCamRegisterImageCallback(Rx::ApiLF::TFuncCamImageCallback(ImageCallback), nullptr);
-
-		////////////////////////////////////////////////////////////////////
-		// Get information on available cameras
-		////////////////////////////////////////////////////////////////////
-
-		// Number of cameras available
-		unsigned uCameraCount;
-		Rx::ApiLF::RxGetPar(Rx::ApiLF::EPar::Cam_Count, uCameraCount);
-
-		if (uCameraCount == 0)
+		// Quit the application if there is no camera
+		if (xCamServer.GetCameraCount() == 0)
 		{
-			printf("No cameras available. Press any key to end...\n");
-			_getch();
-			return -1;
+			printf("No camera found\n");
+			return 0;
 		}
-		printf("Number of cameras available: %d\n", uCameraCount);
 
-		////////////////////////////////////////////////////////////////////
-		// Get information on available camera calibration settings
-		////////////////////////////////////////////////////////////////////
+		printf("Number of cameras available: %d\n", xCamServer.GetCameraCount());
 
-		// Work with camera 0
-		unsigned uCamID = 0;
+		// Quit the application if there is no Cuda device
+		if (Rx::LFR::CCuda::GetDeviceCount() == 0)
+		{
+			printf("No Cuda device found\n");
+			return 0;
+		}
 
-		// Before the calibration database for a camera can be accessed
-		// the camera has to be opened.
+		printf("Number of Cuda devices available: %d\n", Rx::LFR::CCuda::GetDeviceCount());
+
+		/************************************************************************/
+		/* Work with one Camera (Id uID) and one GPU (Id uID)	                */
+		/* Get information on available camera calibration settings	            */
+		/************************************************************************/
+
+		// Work with camera and GPU 0
+		unsigned uID = 0;
+
+		// Get the camera from the camera server
+		Rx::LFR::CCamera& xCamera = xCamServer.GetCamera(uID);
+
+		// Open the camera
 		printf("Opening camera 0...");
-		Rx::ApiLF::RxCamOpen(uCamID);
+		xCamera.Open();
 		printf("done.\n");
 
-		printf("Binding camera 0 ...");
-		Rx::ApiLF::RxCamBind(uCamID);
-		printf("done.\n");
+		// Add a image captured callback. This method gets called for every captured camera image and more details are given there
+		xCamera.AddImageCapturedCallback(ImageCaptured, nullptr);
 
 		printf("______________________________________________\n");
-		printf("Camera %d:\n", uCamID);
+		printf("Camera %d:\n", uID);
 
-		Rx::ApiLF::RxCamGetPar(uCamID, Rx::ApiLF::EPar::Cam_DriverName, sxValue);
-		printf(">> Type: %s\n", sxValue.ToCString());
+		printf(">> Type: %s\n", xCamera.GetDriverName().ToCString());
 
-		Rx::ApiLF::RxCamGetPar(uCamID, Rx::ApiLF::EPar::Cam_HardwareId, sxValue);
-		printf(">> ID  : %s\n", sxValue.ToCString());
+		printf(">> ID  : %s\n", xCamera.GetInternalSerial().ToCString());
 
 		printf("\n\n");
 
-		/////////////////////////////////////////////////////////////////
-		// Capture images from camera
-		Rx::ApiLF::RxSetPar(Rx::ApiLF::EPar::Proj_CurrentTargetView, unsigned(Rx::Projection::ESpace::ViewCamera));
+		// Set up the image buffer properties
+		unsigned uBufferSize = 3;
+		bool bOverwrite      = false;
 
-		Rx::ApiLF::RxCamSetPar(Rx::ApiLF::EPar::Cam_TriggerMode, unsigned(Rx::Interop::Runtime30::Camera::ETriggerMode::Software_SnapShot));
+		printf("______________________________________________\n");
+		printf("Camera Image Buffer %d:\n", uID);
+
+		printf(">> Buffersize: %u\n", uBufferSize);
+
+		printf(">> Overwrite  : %s\n", bOverwrite ? "Yes" : "No");
+
+		printf("\n\n");
+
+		// Create buffer within the given size and with the given overwrite flag
+		m_xCamBuffer.Initialize(uBufferSize, bOverwrite);
+
+		// Load the default calibration of the camera (and load the gray image too)
+		Rx::LFR::CCalibration xDefaultCalibration;
+		Rx::LFR::CCalibrationManager::LoadDefaultCalibration(xDefaultCalibration, xCamera, true);
+
+		// For this example just work with one camera and one GPU
+		xCudaCompute.SetCudaDevice(Rx::LFR::CCuda::GetDevice(uID));
+		xCudaCompute.ApplyCalibration(xDefaultCalibration, true);
+		xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DataType, (unsigned) Rx::Interop::Runtime28::EDataType::UByte);
+
+		// Get the camera name
+		Rx::CRxString sxCameraName = Rx::LFR::CCalibrationManager::GetCameraName(xCamera);
+
+		// Create the visualization
+		int iHandle;
+		CLUViz::Tool::CreateViewImage(iHandle, 0, 0, 1000, 800, sxCameraName.ToCString());
 
 		// Now start capturing images
 		printf("Starting capture...");
-		Rx::ApiLF::RxCamStartCapture();
+		xCamera.Start(Rx::Interop::Runtime30::Camera::ETriggerMode::Software_SnapShot);
 		printf("done.\n\n");
 
 		printf("\n\n");
@@ -188,105 +211,137 @@ int main(int argc, char* argv[])
 		printf("____________________\n");
 
 		// Get the current camera exposure
-		double dValue;
-		Rx::ApiLF::RxCamGetPar(Rx::ApiLF::EPar::Cam_Exposure, dValue);
-
-		//RxCamGetPar(uCamID, EPar::Cam_Exposure, dValue);
-		printf("Init Exposure: %g\n", dValue);
+		float fValue;
+		xCamera.GetProperty(Rx::Interop::Runtime30::Camera::EProperty::Exposure, fValue);
+		printf("Init Exposure: %g\n", fValue);
 
 		// Set the camera exposure in milliseconds
-		Rx::ApiLF::RxCamSetPar(Rx::ApiLF::EPar::Cam_Exposure, 10.0);
+		xCamera.SetProperty(Rx::Interop::Runtime30::Camera::EProperty::Exposure, 10.0f);
 
-		// Depending on the camera and other settings, the exposure
-		// time set in the previous step may not be exactly available.
-		// Read the exposure time again to see what the actual value is.
-		Rx::ApiLF::RxCamGetPar(Rx::ApiLF::EPar::Cam_Exposure, dValue);
-		printf("New Exposure: %g\n", dValue);
+		// Get the new camera exposure
+		xCamera.GetProperty(Rx::Interop::Runtime30::Camera::EProperty::Exposure, fValue);
+		printf("New Exposure: %g\n", fValue);
 
 		bool bDoCapture   = true;
 		bool bUpdateImage = false;
 		double dFocus     = 0.5;
 
+		// Get the image access interface.
+		Rx::LFR::ICudaDataImages* pxImages = static_cast<Rx::LFR::ICudaDataImages*>(xCudaCompute.GetInterface(Rx::LFR::Interfaces::ECudaCompute::Images));
+
+		// Get the first image in the Queue
+		Rx::CRxImage xCapturedImage;
+
 		// Loop until the user ends the program
 		bool bEnd = false;
 		while (!bEnd)
 		{
-			// Set API parameters
-			Rx::ApiLF::RxSetPar(Rx::ApiLF::EPar::Focus_RelativeFocusPlane, dFocus);
-
 			if (bDoCapture)
 			{
 				bDoCapture = false;
 
 				// Trigger the camera
-				Rx::ApiLF::RxCamTrigger();
+				xCamera.Trigger();
 			}
 
-			if (bUpdateImage)
+			// Wait for the image buffer to be not empty
+			if (!m_xCamBuffer.WaitForNotEmpty(1000))
 			{
-				ProcessImage();
+				continue;
 			}
 
-			if (m_bImageAvailable)
+			// Check if a new image should be get from the image buffer or the previous image sould be updated
+			if (!bUpdateImage)
 			{
-				// Get focused image from CUDA device
-				Rx::CRxImage xImage;
-				Rx::ApiLF::RxGetImage(Rx::ApiLF::EImgID::RefocusBasic, xImage);
-
-				// Display the image
-				CLUViz::Tool::ViewSetImage(iView, &xImage);
-
-				printf("\nMenu:\n");
-				printf("'c': Capture new image\n");
-				printf("'+', '-': Change focus\n");
-				printf("'q': End\n\n");
-
-				switch (_getch())
+				if (!m_xCamBuffer.MoveOut(xCapturedImage))
 				{
-				case 'c':
-					if (m_bImageAvailable)
-					{
-						bDoCapture        = true;
-						m_bImageAvailable = false;
-					}
-					break;
-
-				case '+':
-					dFocus      += 0.05;
-					bUpdateImage = true;
-					break;
-
-				case '-':
-					dFocus      -= 0.05;
-					bUpdateImage = true;
-					break;
-
-				case 'q':
-					bEnd = true;
-					break;
+					// Wait again! This functions says that it waits until a frame is available
+					continue;
 				}
+			}
 
-				if (dFocus < 0.0)
-				{
-					dFocus = 0.0;
-				}
-				else if (dFocus >= 1.0)
-				{
-					dFocus = 0.95;
-				}
+			// Upload the image as the new raw image of all further CUDA computations
+			printf("Uploading image to Cuda compute instance...\n");
+			xCudaCompute.UploadRawImage(xCapturedImage);
+
+			// Pre-process raw light field image before calling any processing functions
+			printf("Pre-processing light field image...\n");
+			xCudaCompute.Compute_PreProcess();
+
+			// Compute refocus image
+			printf("Computing refocus image on depth %g...\n", dFocus);
+			xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Focus_RelativeFocusPlane, dFocus);
+			xCudaCompute.Compute_RefocusBasic();
+
+			// Get refocus image from CUDA device
+			printf("Download image from CUDA device...\n");
+			Rx::CRxImage xOutputImage;
+			pxImages->Download(Rx::LFR::EImage::RefocusBasic, &xOutputImage);
+
+			// Display the image
+			CLUViz::Tool::ViewSetImage(iHandle, &xOutputImage);
+
+			printf("\nMenu:\n");
+			printf("'c': Capture new image\n");
+			printf("'+', '-': Change focus\n");
+			printf("'q': End\n\n");
+
+			switch (_getch())
+			{
+			case 'c':
+				bDoCapture   = true;
+				bUpdateImage = false;
+				break;
+
+			case '+':
+				printf("said +\n");
+				printf("before: %f\n", dFocus);
+				dFocus      += 0.05;
+				printf("after: %f\n", dFocus);
+				bUpdateImage = true;
+				break;
+
+			case '-':
+				printf("said -\n");
+				dFocus      -= 0.05;
+				bUpdateImage = true;
+				break;
+
+			case 'q':
+				printf("quitting\n");
+				bEnd = true;
+				break;
+			}
+
+			if (dFocus < 0.0)
+			{
+				dFocus = 0.0;
+			}
+			else if (dFocus >= 1.0)
+			{
+				dFocus = 0.95;
 			}
 		}
 
 		printf("Stopping camera capture...");
 		// Stop capturing
-		Rx::ApiLF::RxCamStopCapture();
+		xCamera.Stop();
 		printf("done.\n");
 
 		// Close camera --> implies an unbind
 		printf("Closing camera...");
-		Rx::ApiLF::RxCamClose(uCamID);
+		xCamera.Close();
 		printf("done.\n");
-	*/
+
+		// Finalize Cuda and the runtime
+		Rx::LFR::CLightFieldRuntime::End();
+
+		// The example is finished
+		printf("finished.\n");
+
+		// Wait for user to press any key.
+		printf("Press any key...\n");
+		_getch();
 	}
 	catch (Rx::CRxException& ex)
 	{
@@ -302,17 +357,6 @@ int main(int argc, char* argv[])
 		_getch();
 		return -1;
 	}
-	/*
-	printf("Closing CLUViz Tool...");
-	// Close all CLUViz Windows and free internally used memory
-	CLUViz::Tool::Finalize();
-	printf("done.\n");
 
-	printf("Closing Raytrix API...");
-	// Close Raytrix API, free all memory on host and CUDA device
-	// and close all open cameras.
-	Rx::ApiLF::RxFinalize();
-	printf("done.\n");
-	*/
 	return 0;
 }
