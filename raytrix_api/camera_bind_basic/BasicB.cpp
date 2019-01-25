@@ -10,6 +10,9 @@
 /************************************************************************/
 
 #include <conio.h>
+#include <chrono>
+#include <iostream>
+#include <thread>
 
 #include "Rx.LFR/LightFieldRuntime.h"
 #include "Rx.LFR/ICudaData.h"
@@ -24,6 +27,14 @@
 
 /// <summary> The camera buffer loop. </summary>
 Rx::LFR::CImageQueue m_xCamBuffer;
+
+//Set some clock namespaces
+using Clock = std::chrono::steady_clock;
+using std::chrono::time_point;
+using std::chrono::duration_cast;
+using std::chrono::milliseconds;
+using namespace std::literals::chrono_literals;
+using std::this_thread::sleep_for;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>
@@ -179,14 +190,20 @@ int main(int argc, char* argv[])
 		Rx::CRxImage xCapturedImage;
 
 		//Exposure settings
-		float exposureVal = 1.0;
+		float exposureVal = 0.0;
 		bool bExposureUp = true;
+		float expTimeTotal = 0.0;
+
+		//Set timer
+		time_point<Clock> start = Clock::now();
+		time_point<Clock> end;
 
 		// Loop until the user ends the program
 		bool bEnd = false;
+		
 		while (!bEnd)
 		{
-			printf("Start of loop\n");
+			//printf("Start of loop\n");
 			if (bDoCapture)
 			{
 				bDoCapture = false;
@@ -216,35 +233,37 @@ int main(int argc, char* argv[])
 			xCudaCompute.UploadRawImage(xCapturedImage);
 
 			// Pre-process raw light field image before calling any processing functions
-			xCudaCompute.Compute_PreProcess();
+			//xCudaCompute.Compute_PreProcess();
 
 			// Get refocus image from CUDA device
 			printf("Download image from CUDA device...\n");
 			Rx::CRxImage xOutputImage;
-			pxImages->Download(Rx::LFR::EImage::Processed_Normalized, &xOutputImage);
+			//pxImages->Download(Rx::LFR::EImage::Processed_Normalized, &xOutputImage);
+			pxImages->Download(Rx::LFR::EImage::Raw, &xOutputImage);
 
 			// Display the image
 			CLUViz::Tool::ViewSetImage(iHandle, &xOutputImage);
 
 			// Set the camera exposure in milliseconds
 			if (bExposureUp) {
-				exposureVal += 2.0;
+				exposureVal += 10.0;
 				if (exposureVal > 50.0) {
+					end = Clock::now();
 					bExposureUp = false;
+					break;
+
 				}
 			}
-			else {
-				exposureVal -= 2.0;
-				if (exposureVal < 2.0) {
-					bExposureUp = true;
-				}
-			}
+			// Set exposure value property
+			expTimeTotal += exposureVal;
 			xCamera.SetProperty(Rx::Interop::Runtime30::Camera::EProperty::Exposure, exposureVal);
 
 			bDoCapture = true;
 			bUpdateImage = false;
 		}
-
+		milliseconds diff = duration_cast<milliseconds>(end - start);
+		std::cout << "total time: " << diff.count() << "ms" << std::endl;
+		std::cout << "exposure time: " << expTimeTotal << "ms" << std::endl;
 		// Stop capturing
 		xCamera.Stop();
 
