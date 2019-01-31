@@ -3,7 +3,8 @@ clear all
 close all
 
 % Iterate through the scenes:
-baseDir = '/home/carson/libs/raytrix_gp_data/raytrixImages/low_light';
+baseDir = '/home/carson/libs/raytrix_gp_data/raytrixImages/high_light_raw';
+baseDir2 = '/home/carson/libs/raytrix_gp_data/raytrixImages/high_light';
 list = dir([baseDir, '/*']);
 
 list([list.isdir] == 1)=[];
@@ -17,7 +18,7 @@ for iter=1:length(contNames)
 %     pause(100)
     newDir = split(contNames{iter}, '.');
     newDir = newDir{1};
-    folderName = strcat(baseDir, '/', newDir);
+    folderName = strcat(baseDir2, '/', newDir)
     pause(2)
     [mkdirSuccess, ~, ~] = mkdir(folderName);
     if mkdirSuccess

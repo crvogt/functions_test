@@ -18,7 +18,8 @@ function LF = get_sub_ap(imgPath)
 
 	%Load image
 	%[img, daMap] = imread(imgPath, 'png');
-    [img, daMap] = imread(imgPath);
+    [img, ~] = imread(imgPath);
+    img = demosaic(img, 'gbrg');
 
 	A = importdata(dataPath);
 	lens0 = A(1:2929,1:2);
