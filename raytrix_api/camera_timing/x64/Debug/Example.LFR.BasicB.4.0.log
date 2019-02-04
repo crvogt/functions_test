@@ -1,2 +1,4 @@
-﻿  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\camera_bind_basic\x64\Debug\Example.LFR.BasicB.4.0.exe
-  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\camera_bind_basic\x64\Debug\Example.LFR.BasicB.4.0.pdb (Full PDB)
+﻿  BasicB.cpp
+  LINK : C:\Users\cvogt\Desktop\functions_test\raytrix_api\camera_timing\x64\Debug\Example.LFR.BasicB.4.0.exe not found or not built by the last incremental link; performing full link
+  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\camera_timing\x64\Debug\Example.LFR.BasicB.4.0.exe
+  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\camera_timing\x64\Debug\Example.LFR.BasicB.4.0.pdb (Full PDB)
