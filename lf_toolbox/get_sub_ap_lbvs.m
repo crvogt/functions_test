@@ -1,4 +1,4 @@
-function LF = get_sub_ap(imgPath)
+function LF_to_return = get_sub_ap_lbvs(imgPath)
 %     imgPath = imgPath{1};
 	onWindows = false;
 
@@ -37,7 +37,7 @@ function LF = get_sub_ap(imgPath)
 		iter = iter + 1;
 	end
 
-	% Put the lenses into a lftoolbox-friendly structure
+	% Put the lenses into a lbvs friendly structure
 
 	LF = zeros(25, 25, 101, 87, 3);
 
@@ -164,6 +164,14 @@ function LF = get_sub_ap(imgPath)
 	pause(2)
 
 	LF = LFDehex_crv(LF);
+
+	LF_to_return = zeros(101, 101, 3, 25, 25);
+	for ax = 1:25
+		for ay = 1:25
+			LF_to_return(:, :, :, ax, ay) = LF(ax, ay, :, :, :);
+		end
+	end
+
     LFDisp_crv(LF);
 
 
