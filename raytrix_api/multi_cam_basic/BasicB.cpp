@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 			printf("No Cuda device found\n");
 			return 0;
 		}
-
+		
 		/************************************************************************/
 		/* Work with one Camera (Id uID) and one GPU (Id uID)	                */
 		/* Get information on available camera calibration settings	            */
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
 		// Open the camera
 		xCamera.Open();
 		xCameraTest.Open();
-
+		
 		// Add a image captured callback. This method gets called for every captured camera image and more details are given there
 		xCamera.AddImageCapturedCallback(ImageCaptured, nullptr);
 		xCameraTest.AddImageCapturedCallback(ImageCaptured, nullptr);
@@ -178,18 +178,19 @@ int main(int argc, char* argv[])
 		Rx::CRxString sxTestCameraName = Rx::LFR::CCalibrationManager::GetCameraName(xCameraTest);
 
 		// Create the visualization
-		int iHandle;
+		int iHandle, iTestHandle;
 		CLUViz::Tool::CreateViewImage(iHandle, 0, 0, 1000, 800, sxCameraName.ToCString());
-		CLUViz::Tool::CreateViewImage(iHandle, 0, 0, 1000, 800, sxTestCameraName.ToCString());
+		CLUViz::Tool::CreateViewImage(iTestHandle, 0, 0, 1000, 800, sxTestCameraName.ToCString());
 
 		// Now start capturing images
 		xCamera.Start(Rx::Interop::Runtime30::Camera::ETriggerMode::Software_SnapShot);
 		xCameraTest.Start(Rx::Interop::Runtime30::Camera::ETriggerMode::Software_SnapShot);
 
 		// Set the camera exposure in milliseconds
+		std::cout << "\nsetting cameras exposure " << 5.0 << " and " << 20.0 << std::endl;
 		xCamera.SetProperty(Rx::Interop::Runtime30::Camera::EProperty::Exposure, 5.0f);
 		xCameraTest.SetProperty(Rx::Interop::Runtime30::Camera::EProperty::Exposure, 20.0f);
-
+		
 		bool bDoCapture   = true;
 		bool bUpdateImage = false;
 		
@@ -200,12 +201,14 @@ int main(int argc, char* argv[])
 		Rx::CRxImage xCapturedImage;
 
 		//Exposure settings
-		float exposureVal = 0.0;
+		float exposureVal = 50.0;
+		float exposureValTest = 150.0;
 		bool bExposureUp = true;
 		float expTimeTotal = 0.0;
 
 		// Loop until the user ends the program
 		bool bEnd = false;
+		bool bMainCam = true;
 		
 		while (!bEnd)
 		{
@@ -215,7 +218,14 @@ int main(int argc, char* argv[])
 				bDoCapture = false;
 
 				// Trigger the camera
-				xCamera.Trigger();
+				if (bMainCam) {
+					xCamera.Trigger();
+					bMainCam = false;
+				}
+				else{
+					xCameraTest.Trigger();
+					bMainCam = true;
+				}
 			}
 
 			// Wait for the image buffer to be not empty
@@ -248,23 +258,31 @@ int main(int argc, char* argv[])
 			pxImages->Download(Rx::LFR::EImage::Raw, &xOutputImage);
 
 			// Display the image
-			CLUViz::Tool::ViewSetImage(iHandle, &xOutputImage);
+			if (bMainCam) {
+				CLUViz::Tool::ViewSetImage(iHandle, &xOutputImage);
+			}
+			else {
+				CLUViz::Tool::ViewSetImage(iTestHandle, &xOutputImage);
+			}
 
 			// Set exposure value property
-			expTimeTotal += exposureVal;
+			//expTimeTotal += exposureVal;
 			xCamera.SetProperty(Rx::Interop::Runtime30::Camera::EProperty::Exposure, exposureVal);
+			xCameraTest.SetProperty(Rx::Interop::Runtime30::Camera::EProperty::Exposure, exposureValTest);
 
 			bDoCapture = true;
 			bUpdateImage = false;
 		}
-		milliseconds diff = duration_cast<milliseconds>(end - start);
-		std::cout << "total time: " << diff.count() << "ms" << std::endl;
-		std::cout << "exposure time: " << expTimeTotal << "ms" << std::endl;
+		//lliseconds diff = duration_cast<milliseconds>(end - start);
+		//std::cout << "total time: " << diff.count() << "ms" << std::endl;
+		//std::cout << "exposure time: " << expTimeTotal << "ms" << std::endl;
 		// Stop capturing
 		xCamera.Stop();
+		xCameraTest.Stop();
 
 		// Close camera --> implies an unbind
 		xCamera.Close();
+		xCameraTest.Close();
 
 		// Finalize Cuda and the runtime
 		Rx::LFR::CLightFieldRuntime::End();
@@ -273,8 +291,7 @@ int main(int argc, char* argv[])
 		printf("Press any key...\n");
 		_getch();
 	}
-	catch (Rx::CRxException& ex)
-	{
+	catch(Rx::CRxException& ex){
 		printf("Exception occured:\n%s\n\n", ex.ToString(true).ToCString());
 		printf("Press any key to end program...\n");
 		_getch();
