@@ -23,7 +23,7 @@ Refer to new_ray_from_raw
 
 int main(int argc, char* argv[]){
 	try{
-		Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\plant.ray";
+		Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\Demo_04_NEW.ray";
 
 		// Initialize CLUVizTool
 		printf("Initializing CLUVizTool...\n");
@@ -61,11 +61,11 @@ int main(int argc, char* argv[]){
 
 		// Start importing the .png files
 		Rx::FileIO::CImage xImageFile;
-		Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\9.png";
+		Rx::CRxString sxRawPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\5_orig_low.png";
 		Rx::CRxImage xRawImage;
 		Rx::CRxImage xImgLum, xImgBayer;
 		Rx::CRxImage imageLumGray;
-		Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\b_gray.png";
+		Rx::CRxString sxGrayPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\b_gray.png";
 		Rx::CRxImage xGrayImage;
 
 		// Load raw image
@@ -95,7 +95,7 @@ int main(int argc, char* argv[]){
 		Rx::LFR::CApiLF::RxSetImage(Rx::LFR::EImage::ID::Gray, xGrayImage);
 		xGrayImage.Destroy();
 		
-		Rx::CRxString newRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\newTestRay.ray";
+		Rx::CRxString newRayFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\newTestRay.ray";
  
 		Rx::LFR::CApiLF::RxRaySave(newRayFile, true);
 
@@ -103,7 +103,7 @@ int main(int argc, char* argv[]){
 		Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::Processed_Normalized, xRayImage);
 		
 		Rx::FileIO::CImage writeImg;
-		Rx::CRxString writeOut = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\check.png";
+		Rx::CRxString writeOut = "C:\\Users\\carson\\Desktop\\gray_to_png\\check.png";
 		writeImg.Write(&xRayImage, writeOut);
 	}
 	catch (Rx::CRxException& ex){
