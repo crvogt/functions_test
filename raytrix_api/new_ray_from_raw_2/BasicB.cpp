@@ -39,12 +39,14 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
+	std::cout << "now?\n";
 	try{
-		for (int iter = 0; iter < 20; iter++) {
+		std::cout << "starting...\n";
+		for (int iter = 0; iter < 10; iter++) {
 			// Construct path to ray image
 			//Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\raytrix_api_tests\\rx_img.ray";
-			Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\arm.ray";
-
+			Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\plant.ray";
+	
 			/*
 			// Initialize CLUVizTool
 			printf("Initializing CLUVizTool...\n");
@@ -93,13 +95,13 @@ int main(int argc, char* argv[])
 			*/
 			// Start importing the .png files
 			Rx::FileIO::CImage xImageFile;
-			Rx::CRxString sxRawPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\targets\\";
+			Rx::CRxString sxRawPngFile = "E:\\hdr\\fibonacci\\0\\raw\\";
 			sxRawPngFile += iter;
 			sxRawPngFile += ".png";
 			Rx::CRxImage xRawImage;
 			Rx::CRxImage xImgLum, xImgBayer;
 			Rx::CRxImage imageLumGray;
-			Rx::CRxString sxGrayPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\b_gray.png";
+			Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\gray.png";
 			Rx::CRxImage xGrayImage;
 
 			// Load raw image
@@ -140,7 +142,7 @@ int main(int argc, char* argv[])
 			//Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::TotalFocus_View_Virtual, xRayImage);
 
 			Rx::FileIO::CImage writeImg;
-			Rx::CRxString writeOut = "C:\\Users\\carson\\Desktop\\low_light_out\\devignette_ref\\";
+			Rx::CRxString writeOut = "E:\\hdr\\fibonacci\\0\\processed\\";
 			writeOut += iter;
 			writeOut += ".png";
 			writeImg.Write(&xRayImage, writeOut);
