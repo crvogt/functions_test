@@ -15,8 +15,8 @@ function LFWriteOutDepthSAI_crv(LF, writeDir)
 
     for iter = pxStart:pxDist:pxEnd
         for jter = pxStart:pxDist:pxEnd
-            % img = uint16(squeeze(LF(iter,jter,:,:,:)));
-            img = uint8(squeeze(LF(iter, jter, :, :, :)));
+            img = uint16(squeeze(LF(iter,jter,:,:,:)));
+            % img = uint8(squeeze(LF(iter, jter, :, :, :)));
             if icounter < 10 && jcounter < 10
                 filename = cat(2, writeDir, '/CRV_0',int2str(icounter),'_0',int2str(jcounter),'.png');
             elseif icounter > 9 && jcounter > 9
@@ -27,7 +27,9 @@ function LFWriteOutDepthSAI_crv(LF, writeDir)
                 filename = cat(2, writeDir, '/CRV_0',int2str(icounter),'_',int2str(jcounter),'.png');
             end
             
-            imwrite(img(1:100,1:100,:), filename)
+            img = imresize(img(1:100, 1:100, :), [200 NaN]);
+            % imwrite(img(1:100,1:100,:), filename)
+            imwrite(img, filename);
             jcounter = jcounter + 1;
         end
         icounter = icounter + 1;

@@ -6,8 +6,8 @@ close all
 % imgPath = '/home/carson/libs/raytrix_data/light_test_1/l1/g0/l1_s5_g0_0000041617_Processed.png';
 % writePath = '/home/carson/libs/raytrix_data/light_test_1/l1/g0/l1g0sai';
 
-imgPath = '/home/carson/libs/store_imgs/FS.png'
-writePath = '/home/carson/libs/store_imgs/fsSAI'
+imgPath = '/home/carson/libs/store_imgs/dist_foc_tests/processed.png'
+writePath = '/home/carson/libs/store_imgs/dist_foc_tests/sais'
 
 LF = get_sub_ap(imgPath);
 
