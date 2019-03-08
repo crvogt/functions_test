@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 		for (int iter = 0; iter < 10; iter++) {
 			// Construct path to ray image
 			//Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\raytrix_api_tests\\rx_img.ray";
-			Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\plant.ray";
+			Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034045116\\plant.ray";
 
 			/*
 			// Initialize CLUVizTool
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
 			Rx::CRxImage xRawImage;
 			Rx::CRxImage xImgLum, xImgBayer;
 			Rx::CRxImage imageLumGray;
-			Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\gray.png";
+			Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034045116\\gray.png";
 			Rx::CRxImage xGrayImage;
 
 			// Load raw image
