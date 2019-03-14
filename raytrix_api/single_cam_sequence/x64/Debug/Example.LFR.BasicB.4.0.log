@@ -1,0 +1,8 @@
+﻿  BasicB.cpp
+c:\users\cvogt\desktop\functions_test\raytrix_api\multi_cam_sequence\basicb.cpp(114): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\cvogt\desktop\functions_test\raytrix_api\multi_cam_sequence\basicb.cpp(115): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\cvogt\desktop\functions_test\raytrix_api\multi_cam_sequence\basicb.cpp(117): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\cvogt\desktop\functions_test\raytrix_api\multi_cam_sequence\basicb.cpp(118): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\cvogt\desktop\functions_test\raytrix_api\multi_cam_sequence\basicb.cpp(119): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\multi_cam_sequence\x64\Debug\Example.LFR.BasicB.4.0.exe
+  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\multi_cam_sequence\x64\Debug\Example.LFR.BasicB.4.0.pdb (Full PDB)
