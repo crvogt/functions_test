@@ -52,13 +52,16 @@ int main(int argc, char* argv[]){
 		// Enumerate allCUDA devices at the beginning
 		Rx::LFR::CCuda::EnumerateCudaDevices();
 
-		Rx::CRxString rays_file += rays_location;
+		Rx::CRxString rays_file;
+		rays_file += rays_location.c_str();
 		rays_file += "0.rays";
 		//"E:\\dual_exp\\video_one\\cam_zero\\0.rays";
 		
-		Rx::CRxString cam_0_write += rays_location;
+		Rx::CRxString cam_0_write;
+		cam_0_write += rays_location.c_str();
 		cam_0_write += "0\\";
-		Rx::CRxString cam_1_write += rays_location;
+		Rx::CRxString cam_1_write; 
+		cam_1_write += rays_location.c_str();
 		cam_1_write += "1\\";	
 	
 		unsigned int uFrameBufferCount = 2;
@@ -79,11 +82,14 @@ int main(int argc, char* argv[]){
 
 		int frameCount = 0;
 		Rx::FileIO::CImage saveImg;
+		
 		xCudaCompute.SetCudaDevice(Rx::LFR::CCuda::GetDevice(Rx::LFR::CCuda::GetDeviceCount() - 1));
 
 		int cam_0_sum = 0;
 		int cam_1_sum = 0;
-		//Rx::LFR::ICudaDataImages* pxImages = static_cast<Rx::LFR::ICudaDataImages*>(xCudaCompute.GetInterface(Rx::LFR::Interfaces::ECudaCompute::Images));
+
+		// Get the image access interface. This interface allows:
+		Rx::LFR::ICudaDataImages* pxImages = static_cast<Rx::LFR::ICudaDataImages*>(xCudaCompute.GetInterface(Rx::LFR::Interfaces::ECudaCompute::Images));
 
 		while (frameCount < read_seq.GetFrameCount() - 1) {
 			//temp_string
@@ -98,56 +104,87 @@ int main(int argc, char* argv[]){
 			// Upload the image as the new raw image of all further CUDA computations
 			//printf("Uploading image to cuda compute instance...\n");
 			xCudaCompute.UploadRawImage(xInputImage);
+			xCudaCompute.
 
-			switch (proc_type){
-				case "raw":
-
-					break;
-				case "process":
-
-					break;
-
-				case "total_focus":
-
-					break;
-
-				case "tiff":
-					//depth ray
-					break;
-
-				default:
-
-					break;
+			if (proc_type == "raw") {
+				pxImages->Download(Rx::LFR::EImage::Raw, &xOutputImage);
 			}
-
-			//// Get the image access interface. This interface allows:
-			Rx::LFR::ICudaDataImages* pxImages = static_cast<Rx::LFR::ICudaDataImages*>(xCudaCompute.GetInterface(Rx::LFR::Interfaces::ECudaCompute::Images));
-			pxImages->Download(Rx::LFR::EImage::Raw, &xOutputImage);
+			else if (proc_type == "processed") {
+				xCudaCompute.Compute_PreProcess();
+				pxImages->Download(Rx::LFR::EImage::Processed_Normalized, &xOutputImage);
+			}
+			else if (proc_type == "ray_depth") {
+				xCudaCompute.Compute_PreProcess();
+				xCudaCompute.Compute_DepthRay();
+				pxImages->Download(Rx::LFR::EImage::DepthRay, &xOutputImage);
+				
+			}
+			else if (proc_type == "total_focus") {
+				xCudaCompute.Compute_PreProcess();
+				xCudaCompute.Compute_DepthRay();
+				xCudaCompute.Compute_DepthMap();
+				xCudaCompute.Compute_TotalFocus();
+				pxImages->Download(Rx::LFR::EImage::TotalFocus_View_Object_Pinhole, &xOutputImage);
+			}
 
 			std::cout << "inputID: " << xInputImage.GetID() << std::endl;
 			Rx::CRxString temp_string;
 			std::cout << "time: " << xInputImage.GetTimestamp() << std::endl;
-			if (xInputImage.GetID() == 0) {
-				temp_string += cam_0_write;
-				temp_string += cam_0_sum;
-				temp_string += "_";
-				temp_string += xInputImage.GetTimestamp();
-				temp_string += ".png";
+			if (proc_type != "ray_depth") {
+				if (xInputImage.GetID() == 0) {
+					temp_string += cam_0_write;
+					temp_string += proc_type.c_str();
+					temp_string += "\\";
+					temp_string += cam_0_sum;
+					temp_string += "_";
+					temp_string += xInputImage.GetTimestamp();
+					temp_string += ".png";
 
-				saveImg.Write(&xOutputImage, temp_string);
+					saveImg.Write(&xOutputImage, temp_string);
 
-				cam_0_sum++;
+					cam_0_sum++;
+				}
+				else if (xInputImage.GetID() == 1) {
+					temp_string += cam_1_write;
+					temp_string += proc_type.c_str();
+					temp_string += "\\";
+					temp_string += cam_1_sum;
+					temp_string += "_";
+					temp_string += xInputImage.GetTimestamp();
+					temp_string += ".png";
+
+					saveImg.Write(&xOutputImage, temp_string);
+
+					cam_1_sum++;
+				}
 			}
-			else if (xInputImage.GetID() == 1) {
-				temp_string += cam_1_write;
-				temp_string += cam_1_sum;
-				temp_string += "_";
-				temp_string += xInputImage.GetTimestamp();
-				temp_string += ".png";
+			else if (proc_type == "ray_depth") {
+				if (xInputImage.GetID() == 0) {
+					temp_string += cam_0_write;
+					temp_string += proc_type.c_str();
+					temp_string += "\\";
+					temp_string += cam_0_sum;
+					temp_string += "_";
+					temp_string += xInputImage.GetTimestamp();
+					temp_string += ".tiff";
 
-				saveImg.Write(&xOutputImage, temp_string);
+					saveImg.Write(&xOutputImage, temp_string);
 
-				cam_1_sum++;
+					cam_0_sum++;
+				}
+				else if (xInputImage.GetID() == 1) {
+					temp_string += cam_1_write;
+					temp_string += proc_type.c_str();
+					temp_string += "\\";
+					temp_string += cam_1_sum;
+					temp_string += "_";
+					temp_string += xInputImage.GetTimestamp();
+					temp_string += ".tiff";
+
+					saveImg.Write(&xOutputImage, temp_string);
+
+					cam_1_sum++;
+				}
 			}
 
 			frameCount++;

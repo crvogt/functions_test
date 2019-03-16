@@ -1,4 +1,4 @@
 ﻿  BasicB.cpp
-c:\users\cvogt\desktop\functions_test\raytrix_api\split_stream_multi_cam_alt\basicb.cpp(72): warning C4018: '<': signed/unsigned mismatch
-  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\split_stream_multi_cam_alt\x64\Debug\Example.LFR.BasicB.4.0.exe
-  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\split_stream_multi_cam_alt\x64\Debug\Example.LFR.BasicB.4.0.pdb (Full PDB)
+c:\users\cvogt\desktop\functions_test\raytrix_api\process_stream\basicb.cpp(94): warning C4018: '<': signed/unsigned mismatch
+  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\process_stream\x64\Debug\Example.LFR.BasicB.4.0.exe
+  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\process_stream\x64\Debug\Example.LFR.BasicB.4.0.pdb (Full PDB)
