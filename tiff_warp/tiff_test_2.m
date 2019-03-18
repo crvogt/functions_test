@@ -24,28 +24,33 @@ fprintf('Initial psnr: %f\n', psnr_val);
 
 [X, Y] = meshgrid(1:width, 1:height);
 
-to_Y = Y + tiff * 10000;
-to_X = X + tiff * 10000;
+% to_Y = tiff;
+% to_X = tiff;
 
-fprintf('\nWarping...\n');
+% generate synthetic test data, for experimenting
+% to_X = tiff*X;   % an arbitrary flow field, in this case
+% to_Y = tiff*Y;   % representing shear
+p1 = 0.1;
+p2 = 0.1;
 
-warped = zeros(height, width, channels);
+while(error < 12.0)
+	to_X = tiff * X * 0.1 + X;
+	to_Y = tiff * Y * 0.1 + Y;
 
-min(min(tiff))
-max(max(tiff))
+	fprintf('\nWarping...\n');
 
-for i = 1:channels
-	warped(:, :, i) = interp2(X, Y, single(src_to_warp(:, :, i)), to_X, to_Y, 'cubic', nan);
+	warped = zeros(height, width, channels);
+
+	for i = 1:channels
+		warped(:, :, i) = interp2(double(src_to_warp(:, :, i)), to_X, to_Y);
+	end
+
+	warped = uint8(warped);
+	% warped = warped + 1;
+
+	imshow(warped);
+
+	psnr_val = psnr(warped, src_target);
+	fprintf('\npsnr: %f\n', psnr_val);
 end
 
-warped = uint8(warped);
-figure(1)
-subplot(1,3,1)
-imshow(warped);
-subplot(1,3,2)
-imshow(src_target);
-subplot(1,3,3)
-imshow(src_to_warp);
-
-psnr_val = psnr(warped, src_target);
-fprintf('\npsnr: %f\n', psnr_val);
