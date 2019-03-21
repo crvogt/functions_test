@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 		std::cout << "starting...\n";
 		
 		// Construct path to ray image
-		Rx::CRxString sxRayFile = "E:\\crop_test\\1680_Ray.ray";
+		Rx::CRxString sxRayFile = "E:\\dual_exp\\view_test\\1679_0000000336.ray";
 
 		Rx::CRxImage xRayImage;
 
@@ -75,8 +75,8 @@ int main(int argc, char* argv[])
 
 		//// Get normalized image from CUDA device
 		Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::Raw, xRayImage);
-		Rx::LFR::CApiLF::RxRayUnbind();
-		Rx::LFR::CApiLF::RxRayDelete(uImgID);
+		//Rx::LFR::CApiLF::RxRayUnbind();
+		//Rx::LFR::CApiLF::RxRayDelete(uImgID);
 		////Rx::LFR::CApiLF::RxGetImage()
 		//// Display the image
 		/*
@@ -88,11 +88,11 @@ int main(int argc, char* argv[])
 		*/
 		// Start importing the .png files
 		Rx::FileIO::CImage xImageFile;
-		Rx::CRxString sxRawPngFile = "E:\\crop_test\\test_raw.png";
+		Rx::CRxString sxRawPngFile = "E:\\crop_test\\warp_test\\warped.png";
 		Rx::CRxImage xRawImage;
 		Rx::CRxImage xImgLum, xImgBayer;
 		Rx::CRxImage imageLumGray;
-		Rx::CRxString sxGrayPngFile = "E:\\crop_test\\test_gray.png";
+		Rx::CRxString sxGrayPngFile = "E:\\crop_test\\warp_test\\warped_gray.png";
 		Rx::CRxImage xGrayImage;
 
 		// Load raw image
@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
 		}
 
 		Rx::FileIO::CImage writeImg;
-		Rx::CRxString writeOut = "E:\\crop_test\\";
+		Rx::CRxString writeOut = "E:\\crop_test\\warp_test\\";
 		writeOut += 0;
 		writeOut += ".png";
 		writeImg.Write(&xRayImage, writeOut);
