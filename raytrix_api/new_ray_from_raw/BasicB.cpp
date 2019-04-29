@@ -42,13 +42,13 @@ int main(int argc, char* argv[])
 	try{
 	// Construct path to ray image
 	//Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\raytrix_api_tests\\rx_img.ray";
-	Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\arm.ray";
+	Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\plant.ray";
 	
 	// Input file
-	Rx::CRxString sxRawPngFile = "C:\\Users\\carson\\Desktop\\raytrix_gp_data\\enhanced_raw\\19.png";
+	Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\spin.png";
 
 	//Writing to:
-	Rx::CRxString outFile = "C:\\Users\\carson\\Desktop\\raytrix_gp_data\\enhanced_tf\\19.png";
+	Rx::CRxString outFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\spin_depth.png";
 
 	// Initialize CLUVizTool
 	printf("Initializing CLUVizTool...\n");
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
 	Rx::CRxImage xRawImage;
 	Rx::CRxImage xImgLum, xImgBayer;
 	Rx::CRxImage imageLumGray;
-	Rx::CRxString sxGrayPngFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\b_gray.png";
+	Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\b_gray.png";
 	Rx::CRxImage xGrayImage;
 
 	// Load raw image
@@ -205,11 +205,14 @@ int main(int argc, char* argv[])
 	
 	Rx::LFR::CApiLF::RxDepthRay();
 	Rx::LFR::CApiLF::RxDepthMap(Rx::LF::ESpace::ID::View_Virtual);
+	//Rx::LFR::CApiLF::RxDepthColorCode(Rx::LF::ESpace::ID::View_Virtual);
+	//Rx::LFR::CApiLF::RxD
 	Rx::LFR::CApiLF::RxTotalFocus(Rx::LF::ESpace::ID::View_Virtual);
 
 	std::cout << "Getting total focus view..." << std::endl;
 
 	Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::TotalFocus_View_Virtual, xRayImage);
+	//Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::DepthMapColored_View_Virtual, xRayImage);
 	CLUViz::Tool::ViewSetImage(iView, &xRayImage);
 	
 	//Rx::CRxString outFile = "C:\\Users\\carson\\Desktop\\gray_to_png\\imgs_to_enhance\\total_focus\\enh\\24.png";

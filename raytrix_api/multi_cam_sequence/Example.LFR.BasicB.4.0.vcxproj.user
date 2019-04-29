@@ -4,7 +4,7 @@
     <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>"E:\\dual_exp\\video_one\\cam_zero\\" "e" 0 0 0 25 40 1 1</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>"E:\\dual_cam_1\\7" 0 0 0 5 5 1 3</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

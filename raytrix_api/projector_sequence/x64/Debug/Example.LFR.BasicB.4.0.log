@@ -1,0 +1,7 @@
+﻿  BasicB.cpp
+c:\users\cvogt\desktop\functions_test\raytrix_api\projector_sequence\basicb.cpp(137): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\cvogt\desktop\functions_test\raytrix_api\projector_sequence\basicb.cpp(138): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\cvogt\desktop\functions_test\raytrix_api\projector_sequence\basicb.cpp(142): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\cvogt\desktop\functions_test\raytrix_api\projector_sequence\basicb.cpp(280): warning C4101: 'timer3': unreferenced local variable
+  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\projector_sequence\x64\Debug\Example.LFR.BasicB.4.0.exe
+  Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\projector_sequence\x64\Debug\Example.LFR.BasicB.4.0.pdb (Full PDB)

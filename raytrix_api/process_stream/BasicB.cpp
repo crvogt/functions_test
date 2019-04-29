@@ -54,15 +54,18 @@ int main(int argc, char* argv[]){
 
 		Rx::CRxString rays_file;
 		rays_file += rays_location.c_str();
-		rays_file += "0.rays";
+		rays_file += stream_num;
+		rays_file += "\\0.rays";
 		//"E:\\dual_exp\\video_one\\cam_zero\\0.rays";
 		
 		Rx::CRxString cam_0_write;
 		cam_0_write += rays_location.c_str();
-		cam_0_write += "0\\";
+		cam_0_write += stream_num;
+		cam_0_write += "\\0\\";
 		Rx::CRxString cam_1_write; 
 		cam_1_write += rays_location.c_str();
-		cam_1_write += "1\\";	
+		cam_1_write += stream_num;
+		cam_1_write += "\\1\\";	
 	
 		unsigned int uFrameBufferCount = 2;
 
@@ -104,7 +107,6 @@ int main(int argc, char* argv[]){
 			// Upload the image as the new raw image of all further CUDA computations
 			//printf("Uploading image to cuda compute instance...\n");
 			xCudaCompute.UploadRawImage(xInputImage);
-			xCudaCompute.
 
 			if (proc_type == "raw") {
 				pxImages->Download(Rx::LFR::EImage::Raw, &xOutputImage);
@@ -140,6 +142,7 @@ int main(int argc, char* argv[]){
 					temp_string += xInputImage.GetTimestamp();
 					temp_string += ".png";
 
+					//std::cout << temp_string.ToCString() << std::endl;
 					saveImg.Write(&xOutputImage, temp_string);
 
 					cam_0_sum++;
@@ -153,6 +156,7 @@ int main(int argc, char* argv[]){
 					temp_string += xInputImage.GetTimestamp();
 					temp_string += ".png";
 
+					//std::cout << temp_string.ToCString() << std::endl;
 					saveImg.Write(&xOutputImage, temp_string);
 
 					cam_1_sum++;

@@ -12,6 +12,7 @@ that can be easily read later
 #include <string>
 #include <chrono>
 #include <thread>
+#include <iomanip>
 
 #include "Rx.Core\RxException.h"
 #include "Rx.CluViz.Core.CluVizTool\CvCluVizTool.h"
@@ -33,6 +34,7 @@ int main(int argc, char* argv[]){
 
 		std::string rays_location;
 		std::string proc_type;
+		int num_streams = 0;
 
 		if (argc < 1){
 			std::cout << "rays_location, proc_type\n";
@@ -41,125 +43,155 @@ int main(int argc, char* argv[]){
 		else{
 			rays_location = std::string(argv[1]);
 			proc_type = std::string(argv[2]);
+			num_streams = std::stoi(std::string(argv[3]));
 		}
+		for (int seq_it = 1; seq_it < num_streams; seq_it++) {
+			// Autheniticate MGPU runtime
+			printf("Authenticate LFR...\n");
+			Rx::LFR::CLightFieldRuntime::Authenticate();
 
-		// Autheniticate MGPU runtime
-		printf("Authenticate LFR...\n");
-		Rx::LFR::CLightFieldRuntime::Authenticate();
+			// Enumerate allCUDA devices at the beginning
+			Rx::LFR::CCuda::EnumerateCudaDevices();
 
-		// Enumerate allCUDA devices at the beginning
-		Rx::LFR::CCuda::EnumerateCudaDevices();
+			Rx::CRxString rays_file;
+			rays_file += rays_location.c_str();
+			rays_file += seq_it;
+			rays_file += "\\";
+			rays_file += "0.rays";
+			//"E:\\dual_exp\\video_one\\cam_zero\\0.rays";
 
-		Rx::CRxString rays_file;
-		rays_file += rays_location.c_str();
-		rays_file += "rays_2.rays";
-		//"E:\\dual_exp\\video_one\\cam_zero\\0.rays";
-		
-		Rx::CRxString cam_0_write;
-		cam_0_write += rays_location.c_str();
-		//cam_0_write += "0\\";
-	
-		unsigned int uFrameBufferCount = 2;
+			Rx::CRxString cam_0_write;
+			cam_0_write += rays_location.c_str();
+			cam_0_write += seq_it;
+			cam_0_write += "\\";
+			//cam_0_write += "0\\";
 
-		Rx::LFR::CSeqFileReader read_seq;
+			unsigned int uFrameBufferCount = 2;
 
-		std::cout << "opening read_seq: " << std::endl;
-		read_seq.Open(rays_file, uFrameBufferCount);
+			Rx::LFR::CSeqFileReader read_seq;
 
-		std::cout << "file size: " << read_seq.GetFileSize();
-		std::cout << "\nframe count: " << read_seq.GetFrameCount() << std::endl;
+			std::cout << "opening read_seq: " << std::endl;
+			read_seq.Open(rays_file, uFrameBufferCount);
 
-		Rx::LFR::CRayImage xInputImage;
-		Rx::LFR::CCudaCompute xCudaCompute;
-		Rx::CRxImage xOutputImage;
+			std::cout << "file size: " << read_seq.GetFileSize();
+			std::cout << "\nframe count: " << read_seq.GetFrameCount() << std::endl;
 
-		read_seq.StartReading(xInputImage);
+			Rx::LFR::CRayImage xInputImage;
+			Rx::LFR::CCudaCompute xCudaCompute;
+			Rx::CRxImage xOutputImage;
 
-		int frameCount = 2200;
-		Rx::FileIO::CImage saveImg;
-		
-		xCudaCompute.SetCudaDevice(Rx::LFR::CCuda::GetDevice(Rx::LFR::CCuda::GetDeviceCount() - 1));
+			read_seq.StartReading(xInputImage);
 
-		int cam_0_sum = 0;
+			int frameCount = 0;
+			Rx::FileIO::CImage saveImg;
 
-		// Get the image access interface. This interface allows:
-		Rx::LFR::ICudaDataImages* pxImages = static_cast<Rx::LFR::ICudaDataImages*>(xCudaCompute.GetInterface(Rx::LFR::Interfaces::ECudaCompute::Images));
+			xCudaCompute.SetCudaDevice(Rx::LFR::CCuda::GetDevice(Rx::LFR::CCuda::GetDeviceCount() - 1));
 
-		while (frameCount < 2300) {
-			//temp_string
+			int cam_0_sum = 0;
 
-			//saveImg.write() //See example in another file, b or something...
-			// Assign the CUDA device and the calibration
-			printf("Selecting CUDA device...\n");
-			//Rx::LFR::CCudaCompute xCudaCompute;
-			xCudaCompute.ApplyCalibration(xInputImage.GetCalibration(), true);
-			xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DataType, (unsigned)Rx::Interop::Runtime28::EDataType::UByte);
-		
-			// Upload the image as the new raw image of all further CUDA computations
-			//printf("Uploading image to cuda compute instance...\n");
-			xCudaCompute.UploadRawImage(xInputImage);
+			// Get the image access interface. This interface allows:
+			Rx::LFR::ICudaDataImages* pxImages = static_cast<Rx::LFR::ICudaDataImages*>(xCudaCompute.GetInterface(Rx::LFR::Interfaces::ECudaCompute::Images));
 
-			if (proc_type == "raw") {
-				pxImages->Download(Rx::LFR::EImage::Raw, &xOutputImage);
-			}
-			else if (proc_type == "processed") {
-				xCudaCompute.Compute_PreProcess();
-				pxImages->Download(Rx::LFR::EImage::Processed_Normalized, &xOutputImage);
-			}
-			else if (proc_type == "ray_depth") {
-				xCudaCompute.Compute_PreProcess();
-				xCudaCompute.Compute_DepthRay();
-				pxImages->Download(Rx::LFR::EImage::DepthRay, &xOutputImage);
-				
-			}
-			else if (proc_type == "total_focus") {
-				xCudaCompute.Compute_PreProcess();
-				xCudaCompute.Compute_DepthRay();
-				xCudaCompute.Compute_DepthMap();
-				xCudaCompute.Compute_TotalFocus();
-				pxImages->Download(Rx::LFR::EImage::TotalFocus_View_Object_Pinhole, &xOutputImage);
+			std::ofstream time_vals;
+			std::string fileName = rays_location.c_str();
+			if (proc_type == "timestamp"){
+				fileName += std::to_string(seq_it);
+				fileName += "\\timestamps.txt";
+
+				time_vals.open(fileName);
 			}
 
-			Rx::CRxString temp_string;
-			if (proc_type != "ray_depth") {
-				temp_string += cam_0_write;
-				temp_string += proc_type.c_str();
-				temp_string += "\\";
-				temp_string += cam_0_sum;
-				temp_string += ".png";
+			while (frameCount < read_seq.GetFrameCount() - 1) {
+				//temp_string
 
-				saveImg.Write(&xOutputImage, temp_string);
+				//saveImg.write() //See example in another file, b or something...
+				// Assign the CUDA device and the calibration
+				printf("Selecting CUDA device...\n");
+				//Rx::LFR::CCudaCompute xCudaCompute;
+				xCudaCompute.ApplyCalibration(xInputImage.GetCalibration(), true);
+				xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DataType, (unsigned)Rx::Interop::Runtime28::EDataType::UByte);
 
-				cam_0_sum++;
-				
+				// Upload the image as the new raw image of all further CUDA computations
+				//printf("Uploading image to cuda compute instance...\n");
+				xCudaCompute.UploadRawImage(xInputImage);
+
+				if (proc_type == "raw") {
+					pxImages->Download(Rx::LFR::EImage::Raw, &xOutputImage);
+				}
+				else if (proc_type == "timestamp") {
+					pxImages->Download(Rx::LFR::EImage::Raw, &xOutputImage);
+				}
+				else if (proc_type == "processed") {
+					xCudaCompute.Compute_PreProcess();
+					pxImages->Download(Rx::LFR::EImage::Processed_Normalized, &xOutputImage);
+				}
+				else if (proc_type == "ray_depth") {
+					xCudaCompute.Compute_PreProcess();
+					xCudaCompute.Compute_DepthRay();
+					pxImages->Download(Rx::LFR::EImage::DepthRay, &xOutputImage);
+
+				}
+				else if (proc_type == "total_focus") {
+					xCudaCompute.Compute_PreProcess();
+					xCudaCompute.Compute_DepthRay();
+					xCudaCompute.Compute_DepthMap();
+					xCudaCompute.Compute_TotalFocus();
+					pxImages->Download(Rx::LFR::EImage::TotalFocus_View_Object_Pinhole, &xOutputImage);
+				}
+
+				Rx::CRxString temp_string;
+				std::cout << "proc_type: " << proc_type << std::endl;
+				if (proc_type != "ray_depth" && proc_type != "timestamp") {
+					temp_string += cam_0_write;
+					temp_string += proc_type.c_str();
+					temp_string += "\\";
+					temp_string += cam_0_sum;
+					temp_string += "_";
+					temp_string += xInputImage.GetTimestamp();
+					temp_string += ".png";
+					//std::cout << xInputImage.GetTimestamp() << std::endl;
+					//std::printf("time: %f\n", xInputImage.GetTimestamp());
+					saveImg.Write(&xOutputImage, temp_string);
+
+					cam_0_sum++;
+
+				}
+				else if (proc_type == "ray_depth") {
+					temp_string += cam_0_write;
+					temp_string += proc_type.c_str();
+					temp_string += "\\";
+					//temp_string += cam_0_sum;
+					//temp_string += "_";
+					temp_string += xInputImage.GetTimestamp();
+					temp_string += ".tiff";
+					//std::printf("time: %f\n", xInputImage.GetTimestamp());
+
+					saveImg.Write(&xOutputImage, temp_string);
+
+					cam_0_sum++;
+
+				}
+				else if (proc_type == "timestamp") {
+					std::cout << "writing timestampe... " << std::endl;
+					time_vals << std::setprecision(12) << xInputImage.GetTimestamp() << "\n";
+				}
+
+				frameCount++;
+				std::cout << "frameCount: " << frameCount << std::endl;
+
+				//Let's us iterate through frames
+				read_seq.SetFrameIndex(frameCount);
+				read_seq.ReadFrame(xInputImage);
+				//sleep_for(milliseconds(100));
+
 			}
-			else if (proc_type == "ray_depth") {
-				temp_string += cam_0_write;
-				temp_string += proc_type.c_str();
-				temp_string += "\\";
-				temp_string += cam_0_sum;
-				temp_string += "_";
-				temp_string += xInputImage.GetTimestamp();
-				temp_string += ".tiff";
 
-				saveImg.Write(&xOutputImage, temp_string);
-
-				cam_0_sum++;
-				
+			std::cout << "cam 0: " << cam_0_sum << std::endl;
+			read_seq.Close();
+			if (proc_type == "timestamp") {
+				time_vals.close();
 			}
-
-			frameCount++;
-			std::cout << "frameCount: " << frameCount << std::endl;
-
-			//Let's us iterate through frames
-			read_seq.SetFrameIndex(frameCount);
-			read_seq.ReadFrame(xInputImage);
-			//sleep_for(milliseconds(100));
-
 		}
-
-		std::cout << "cam 0: " << cam_0_sum << std::endl;
-		read_seq.Close();
 		return 0;
 	}
 	catch (Rx::CRxException& ex)

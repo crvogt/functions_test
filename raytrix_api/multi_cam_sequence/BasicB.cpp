@@ -15,6 +15,7 @@
 #include <thread>
 #include <string>
 #include <time.h>
+#include <Windows.h>
 
 #include "Rx.LFR/LightFieldRuntime.h"
 #include "Rx.LFR/ICudaData.h"
@@ -63,7 +64,7 @@ void OnImageCaptured(const Rx::CRxImage& xImage, unsigned uCamIdx)
 		std::chrono::duration<double> span = std::chrono::duration_cast<std::chrono::duration<double>>(cur_tp - start_hr);
 		Rx::CRxImage xCapturedImage;
 		xCapturedImage.Create(&xImage);
-		std::cout << "\nspan: " << span.count();
+		//std::cout << "\nspan: " << span.count();
 		xCapturedImage.SetTimestampID(span.count(), uCamIdx);
 		//xCapturedImage.SetID(uCamIdx);
 
@@ -91,6 +92,18 @@ static void ImageCaptured(const Rx::CRxImage& xImage, unsigned uCamIdx, void* pv
 	OnImageCaptured(xImage, uCamIdx);
 }
 
+bool dirExists(const std::string& dirName_in)
+{
+	DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
+	if (ftyp == INVALID_FILE_ATTRIBUTES)
+		return false;  //something is wrong with your path!
+
+	if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
+		return true;   // this is a directory!
+
+	return false;    // this is not a directory!
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>
 /// 	Main entry-point for this application.
@@ -101,6 +114,7 @@ static void ImageCaptured(const Rx::CRxImage& xImage, unsigned uCamIdx, void* pv
 ///
 /// <returns> Exit-code for the process - 0 for success, else an error code. </returns>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 int main(int argc, char* argv[])
 {
 	try
@@ -112,23 +126,58 @@ int main(int argc, char* argv[])
 		bool processed_bool, visualize, save_feed;
 		int delay_catch;
 		float exposure_val_zero, exposure_val_one, collect_time;
-		std::string file_location_zero, file_location_one;
+		std::string file_location, file_location_zero, file_location_one;
 
 		if (argc <= 1) {
-			std::cout << "file_location_zero, file_location_one, processed_bool, visualize, delay_catch, exposure_val_zero, exposure_val_one, save_feed, collect_time\n";
+			std::cout << "file_location, processed_bool, visualize, delay_catch, exposure_val_zero, exposure_val_one, save_feed, collect_time\n";
 			return 0;
 		}
 		else {
-			file_location_zero = std::string(argv[1]);
-			file_location_one = std::string(argv[2]);
-			processed_bool = std::stoi(std::string(argv[3]));
-			visualize = std::stoi(std::string(argv[4]));
-			delay_catch = std::stoi(std::string(argv[5]));
-			exposure_val_zero = std::stof(std::string(argv[6]));
-			exposure_val_one = std::stof(std::string(argv[7]));
-			save_feed = std::stoi(std::string(argv[8]));
-			collect_time = std::stof(std::string(argv[9]));
+			file_location = std::string(argv[1]);
+			processed_bool = std::stoi(std::string(argv[2]));
+			visualize = std::stoi(std::string(argv[3]));
+			delay_catch = std::stoi(std::string(argv[4]));
+			exposure_val_zero = std::stof(std::string(argv[5]));
+			exposure_val_one = std::stof(std::string(argv[6]));
+			save_feed = std::stoi(std::string(argv[7]));
+			collect_time = std::stof(std::string(argv[8]));
 		}
+
+		/*bool dir_success = CreateDirectory((LPCWSTR)file_location.c_str(), NULL);
+		if (dir_success) {
+			std::cout << "Created base dir: " << file_location << std::endl;
+		}
+		else {
+			if (dirExists(file_location)) {
+				std::cout << "dir already exists\n";
+			}
+			else {
+				std::cout << "could not create " << file_location << std::endl;
+			}
+		}*/
+
+		file_location_zero = file_location + "\\0";
+		file_location_one = file_location + "\\1";
+
+		std::cout << "file_location_zero: " << file_location_zero << std::endl;
+		std::cout << "file_location_one: " << file_location_one << std::endl;
+
+		/*bool dir_success_zero = CreateDirectory((LPCWSTR)file_location_zero.c_str(), NULL);
+		bool dir_success_one = CreateDirectory((LPCWSTR)file_location_one.c_str(), NULL);
+		if (dir_success_zero && dir_success_one) {
+			std::cout << "successfully created: " << file_location_zero << " and: " << file_location_one << std::endl;
+		}
+		else {
+			std::cout << "did not create: " << file_location_zero << std::endl;
+			bool dir_exists = dirExists(file_location_zero);
+			if (dir_exists) {
+				std::cout << "directory already exists\n";
+			}
+			else {
+				std::cout << "directory doesn't exist\n";
+			}
+			return 0;
+		}*/
 
 		// Prepare saving vars
 		Rx::LFR::CSeqFileWriter seq_out_zero;
@@ -260,8 +309,9 @@ int main(int argc, char* argv[])
 		time_point<Clock> end;
 
 		std::cout << "In main loop...\n";
-		time_t timer1, timer2;
+		time_t timer1, timer2, timer3;
 		double seconds = 0.0;
+		double start_seconds = 0.0;
 		//Get current time
 		time(&timer1);
 
@@ -287,8 +337,16 @@ int main(int argc, char* argv[])
 		int counter = 0;
 		int cam_0_sum = 0;
 		int cam_1_sum = 1;
+		std::cout << "RECORDING in 3 seconds\n";
+		while (start_seconds < 3.0) {
+			time(&timer3);
+			start_seconds = difftime(timer3, timer1);
+			std::cout << start_seconds << std::endl;
+		}
 		//auto start_time = std::chrono::steady_clock::now();
 		//std::chrono::high_resolution_clock::time_point start_hr = std::chrono::high_resolution_clock::now();
+		time(&timer1);
+		std::cout << "Recording...\n";
 		while (seconds < collect_time)
 		{
 			
@@ -304,7 +362,7 @@ int main(int argc, char* argv[])
 			if (!m_xCamBuffer.MoveOut(xCapturedImage))
 			{
 				// Wait again! This functions says that it waits until a frame is available
-				printf("Waiting for frame to be available\n");
+				//printf("Waiting for frame to be available\n");
 				continue;
 			}
 			//}
@@ -327,7 +385,7 @@ int main(int argc, char* argv[])
 			
 			if (save_feed) {
 				
-				std::cout << "ID: " << xCapturedImage.GetID() << std::endl;
+				//std::cout << "ID: " << xCapturedImage.GetID() << std::endl;
 				if (xCapturedImage.GetID() == 0) {
 					cam_0_sum++;
 				}
@@ -342,7 +400,7 @@ int main(int argc, char* argv[])
 					
 				//xCapturedImage.SetTimestamp(span.count());
 				seq_out_zero.WriteFrame(xCapturedImage);
-				std::cout << counter + 1 << std::endl;
+				//std::cout << counter + 1 << std::endl;
 				counter++;
 					
 				/*write_file = file_location_zero.c_str();

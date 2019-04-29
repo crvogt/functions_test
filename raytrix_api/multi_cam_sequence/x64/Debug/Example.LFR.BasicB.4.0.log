@@ -1,6 +1,6 @@
 ﻿  BasicB.cpp
-c:\users\cvogt\desktop\functions_test\raytrix_api\multi_cam_sequence\basicb.cpp(124): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-c:\users\cvogt\desktop\functions_test\raytrix_api\multi_cam_sequence\basicb.cpp(125): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-c:\users\cvogt\desktop\functions_test\raytrix_api\multi_cam_sequence\basicb.cpp(129): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\cvogt\desktop\functions_test\raytrix_api\multi_cam_sequence\basicb.cpp(137): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\cvogt\desktop\functions_test\raytrix_api\multi_cam_sequence\basicb.cpp(138): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\cvogt\desktop\functions_test\raytrix_api\multi_cam_sequence\basicb.cpp(142): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
   Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\multi_cam_sequence\x64\Debug\Example.LFR.BasicB.4.0.exe
   Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\multi_cam_sequence\x64\Debug\Example.LFR.BasicB.4.0.pdb (Full PDB)
