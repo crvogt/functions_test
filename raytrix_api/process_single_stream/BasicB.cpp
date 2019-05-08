@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
 			proc_type = std::string(argv[2]);
 			num_streams = std::stoi(std::string(argv[3]));
 		}
-		for (int seq_it = 1; seq_it < num_streams; seq_it++) {
+		for (int seq_it = 0; seq_it < num_streams; seq_it++) {
 			// Autheniticate MGPU runtime
 			printf("Authenticate LFR...\n");
 			Rx::LFR::CLightFieldRuntime::Authenticate();

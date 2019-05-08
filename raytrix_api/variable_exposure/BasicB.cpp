@@ -144,7 +144,16 @@ int main(int argc, char* argv[])
 
 		std::cout << "fl: " << file_location << " pb: " << processed_bool << " vis: " << visualize << " dc: " << delay_catch << " ev: " << exposure_val << std::endl;
 
-		int counter = 2;
+		int counter = 0;
+		float start_exp = 3.0;
+		float exp_thresh = 1.0;
+		int exp_frames = 10;
+		int exp_count = 0;
+		int exp_level = 0;
+		int num_expose = 4;
+		//float low_exp[] = { 0.05, 0.08, 0.15, 0.5 };
+		float low_exp[] = { 0.5, 0.5, 0.5, 0.5 };
+		//float low_exp[] = { 0.15, 0.15, 0.15, 0.15 };
 
 		// Prepare saving vars
 		Rx::LFR::CSeqFileWriter seq_out;
@@ -255,7 +264,7 @@ int main(int argc, char* argv[])
 		
 		std::cout << "Setting exposure...\n";
 		//Set exposure values
-		exposure_val = 1.0;
+		exposure_val = start_exp;
 		cam.SetProperty(Rx::Interop::Runtime30::Camera::EProperty::Exposure, exposure_val);
 		
 		std::cout << "Initializing timer....\n";
@@ -301,6 +310,8 @@ int main(int argc, char* argv[])
 				time(&timer1);
 				std::cout << "Recording...\n";
 				double seconds = 0.0;
+				exp_level = 0;
+				exp_count = 0;
 				while (seconds < collect_time)
 				{
 					// Wait for the image buffer to be not empty
@@ -331,17 +342,29 @@ int main(int argc, char* argv[])
 					time(&timer2);
 					seconds = difftime(timer2, timer1);
 
-					if (exposure_val > 0.9) {
-						exposure_val = 0.02;
+					if (exposure_val > exp_thresh) {
+						
+						exposure_val = low_exp[exp_level]; //0.05;
+						exp_count++;
+						
+						if (exp_count >= exp_frames) {
+							exp_count = 0;
+							exp_level++;
+							if (exp_level >= num_expose) {
+								exp_level = 0;
+							}
+						}
+
 						cam.SetProperty(Rx::Interop::Runtime30::Camera::EProperty::Exposure, exposure_val);
 					}
-					else if (exposure_val < 0.5) {
-						exposure_val = 1.0;
+					else if (exposure_val < exp_thresh) {
+						exposure_val = start_exp;
 						cam.SetProperty(Rx::Interop::Runtime30::Camera::EProperty::Exposure, exposure_val);
 					}
 				}
 				seq_out.Close();
 				counter++;
+			
 				std::cout << "Next dir: " << counter << std::endl;
 
 			}
@@ -350,7 +373,7 @@ int main(int argc, char* argv[])
 			}
 		}
 	
-		std::cout << "\ncam num: " << cam_sum;
+		std::cout << "\ncam sum: " << cam_sum;
 
 		std::cout << "Stopping camera(s)...\n";
 		cam.Stop();
