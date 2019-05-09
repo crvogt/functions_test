@@ -1,6 +1,9 @@
-function LF = get_sub_ap(imgPath)
-    imgPath = imgPath{1};
-    % imgPath = '/home/carson/libs/gray_to_png/0034035116/plant_processed.png'
+function LF = get_sub_ap_03(imgPath)
+    imgPath = imgPath; % {1};
+    % clc
+    % close all
+    % clear all
+    imgPath = '/home/carson/libs/gray_to_png/0034035116/plant_processed.png'
 
 	onWindows = false;
 
@@ -11,53 +14,40 @@ function LF = get_sub_ap(imgPath)
 		% cd('/home/carson/LFToolbox0.4');
 		addpath('/home/carson/functions_test/lf_toolbox/LFToolbox0.4/')
 		LFMatlabPathSetup();
-		% cd('-');
-		% imgPath = 'processed.png';
-		% imgPath = 'l5_s5_g25.png';
-		% imgPath = 'l1_s5_g100.png';
+		
 		fprintf('\nOpening %s...\n', imgPath);
-		dataPath = 'mxa_details.txt';
+		dataPath = '/home/carson/libs/gray_to_png/0034035116/mxa_details.txt';
 	end
 
 	%Load image
-	%[img, daMap] = imread(imgPath, 'png');
     [img, ~] = imread(imgPath);
-    %img = demosaic(img, 'gbrg');
+    % img = demosaic(img, 'gbrg');
 
 	A = importdata(dataPath);
-	lens0 = A(1:2929,1:2);
-	lens1 = A(2930:5858, 1:2);
-	lens2 = A(5859:8760, 1:2);
-
-	yMax = max(lens2(:,1));
-	yThresh = 0.16;
-	iter = 1;
-	while iter < length(lens2)
-		if(lens2(iter,1) >= (yMax - yThresh))
-			lens2(iter,:) = [];
-		end
-		iter = iter + 1;
-	end
+	lens0 = A(1:2900,1:2);
+	lens1 = A(2901:5800, 1:2);
+	lens2 = A(5801:8700, 1:2);
 
 	% figure(1)
+	% imshow(img)
 	% hold on;
 	% plot(lens0(:, 1), lens0(:, 2), '.', 'MarkerSize', 20)
 	% plot(lens1(:, 1), lens1(:, 2), '.k')
 	% plot(lens2(:, 1), lens2(:, 2), '.g')
 	% hold off;
 
-	% pause(20)
+	% pause(100)
 
-	% Put the lenses into a lftoolbox-friendly structure
-
-	LF = zeros(25, 25, 101, 87, 3);
-
-	% Get an individual lens. Effective radius ~11.5, so call it 12.
-	effR = 12;
+	% Get an individual lens. Effective radius ~10.5, so call it 11.
+	effR = 11;
 	SVec = -6:6;
 	TVec = -6:6;
 	UVec = 1:101;
 	VVec = 1:87;
+
+	% Put the lenses into a lftoolbox-friendly structure
+
+	LF = zeros(effR*2+1, effR*2+1, 101, 87, 3);
 
 	[tt,ss,vv,uu] = ndgrid(TVec, SVec, VVec, UVec);
 	R = sqrt(tt.^2 + ss.^2);
@@ -67,16 +57,20 @@ function LF = get_sub_ap(imgPath)
 	count0 = 1;
 	count1 = 1;
 	count2 = 1;
-	track = 1;
+	track = 0;
 	trackPrev = 0;
 	Ucount = 87;
 	UStart = Ucount;
 	Vcount = 101;
+	% length(lens2)
+	% pause(20)
 	for counter = 1:(length(lens0)+length(lens1)+length(lens2))
-		
+		% count0 + count1 + count2
+		% track
+		% fprintf('count1 %d, count2 %d, count0 %d, track %d\n', count1, count2, count0, track)
 		switch track
-			case(1)
-				if (ceil(lens1(count0,2)) - lens1(count1,2)) >= 0.5
+			case(1) %1
+				if (ceil(lens1(count1,2)) - lens1(count1,2)) >= 0.5
 					rowVal = floor(lens1(count1,2));
 				else 
 					rowVal = ceil(lens1(count1,2));
@@ -90,7 +84,7 @@ function LF = get_sub_ap(imgPath)
 				trackPrev = track;
 				track = track+1;
 
-			case(2)
+			case(2) %2
 				if (ceil(lens2(count2,2)) - lens0(count2,2)) >= 0.5
 					rowVal = floor(lens2(count2,2));
 				else 
@@ -105,7 +99,7 @@ function LF = get_sub_ap(imgPath)
 				trackPrev = track;
 				track = 0;
 
-			case(0)
+			case(0) %0
 				if (ceil(lens0(count0,2)) - lens0(count0,2)) >= 0.5
 					rowVal = floor(lens0(count0,2));
 				else 
@@ -122,30 +116,68 @@ function LF = get_sub_ap(imgPath)
 		end
 
 		lensImg = imcrop(img,[colVal-effR, rowVal-effR, effR*2, effR*2]);
+		% close all
+		% delete p_temp;
 		
+
+		% figure(1)
+		% imshow(img)
+		% hold on;
+		% plot(lens0(:, 1), lens0(:, 2), '*r', 'MarkerSize', 5)
+		% plot(lens1(:, 1), lens1(:, 2), '.k', 'MarkerSize', 10)
+		% plot(lens2(:, 1), lens2(:, 2), '.g', 'MarkerSize', 10)
+		% p_temp = plot((colVal), (rowVal), '*m', 'MarkerSize', 30);
+		% hold off;
+		
+
 		for it = 1:effR*2+1
 			for jt = 1:effR*2+1
 				dist = sqrt((jt-(effR+1))^2 + (it-(effR+1))^2);
-				if dist > 12.5
+				if dist > (effR+1)
 					lensImg(it,jt,:) = 0;
 				end
 			end
 		end
-
+		% size(LF)
+		% size(lensImg)
 		LF(:,:,Vcount, Ucount,:) = lensImg;
-
+		% fprintf('track: %d', trackPrev);
+		% figure(2)
+		% hold on;
+		% imshow(lensImg)
+		% hold off;
+		% pause(1)
 		Ucount = Ucount - 1;
 		if Ucount == 0
 			if UStart == 87
-				Ucount = 86;
+				Ucount = 87;
 				UStart = Ucount;
-			elseif UStart == 86
+			elseif UStart == 87
 				Ucount = 87;	
 				UStart = Ucount;		
 			end
+			% imgslice = squeeze(LF(1, 1, :, :, :));
+			% size(imgslice)
+			% imshow(imgslice)
+			% pause(4)
 			Vcount = Vcount - 1;
-			track = trackPrev;
+			% temp = track;
+			% if trackPrev == 2
+			% 	track = 1;
+			% elseif trackPrev == 0
+			% 	track = 2;
+			% elseif trackPrev == 2
+				% track = 0
+			% end
+			% track = trackPrev;
+			% trackPrev = temp;
+			if trackPrev == 2
+				track = 1;
+			elseif trackPrev == 0
+				track = 0;
+			end
 		end
+		% pause(.2)
 	end
 
 	LF = flip(LF, 4);
@@ -155,10 +187,10 @@ function LF = get_sub_ap(imgPath)
 
 	        if jter == 1
 	            basicImg = LF(:,:,iter,jter,:);
-	            basicImg = squeeze(uint16(basicImg));
+	            basicImg = squeeze(uint8(basicImg));
 	        else 
 	            lensImg = LF(:,:,iter,jter,:);
-	            lensImg = squeeze(uint16(lensImg));
+	            lensImg = squeeze(uint8(lensImg));
 	            basicImg = cat(2, basicImg, lensImg);
 	        end 
 	    end
@@ -172,7 +204,6 @@ function LF = get_sub_ap(imgPath)
 	close all
 
 	fprintf('\nDehexing\n');
-	pause(2)
 
 	LF = LFDehex_crv(LF);
     LFDisp_crv(LF);
