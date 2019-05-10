@@ -3,7 +3,7 @@ function LF = get_sub_ap_03(imgPath)
     % clc
     % close all
     % clear all
-    imgPath = '/home/carson/libs/gray_to_png/0034035116/plant_processed.png'
+    % imgPath = '/home/carson/libs/gray_to_png/0034035116/plant_processed.png'
 
 	onWindows = false;
 
