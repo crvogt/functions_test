@@ -51,8 +51,8 @@ int main(int argc, char* argv[])
 			Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\plant.ray";
 			Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\gray.png";
 
-			Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\var_exp_val_1\\2\\enhanced_4_3\\";
-			Rx::CRxString writeOut = "C:\\Users\\cvogt\\var_exp_val_1\\2\\enhanced_4_3\\processed\\";
+			Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\var_exp_val_1\\2\\hist_eq_denoise\\";
+			Rx::CRxString writeOut = "C:\\Users\\cvogt\\var_exp_val_1\\2\\hist_eq_denoise\\processed\\";
 
 			// Ray image
 			Rx::CRxImage xRayImage;
