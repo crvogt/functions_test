@@ -41,22 +41,42 @@ int main(int argc, char* argv[])
 {
 	// Set both to false for processed lf
 	bool calc_depth = false;
-	bool total_focus = false;
+	bool total_focus = true;
 	int num_files = 60;
 
 	std::cout << "Calculating depth?: " << calc_depth << std::endl;
 	try {
+		// Construct path to ray image
+		Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\plant.ray";
+		Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\gray.png";
+
+		// Initialize Raytrix Library with CUDA support using default library paths
+		printf("Initializing API...\n");
+		Rx::LFR::CApiLF::RxInit(true);
+
+		// Automatic CUDA device selection if no device ID or a negative device ID is given.
+		printf("Selecting CUDA device...\n");
+		Rx::LFR::CApiLF::RxCudaSelectDevice();
+		
+		printf("Loading image '%s'...\n", sxRayFile.ToCString());
+		unsigned uImgID = Rx::LFR::CApiLF::RxRayLoad(sxRayFile);
+
+		Rx::LFR::CApiLF::RxRayBind(uImgID);
+
+		std::cout << "start\n";
 		for (int iter = 20; iter < num_files + 20; iter++) {
+			/*
 			// Construct path to ray image
 			Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\plant.ray";
 			Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\gray.png";
-
-			Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\var_exp_val_1\\2\\hist_eq_denoise\\";
-			Rx::CRxString writeOut = "C:\\Users\\cvogt\\var_exp_val_1\\2\\hist_eq_denoise\\processed\\";
+			*/
+			Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\var_exp_val_1\\enhanced_1_3_l1_l0\\";
+			Rx::CRxString writeOut = "C:\\Users\\cvogt\\var_exp_val_1\\enhanced_1_3_l1_l0\\tf\\";
 
 			// Ray image
 			Rx::CRxImage xRayImage;
-
+			
+			/*
 			// Initialize Raytrix Library with CUDA support using default library paths
 			printf("Initializing API...\n");
 			Rx::LFR::CApiLF::RxInit(true);
@@ -66,18 +86,21 @@ int main(int argc, char* argv[])
 			Rx::LFR::CApiLF::RxCudaSelectDevice();
 
 			// Load a ray image
+			
 			printf("Loading image '%s'...\n", sxRayFile.ToCString());
 			unsigned uImgID = Rx::LFR::CApiLF::RxRayLoad(sxRayFile);
-
+			
 			//// Bind the loaded ray image. This copies the ray image to the CUDA device.
 			//printf("Binding image...\n");
+			
 			Rx::LFR::CApiLF::RxRayBind(uImgID);
-
+			*/
 			//// Get normalized image from CUDA device
 			Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::Raw, xRayImage);
 				
 			// Start importing the .png files
 			Rx::FileIO::CImage xImageFile;
+			/*
 			if (iter < 10) {
 				sxRawPngFile += "000";
 				sxRawPngFile += iter;
@@ -96,6 +119,9 @@ int main(int argc, char* argv[])
 				writeOut += "0";
 				writeOut += iter;
 			}
+			*/
+			sxRawPngFile += iter;
+			writeOut += iter;
 				
 			sxRawPngFile += ".png";
 			Rx::CRxImage xRawImage;
