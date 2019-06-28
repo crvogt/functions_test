@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
 
 		std::cout << "fl: " << file_location << " pb: " << processed_bool << " vis: " << visualize << " dc: " << delay_catch << " ev: " << exposure_val << std::endl;
 
-		int counter = 0;
+		int counter = 46;
 		float start_exp = 3.0;
 		float exp_thresh = 1.0;
 		int exp_frames = 10;
@@ -152,8 +152,8 @@ int main(int argc, char* argv[])
 		int exp_level = 0;
 		int num_expose = 4;
 		//float low_exp[] = { 0.05, 0.08, 0.15, 0.5 };
-		float low_exp[] = { 0.5, 0.5, 0.5, 0.5 };
-		//float low_exp[] = { 0.15, 0.15, 0.15, 0.15 };
+		//float low_exp[] = { 0.5, 0.5, 0.5, 0.5 };
+		float low_exp[] = { 0.15, 0.15, 0.15, 0.15 };
 
 		// Prepare saving vars
 		Rx::LFR::CSeqFileWriter seq_out;

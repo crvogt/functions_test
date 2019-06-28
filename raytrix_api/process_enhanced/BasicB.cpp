@@ -42,41 +42,22 @@ int main(int argc, char* argv[])
 	// Set both to false for processed lf
 	bool calc_depth = false;
 	bool total_focus = true;
-	int num_files = 60;
+	int num_files = 10;
+	int start_file = 50;//20
 
 	std::cout << "Calculating depth?: " << calc_depth << std::endl;
 	try {
-		// Construct path to ray image
-		Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\plant.ray";
-		Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\gray.png";
-
-		// Initialize Raytrix Library with CUDA support using default library paths
-		printf("Initializing API...\n");
-		Rx::LFR::CApiLF::RxInit(true);
-
-		// Automatic CUDA device selection if no device ID or a negative device ID is given.
-		printf("Selecting CUDA device...\n");
-		Rx::LFR::CApiLF::RxCudaSelectDevice();
-		
-		printf("Loading image '%s'...\n", sxRayFile.ToCString());
-		unsigned uImgID = Rx::LFR::CApiLF::RxRayLoad(sxRayFile);
-
-		Rx::LFR::CApiLF::RxRayBind(uImgID);
-
-		std::cout << "start\n";
-		for (int iter = 20; iter < num_files + 20; iter++) {
-			/*
+		for (int iter = start_file; iter < num_files + start_file; iter++) {
 			// Construct path to ray image
 			Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\plant.ray";
 			Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\gray.png";
-			*/
-			Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\var_exp_val_1\\enhanced_1_3_l1_l0\\";
-			Rx::CRxString writeOut = "C:\\Users\\cvogt\\var_exp_val_1\\enhanced_1_3_l1_l0\\tf\\";
+
+			Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\var_exp_val_1\\loss_test_orig\\";
+			Rx::CRxString writeOut = "C:\\Users\\cvogt\\var_exp_val_1\\loss_test_orig\\tf\\";
 
 			// Ray image
 			Rx::CRxImage xRayImage;
-			
-			/*
+
 			// Initialize Raytrix Library with CUDA support using default library paths
 			printf("Initializing API...\n");
 			Rx::LFR::CApiLF::RxInit(true);
@@ -86,22 +67,19 @@ int main(int argc, char* argv[])
 			Rx::LFR::CApiLF::RxCudaSelectDevice();
 
 			// Load a ray image
-			
 			printf("Loading image '%s'...\n", sxRayFile.ToCString());
 			unsigned uImgID = Rx::LFR::CApiLF::RxRayLoad(sxRayFile);
-			
+
 			//// Bind the loaded ray image. This copies the ray image to the CUDA device.
 			//printf("Binding image...\n");
-			
 			Rx::LFR::CApiLF::RxRayBind(uImgID);
-			*/
+
 			//// Get normalized image from CUDA device
 			Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::Raw, xRayImage);
-				
+
 			// Start importing the .png files
 			Rx::FileIO::CImage xImageFile;
-			/*
-			if (iter < 10) {
+			/*if (iter < 10) {
 				sxRawPngFile += "000";
 				sxRawPngFile += iter;
 				writeOut += "000";
@@ -119,10 +97,10 @@ int main(int argc, char* argv[])
 				writeOut += "0";
 				writeOut += iter;
 			}
-			*/
+*/
 			sxRawPngFile += iter;
 			writeOut += iter;
-				
+
 			sxRawPngFile += ".png";
 			Rx::CRxImage xRawImage;
 			Rx::CRxImage xImgLum, xImgBayer;
@@ -133,11 +111,11 @@ int main(int argc, char* argv[])
 			printf("Loading raw image '%s'...\n", sxRawPngFile.ToCString());
 			xImageFile.Read(&xImgLum, sxRawPngFile);
 			xImgBayer.Create(xImgLum.GetFormat().m_iWidth, xImgLum.GetFormat().m_iHeight, Rx::Interop::Runtime28::EPixelType::BayerGB, Rx::Interop::Runtime28::EDataType::UByte, xImgLum.GetDataPtr());
-	
+
 			// Load gray image
 			printf("Loading raw image '%s'...\n", sxGrayPngFile.ToCString());
 			xImageFile.Read(&xGrayImage, sxGrayPngFile);
-		
+
 			// Now apply the raw image and the gray image to the loaded ray image.
 			Rx::LFR::CApiLF::RxSetImage(Rx::LFR::EImage::ID::Raw, xImgBayer);
 			xImgBayer.Destroy();
@@ -171,8 +149,8 @@ int main(int argc, char* argv[])
 				Rx::LFR::CApiLF::RxTotalFocus(Rx::LF::ESpace::ID::View_Virtual);
 				Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::TotalFocus_View_Virtual, xRayImage);
 			}
-			else if(calc_depth){
-				
+			else if (calc_depth) {
+
 				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_NearResolutionLevel, 3U);
 				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_MinStdDeviation, 0.00);
 				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_MinCorrelation, 0.92);
@@ -188,10 +166,10 @@ int main(int argc, char* argv[])
 				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_FilterRadius, 5U);
 				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_Edge, 0.1);
 				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_Range, 5.0);
-				
+
 				Rx::LFR::CApiLF::RxDepthRay();
 				Rx::LFR::CApiLF::RxDepthMap(Rx::LF::ESpace::ID::View_Object_Pinhole);
-				Rx::LFR::CApiLF::RxDepth3D();				
+				Rx::LFR::CApiLF::RxDepth3D();
 				Rx::LFR::CApiLF::RxDepthColorCode(Rx::LF::ESpace::View_Object_Pinhole);
 				Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::DepthMapColored_View_Object_Pinhole, xRayImage);
 			}

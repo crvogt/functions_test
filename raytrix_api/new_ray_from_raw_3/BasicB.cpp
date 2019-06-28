@@ -45,139 +45,117 @@ int main(int argc, char* argv[])
 	std::cout << "Calculating depth?: " << calc_depth << std::endl;
 	try {
 		std::cout << "starting...\n";
-		for (int cur_dir = 0; cur_dir < 1; cur_dir++) {
-			for (int iter = 0; iter < num_files; iter++) {
-				// Construct path to ray image
-				//Rx::CRxString sxRayFile = "C:\\Users\\carson\\Desktop\\raytrix_api_tests\\rx_img.ray";
-				Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034045116\\plant.ray";
+		
+		// Construct path to ray image
+		Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\proc_test\\plant.ray";
+		Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\proc_test\\50.png";
+		Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\proc_test\\gray.png";
+		Rx::CRxString writeOut = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\proc_test\\50_proc.png";
 
-				/*
-				// Initialize CLUVizTool
-				printf("Initializing CLUVizTool...\n");
-				CLUViz::Tool::Init();
-				printf("Creating image view window...\n");
-				int iView = 0;
-				CLUViz::Tool::CreateViewImage(iView, 0, 0, 1000, 800, "");
-				*/
-				// Ray image
-				Rx::CRxImage xRayImage;
+		/*
+		// Initialize CLUVizTool
+		printf("Initializing CLUVizTool...\n");
+		CLUViz::Tool::Init();
+		printf("Creating image view window...\n");
+		int iView = 0;
+		CLUViz::Tool::CreateViewImage(iView, 0, 0, 1000, 800, "");
+		*/
+		// Ray image
+		Rx::CRxImage xRayImage;
 
-				///////////////////////////////////////////////////////////////
-				/// Initialize and prepare
-				///////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////
+		/// Initialize and prepare
+		///////////////////////////////////////////////////////////////
 
-				// Initialize Raytrix Library with CUDA support using default library paths
-				printf("Initializing API...\n");
-				Rx::LFR::CApiLF::RxInit(true);
+		// Initialize Raytrix Library with CUDA support using default library paths
+		printf("Initializing API...\n");
+		Rx::LFR::CApiLF::RxInit(true);
 
-				// Automatic CUDA device selection if no device ID or a negative device ID is given.
-				printf("Selecting CUDA device...\n");
-				Rx::LFR::CApiLF::RxCudaSelectDevice();
+		// Automatic CUDA device selection if no device ID or a negative device ID is given.
+		printf("Selecting CUDA device...\n");
+		Rx::LFR::CApiLF::RxCudaSelectDevice();
 
-				///////////////////////////////////////////////////////////////
-				/// Basic image processing
-				///////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////
+		/// Basic image processing
+		///////////////////////////////////////////////////////////////
 
-				// Load a ray image
-				printf("Loading image '%s'...\n", sxRayFile.ToCString());
-				unsigned uImgID = Rx::LFR::CApiLF::RxRayLoad(sxRayFile);
+		// Load a ray image
+		printf("Loading image '%s'...\n", sxRayFile.ToCString());
+		unsigned uImgID = Rx::LFR::CApiLF::RxRayLoad(sxRayFile);
 
-				//// Bind the loaded ray image. This copies the ray image to the CUDA device.
-				//printf("Binding image...\n");
-				Rx::LFR::CApiLF::RxRayBind(uImgID);
+		//// Bind the loaded ray image. This copies the ray image to the CUDA device.
+		//printf("Binding image...\n");
+		Rx::LFR::CApiLF::RxRayBind(uImgID);
 
-				//// Get normalized image from CUDA device
-				Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::Raw, xRayImage);
-				////Rx::LFR::CApiLF::RxGetImage()
-				//// Display the image
-				/*
-				CLUViz::Tool::ViewSetImage(iView, &xRayImage);
+		//// Get normalized image from CUDA device
+		Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::Raw, xRayImage);
+		////Rx::LFR::CApiLF::RxGetImage()
+		//// Display the image
+		/*
+		CLUViz::Tool::ViewSetImage(iView, &xRayImage);
 
-				//// Wait for user to press any key.
-				printf("Press any key...\n");
-				_getch();
-				*/
-				// Start importing the .png files
-				Rx::FileIO::CImage xImageFile;
-				Rx::CRxString sxRawPngFile = "F:\\raytrix_dual_cam_exp\\dual_cam_1\\";
-				sxRawPngFile += cur_dir;
-				sxRawPngFile += "\\1\\raw\\";
-				if (iter < 10) {
-					sxRawPngFile += "000";
-					sxRawPngFile += iter;
-				}
-				else if (iter >= 10 && iter < 100) {
-					sxRawPngFile += "00";
-					sxRawPngFile += iter;
-				}
-				else if (iter >= 100 && iter < 1000) {
-					sxRawPngFile += "0";
-					sxRawPngFile += iter;
-				}
-				
-				sxRawPngFile += ".png";
-				Rx::CRxImage xRawImage;
-				Rx::CRxImage xImgLum, xImgBayer;
-				Rx::CRxImage imageLumGray;
-				Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034045116\\gray.png";
-				Rx::CRxImage xGrayImage;
+		//// Wait for user to press any key.
+		printf("Press any key...\n");
+		_getch();
+		*/
+		// Start importing the .png files
+		Rx::FileIO::CImage xImageFile;
+		
+		Rx::CRxImage xRawImage;
+		Rx::CRxImage xImgLum, xImgBayer;
+		Rx::CRxImage imageLumGray;
+		Rx::CRxImage xGrayImage;
 
-				// Load raw image
-				printf("Loading raw image '%s'...\n", sxRawPngFile.ToCString());
-				xImageFile.Read(&xImgLum, sxRawPngFile);
-				xImgBayer.Create(xImgLum.GetFormat().m_iWidth, xImgLum.GetFormat().m_iHeight, Rx::Interop::Runtime28::EPixelType::BayerGB, Rx::Interop::Runtime28::EDataType::UByte, xImgLum.GetDataPtr());
-				/*
-				CLUViz::Tool::ViewSetImage(iView, &xImgBayer);
-				// Wait for user to press any key.
-				printf("Press any key...\n");
-				_getch();
-				*/
-				// Load gray image
-				printf("Loading raw image '%s'...\n", sxGrayPngFile.ToCString());
-				xImageFile.Read(&xGrayImage, sxGrayPngFile);
-				/*
-				CLUViz::Tool::ViewSetImage(iView, &xGrayImage);
+		// Load raw image
+		printf("Loading raw image '%s'...\n", sxRawPngFile.ToCString());
+		xImageFile.Read(&xImgLum, sxRawPngFile);
+		xImgBayer.Create(xImgLum.GetFormat().m_iWidth, xImgLum.GetFormat().m_iHeight, Rx::Interop::Runtime28::EPixelType::BayerGB, Rx::Interop::Runtime28::EDataType::UByte, xImgLum.GetDataPtr());
+		/*
+		CLUViz::Tool::ViewSetImage(iView, &xImgBayer);
+		// Wait for user to press any key.
+		printf("Press any key...\n");
+		_getch();
+		*/
+		// Load gray image
+		printf("Loading raw image '%s'...\n", sxGrayPngFile.ToCString());
+		xImageFile.Read(&xGrayImage, sxGrayPngFile);
+		/*
+		CLUViz::Tool::ViewSetImage(iView, &xGrayImage);
 
-				// Wait for user to press any key.
-				printf("Press any key...\n");
-				_getch();
-				*/
-				// Now apply the raw image and the gray image to the loaded ray image.
-				Rx::LFR::CApiLF::RxSetImage(Rx::LFR::EImage::ID::Raw, xImgBayer);
-				xImgBayer.Destroy();
+		// Wait for user to press any key.
+		printf("Press any key...\n");
+		_getch();
+		*/
+		// Now apply the raw image and the gray image to the loaded ray image.
+		Rx::LFR::CApiLF::RxSetImage(Rx::LFR::EImage::ID::Raw, xImgBayer);
+		xImgBayer.Destroy();
 
 
-				Rx::LFR::CApiLF::RxSetImage(Rx::LFR::EImage::ID::Gray, xGrayImage);
-				xGrayImage.Destroy();
+		Rx::LFR::CApiLF::RxSetImage(Rx::LFR::EImage::ID::Gray, xGrayImage);
+		xGrayImage.Destroy();
 
-				// Process image with no white image
-				printf("Preprocessing...\n");
-				Rx::LFR::CApiLF::RxPreProcess();
+		// Process image with no white image
+		printf("Preprocessing...\n");
+		Rx::LFR::CApiLF::RxPreProcess();
 
-				Rx::LFR::CApiLF::RxRaySave(sxRayFile, true);
-				// Get normalized image from CUDA device
-				if (!calc_depth) {
-					std::cout << "Getting preprocessed lf\n";
-					Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::Processed_Normalized, xRayImage);
-				}
-				else {
-					std::cout << "Getting total focus image\n";
-					Rx::LFR::CApiLF::RxDepthRay();
-					Rx::LFR::CApiLF::RxDepthMap(Rx::LF::ESpace::ID::View_Virtual);
-					Rx::LFR::CApiLF::RxTotalFocus(Rx::LF::ESpace::ID::View_Virtual);
-					Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::TotalFocus_View_Virtual, xRayImage);
-				}
-
-				Rx::FileIO::CImage writeImg;
-				Rx::CRxString writeOut = "F:\\raytrix_dual_cam_exp\\dual_cam_1\\";
-				writeOut += cur_dir;
-				writeOut += "\\1\\tf\\";
-				writeOut += iter;
-				writeOut += ".png";
-				writeImg.Write(&xRayImage, writeOut);
-			}
+		Rx::LFR::CApiLF::RxRaySave(sxRayFile, true);
+		// Get normalized image from CUDA device
+		if (!calc_depth) {
+			std::cout << "Getting preprocessed lf\n";
+			Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::Processed_Normalized, xRayImage);
 		}
+		else {
+			std::cout << "Getting total focus image\n";
+			Rx::LFR::CApiLF::RxDepthRay();
+			Rx::LFR::CApiLF::RxDepthMap(Rx::LF::ESpace::ID::View_Virtual);
+			Rx::LFR::CApiLF::RxTotalFocus(Rx::LF::ESpace::ID::View_Virtual);
+			Rx::LFR::CApiLF::RxGetImage(Rx::LFR::EImage::ID::TotalFocus_View_Virtual, xRayImage);
+		}
+
+		Rx::FileIO::CImage writeImg;		
+		writeImg.Write(&xRayImage, writeOut);
 	}
+	
 	catch (Rx::CRxException& ex)
 	{
 		printf("Exception occured:\n%s\n\n", ex.ToString(true).ToCString());

@@ -2,6 +2,8 @@
 c:\users\cvogt\desktop\functions_test\raytrix_api\variable_exposure\basicb.cpp(137): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
 c:\users\cvogt\desktop\functions_test\raytrix_api\variable_exposure\basicb.cpp(138): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
 c:\users\cvogt\desktop\functions_test\raytrix_api\variable_exposure\basicb.cpp(141): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\cvogt\desktop\functions_test\raytrix_api\variable_exposure\basicb.cpp(156): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+c:\users\cvogt\desktop\functions_test\raytrix_api\variable_exposure\basicb.cpp(156): warning C4305: 'initializing': truncation from 'double' to 'float'
 c:\users\cvogt\desktop\functions_test\raytrix_api\variable_exposure\basicb.cpp(275): warning C4101: 'timer3': unreferenced local variable
 c:\users\cvogt\desktop\functions_test\raytrix_api\variable_exposure\basicb.cpp(237): warning C4101: 'tHandle': unreferenced local variable
   Example.LFR.BasicB.4.0.vcxproj -> C:\Users\cvogt\Desktop\functions_test\raytrix_api\variable_exposure\x64\Debug\Example.LFR.BasicB.4.0.exe
