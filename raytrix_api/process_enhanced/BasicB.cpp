@@ -40,10 +40,10 @@
 int main(int argc, char* argv[])
 {
 	// Set both to false for processed lf
-	bool calc_depth = false;
-	bool total_focus = true;
-	int num_files = 10;
-	int start_file = 50;//20
+	bool calc_depth = true;
+	bool total_focus = false;
+	int num_files = 155;
+	int start_file = 0;//20
 
 	std::cout << "Calculating depth?: " << calc_depth << std::endl;
 	try {
@@ -52,8 +52,8 @@ int main(int argc, char* argv[])
 			Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\plant.ray";
 			Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034035116\\gray.png";
 
-			Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\var_exp_val_1\\loss_test_orig\\";
-			Rx::CRxString writeOut = "C:\\Users\\cvogt\\var_exp_val_1\\loss_test_orig\\tf\\";
+			Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\enhanced_compare\\datasets\\hist_eq\\";
+			Rx::CRxString writeOut = "C:\\Users\\cvogt\\enhanced_compare\\datasets_dm\\hist_eq\\";
 
 			// Ray image
 			Rx::CRxImage xRayImage;
