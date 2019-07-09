@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
 			proc_type = std::string(argv[2]);
 			num_streams = std::stoi(std::string(argv[3]));
 		}
-		for (int seq_it = 4; seq_it < num_streams; seq_it++) {
+		for (int seq_it = 0; seq_it < num_streams; seq_it++) {
 			// Autheniticate MGPU runtime
 			printf("Authenticate LFR...\n");
 			Rx::LFR::CLightFieldRuntime::Authenticate();
@@ -138,8 +138,83 @@ int main(int argc, char* argv[]){
 					xCudaCompute.Compute_TotalFocus();
 					pxImages->Download(Rx::LFR::EImage::TotalFocus_View_Object_Pinhole, &xOutputImage);
 				}
+				else if (proc_type == "dm") {
+					xCudaCompute.Compute_PreProcess();
+
+					// Set Pre-Process Parameters
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DenoiseNLM_Enable, 1U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DenoiseNLM_FilterDia, 4U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DenoiseNLM_NoiseLevel, 0.15);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DenoiseNLM_BlendFactor, 0.2);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_Sharp1_Enable, 1U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_Sharp1_BlurStdDev, 2.5);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_Sharp1_Factor, 1.8);
+
+					// Set Depth Parameters
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_NearResolutionLevel, 3U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_MinStdDeviation, 0.00);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_MinCorrelation, 0.9);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_PatchDiameter, 4U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_PatchStride, 1U);
+
+					// Depth Fill Parameters
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Enabled, 1U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_IterCnt, 4U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_IterSize, 1U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Complete, 1U);
+
+					// Depth Fill Bilateral filter
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_Enabled, 1U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_FilterRadius, 5U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_Edge, 0.1);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_Range, 5.0);
+					
+					xCudaCompute.Compute_DepthRay();
+					xCudaCompute.Compute_DepthMap(Rx::LF::ESpace::View_Object_Pinhole);
+					xCudaCompute.Compute_Depth3D();
+					xCudaCompute.Compute_DepthColorCode(Rx::LF::ESpace::View_Object_Pinhole);
+					pxImages->Download(Rx::LFR::EImage::DepthMapColored_View_Object_Pinhole, &xOutputImage);
+				}
+				else if (proc_type == "dm_raw") {
+					xCudaCompute.Compute_PreProcess();
+
+					// Set Pre-Process Parameters
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DenoiseNLM_Enable, 0U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DenoiseNLM_FilterDia, 4U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DenoiseNLM_NoiseLevel, 0.15);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_DenoiseNLM_BlendFactor, 0.2);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_Sharp1_Enable, 1U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_Sharp1_BlurStdDev, 2.5);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::PreProc_Sharp1_Factor, 1.8);
+
+					// Set Depth Parameters
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_NearResolutionLevel, 3U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_MinStdDeviation, 0.00);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_MinCorrelation, 0.9);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_PatchDiameter, 4U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_PatchStride, 1U);
+
+					// Depth Fill Parameters
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Enabled, 0U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_IterCnt, 4U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_IterSize, 1U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Complete, 1U);
+
+					// Depth Fill Bilateral filter
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_Enabled, 0U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_FilterRadius, 5U);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_Edge, 0.1);
+					xCudaCompute.GetParams().SetValue(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_Range, 5.0);
+
+					xCudaCompute.Compute_DepthRay();
+					xCudaCompute.Compute_DepthMap(Rx::LF::ESpace::View_Object_Pinhole);
+					xCudaCompute.Compute_Depth3D();
+					xCudaCompute.Compute_DepthColorCode(Rx::LF::ESpace::View_Object_Pinhole);
+					pxImages->Download(Rx::LFR::EImage::DepthMapColored_View_Object_Pinhole, &xOutputImage);
+				}
 
 				Rx::CRxString temp_string;
+				
 				std::cout << "proc_type: " << proc_type << std::endl;
 				if (proc_type != "ray_depth" && proc_type != "timestamp") {
 					temp_string += cam_0_write;
@@ -156,6 +231,7 @@ int main(int argc, char* argv[]){
 					cam_0_sum++;
 
 				}
+				
 				else if (proc_type == "ray_depth") {
 					temp_string += cam_0_write;
 					temp_string += proc_type.c_str();

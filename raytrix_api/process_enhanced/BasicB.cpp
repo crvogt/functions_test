@@ -40,7 +40,7 @@
 int main(int argc, char* argv[])
 {
 	// Set both to false for processed lf
-	bool calc_depth = true;
+	bool calc_depth = false;
 	bool total_focus = false;
 	int num_files = 155;
 	int start_file = 0;//20
