@@ -39,9 +39,9 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-	bool calc_depth = false;
+	bool calc_depth = true;
 	bool calc_proc = false;
-	bool calc_dm = true;
+	bool calc_dm = false;
 	int num_files = 20;
 
 	std::cout << "Calculating depth?: " << calc_depth << std::endl;
@@ -49,14 +49,14 @@ int main(int argc, char* argv[])
 		std::cout << "starting...\n";
 
 		// Construct path to ray image
-		Rx::CRxString sxRayFile = "C:\\Users\\carson\\gray_to_png\\0034045116\\plant.ray";
-		Rx::CRxString sxGrayPngFile = "C:\\Users\\carson\\gray_to_png\\0034045116\\gray.png";
+		Rx::CRxString sxRayFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034045116\\plant.ray";
+		Rx::CRxString sxGrayPngFile = "C:\\Users\\cvogt\\Desktop\\gray_to_png\\0034045116\\gray.png";
 		
 		for(int it = 0; it < num_files; it++){
-			Rx::CRxString sxRawPngFile = "E:\\raytrix_images\\low_light_raw\\";
+			Rx::CRxString sxRawPngFile = "C:\\Users\\cvogt\\raytrix_images\\hist_eq_denoise\\";
 			sxRawPngFile += it;
 			sxRawPngFile += ".png";
-			Rx::CRxString writeOut = "E:\\raytrix_images\\low_light_dm_raw\\";
+			Rx::CRxString writeOut = "C:\\Users\\cvogt\\raytrix_images\\hist_eq_denoise_tf\\";
 			writeOut += it;
 			writeOut += ".png";
 
@@ -143,7 +143,7 @@ int main(int argc, char* argv[])
 				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_Fill_Enabled, 0U);
 				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_Fill_IterCnt, 4U);
 				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_Fill_IterSize, 1U);
-				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_Fill_Complete, 0U);
+				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_Fill_Complete, 1U);
 
 				// Depth Fill Bilateral filter
 				Rx::LFR::CApiLF::RxSetPar(Rx::LFR::Params::ECudaCompute::Depth_Fill_Bilateral_Enabled, 1U);
