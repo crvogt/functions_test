@@ -1,5 +1,5 @@
 function LF = get_sub_ap(imgPath)
-    imgPath = imgPath{1};
+    % imgPath = imgPath;
     % imgPath = '/home/carson/libs/gray_to_png/0034035116/plant_processed.png'
 
 	onWindows = false;
@@ -39,14 +39,15 @@ function LF = get_sub_ap(imgPath)
 		iter = iter + 1;
 	end
 
-	% figure(1)
-	% hold on;
-	% plot(lens0(:, 1), lens0(:, 2), '.', 'MarkerSize', 20)
-	% plot(lens1(:, 1), lens1(:, 2), '.k')
-	% plot(lens2(:, 1), lens2(:, 2), '.g')
-	% hold off;
+	figure(1)
+	imshow(img)
+	hold on;
+	plot(lens0(:, 1), lens0(:, 2), '.', 'MarkerSize', 20)
+	plot(lens1(:, 1), lens1(:, 2), '.k')
+	plot(lens2(:, 1), lens2(:, 2), '.g')
+	hold off;
 
-	% pause(20)
+	pause(20)
 
 	% Put the lenses into a lftoolbox-friendly structure
 
