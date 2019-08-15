@@ -45,6 +45,7 @@ function LF = get_sub_ap(imgPath)
 	plot(lens0(:, 1), lens0(:, 2), '.', 'MarkerSize', 20)
 	plot(lens1(:, 1), lens1(:, 2), '.k')
 	plot(lens2(:, 1), lens2(:, 2), '.g')
+	plot(2048/2+20.2866, 2048/2+0.28, '*g', 'MarkerSize', 25)
 	hold off;
 
 	pause(20)
